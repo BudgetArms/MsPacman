@@ -34,6 +34,35 @@
 #include "Core/BudgetEngine.h"
 #include "Core/GameObject.h"
 #include "Core/Renderer.h"
+#include "Core/RingBuffer.h"
+#include "Core/Scene.h"
+#include "Core/ServiceLocator.h"
+#include "Components/TextComponent.h"
+#include "Components/TextureComponent.h"
+
+#include "Commands/Command.h"
+#include "Commands/GameActorCommand.h"
+
+#include "Components/Component.h"
+#include "Components/FpsCounterComponent.h"
+#include "Components/ImguiComponent.h"
+#include "Components/TransformComponent.h"
+#include "Components/TrashTheCacheComponent.h"
+
+#include "Managers/ResourceManager.h"
+#include "Managers/SceneManager.h"
+
+#include "Sounds/SoundSystem.h"
+#include "Sounds/LoggingSoundSystem.h"
+#include "Sounds/SdlSoundSystem.h"
+#include "Sounds/SdlAudioClip.h"
+#include "Sounds/LoggingAudioClip.h"
+#include "Sounds/NullAudioClip.h"
+
+#include "Wrappers/Controller.h"
+#include "Wrappers/Keyboard.h"
+#include "Wrappers/Mouse.h"
+#include "Wrappers/Texture2D.h"
 
 
 #ifdef STEAMWORKS_ENABLED
@@ -48,10 +77,12 @@
 #pragma endregion
 
 
+
 namespace fs = std::filesystem;
 using namespace bae;
 
 void Start();
+void LoadFpsCounterScene();
 
 
 int main(int, char* [])
@@ -110,8 +141,28 @@ int main(int, char* [])
 
 void Start()
 {
-
-
+    LoadFpsCounterScene();
 }
 
 
+void LoadFpsCounterScene()
+{
+    auto& fpsScene = SceneManager::GetInstance().CreateScene("FpsCounterScene");
+
+    //auto font = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 36);
+    //auto fontSmall = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
+    auto fontSmall = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
+
+    auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
+    fpsCounter->AddComponent<FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
+
+    SDL_Window* window = Renderer::GetInstance().GetSDLWindow();
+    int width, height;
+    SDL_GetWindowSize(window, &width, &height);
+    fpsCounter->SetWorldLocation({ width, 0.f });
+    fpsCounter->AddLocation({ -75.f, 5.f });
+
+    fpsScene.Add(fpsCounter);
+
+
+}
