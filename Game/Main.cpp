@@ -11,7 +11,6 @@
 #include <Windows.h>
 #include <filesystem>
 #include <iostream>
-#include <unordered_map>
 #include <chrono>
 
 
@@ -34,34 +33,16 @@
 #include "Core/BudgetEngine.h"
 #include "Core/GameObject.h"
 #include "Core/Renderer.h"
-#include "Core/RingBuffer.h"
 #include "Core/Scene.h"
-#include "Core/ServiceLocator.h"
 #include "Components/TextComponent.h"
-#include "Components/TextureComponent.h"
 
-#include "Commands/Command.h"
-#include "Commands/GameActorCommand.h"
-
-#include "Components/Component.h"
 #include "Components/FpsCounterComponent.h"
 #include "Components/ImguiComponent.h"
-#include "Components/TransformComponent.h"
-#include "Components/TrashTheCacheComponent.h"
 
 #include "Managers/ResourceManager.h"
 #include "Managers/SceneManager.h"
 
-#include "Sounds/SoundSystem.h"
-#include "Sounds/LoggingSoundSystem.h"
-#include "Sounds/SdlSoundSystem.h"
-#include "Sounds/SdlAudioClip.h"
-#include "Sounds/LoggingAudioClip.h"
-#include "Sounds/NullAudioClip.h"
-
 #include "Wrappers/Controller.h"
-#include "Wrappers/Keyboard.h"
-#include "Wrappers/Mouse.h"
 #include "Wrappers/Texture2D.h"
 
 
@@ -110,8 +91,8 @@ int main(int, char* [])
 
     if (!fs::exists(window.resourceFolder))
     {
-        std::cout << "Resouces Folder Not Found" << '\n';
-        assert("Resouces Folder Not Found");
+        std::cout << "Resources Folder Not Found" << '\n';
+        assert("Resources Folder Not Found");
         exit(-1);
     }
 
