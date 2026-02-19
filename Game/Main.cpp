@@ -16,7 +16,6 @@
 
 #pragma region BudgetArmsEngine Includes
 
-
 #include <glm.hpp>
 #include <SDL.h>
 #include <imgui.h>
@@ -37,7 +36,6 @@
 #include "Components/TextComponent.h"
 
 #include "Components/FpsCounterComponent.h"
-#include "Components/ImguiComponent.h"
 
 #include "Managers/ResourceManager.h"
 #include "Managers/SceneManager.h"
@@ -68,7 +66,6 @@ void LoadFpsCounterScene();
 
 int main(int, char* [])
 {
-    //thx myself for dying to find this
 #ifdef WIN32
     if (AllocConsole())
     {
