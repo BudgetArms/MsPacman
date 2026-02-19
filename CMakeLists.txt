@@ -37,7 +37,7 @@ execute_process(
   COMMAND git submodule update --init --remote --force
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
-]]
+#]]
 
 
 add_subdirectory(BudgetArmsEngine)

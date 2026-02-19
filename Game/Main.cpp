@@ -66,6 +66,7 @@ void LoadFpsCounterScene();
 
 int main(int, char* [])
 {
+
 #ifdef WIN32
     if (AllocConsole())
     {
@@ -127,11 +128,10 @@ void LoadFpsCounterScene()
 {
     auto& fpsScene = SceneManager::GetInstance().CreateScene("FpsCounterScene");
 
-    //auto font = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 36);
-    //auto fontSmall = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
-    auto fontSmall = ResourceManager::GetInstance().LoadFont("Lingua.otf", 18);
+    auto font = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 36);
+    auto fontSmall = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
 
-    auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
+    const auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
     fpsCounter->AddComponent<FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
 
     SDL_Window* window = Renderer::GetInstance().GetSDLWindow();
@@ -141,6 +141,4 @@ void LoadFpsCounterScene()
     fpsCounter->AddLocation({ -75.f, 5.f });
 
     fpsScene.Add(fpsCounter);
-
-
 }
