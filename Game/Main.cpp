@@ -21,6 +21,9 @@
 #include <imgui.h>
 #include <imgui_plot.h>
 
+#include "Components/RotateComponent.hpp"
+#include "Components/TextureComponent.h"
+
 #ifdef STEAMWORKS_ENABLED
 #pragma warning (push)
 #pragma warning (disable: 4996)
@@ -62,6 +65,7 @@ using namespace bae;
 
 void Start();
 void LoadFpsCounterScene();
+void LoadRotatingScene();
 
 
 int main(int, char* [])
@@ -121,6 +125,9 @@ int main(int, char* [])
 void Start()
 {
     LoadFpsCounterScene();
+    LoadRotatingScene();
+
+
 }
 
 
@@ -134,11 +141,34 @@ void LoadFpsCounterScene()
     const auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
     fpsCounter->AddComponent<FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
 
+    const auto background = std::make_shared<GameObject>("Background");
+    background->AddComponent<TextureComponent>(*background, "Textures/background.png");
+
     SDL_Window* window = Renderer::GetInstance().GetSDLWindow();
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     fpsCounter->SetWorldLocation({ width, 0.f });
     fpsCounter->AddLocation({ -75.f, 5.f });
 
+    fpsScene.Add(background);
     fpsScene.Add(fpsCounter);
+}
+
+void LoadRotatingScene()
+{
+    auto& rotatingScene = SceneManager::GetInstance().CreateScene("RotateScene");
+
+    const auto playerBig = std::make_shared<GameObject>("MainPlayer");
+    playerBig->AddComponent<Game::RotateComponent>(*playerBig, glm::vec2(400, 200), 50.f, 5.f);
+    playerBig->AddComponent<TextureComponent>(*playerBig, "Textures/SpriteExample.png");
+
+
+    const auto playerSmall = std::make_shared<GameObject>("SmallPlayer");
+    playerSmall->AddComponent<Game::RotateComponent>(*playerSmall, glm::vec2(400, 100), 10.f, -5.f);
+    playerSmall->AddComponent<TextureComponent>(*playerSmall, "Textures/SpriteExample.png");
+
+    playerBig->AttachChild(playerSmall.get(), false, false, false);
+
+    rotatingScene.Add(playerBig);
+    rotatingScene.Add(playerSmall);
 }

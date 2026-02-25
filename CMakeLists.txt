@@ -19,13 +19,37 @@ set(ENABLE_CONSOLE ON)
 if(ENABLE_STEAMWORKS AND NOT EMSCRIPTEN)
 
     message("Using Steamworks")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 
-    if(EXISTS "${STEAMWORKS_SDK_PATH}")
-        message(STATUS "Steamworks SDK found at: ${STEAMWORKS_SDK_PATH}")
-        set(STEAMWORKS_AVAILABLE TRUE)
+    find_package(Steamworks QUIET)
+
+    if(Steamworks_FOUND)
+
+        target_link_libraries("${TARGET_NAME}" PUBLIC Steamworks::Steamworks)
+        target_compile_definitions(${TARGET_NAME} PRIVATE USE_STEAMWORKS)
+
+        add_custom_command(
+            TARGET
+            ${TARGET_NAME}
+            POST_BUILD
+            COMMAND "${CMAKE_COMMAND}"
+            -E copy "${Steamworks_RUNTIME_DLL}" "$<TARGET_FILE_DIR:${TARGET_NAME}>"
+        )
+
+        add_custom_command(
+            TARGET
+            ${TARGET_NAME}
+            POST_BUILD
+            COMMAND "${CMAKE_COMMAND}"
+            -E echo "480" > "$<TARGET_FILE_DIR:${TARGET_NAME}>/steam_appid.txt"
+            COMMENT "Generating steam_appid.txt"
+        )
+
     else()
-        message(WARNING "Steamworks SDK not found at: ${STEAMWORKS_SDK_PATH}")
+
+        message(WARNING "Steamworks package NOT found")
         set(STEAMWORKS_AVAILABLE FALSE)
+
     endif()
 
 endif()

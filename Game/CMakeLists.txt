@@ -7,6 +7,8 @@ message("\n${CMAKE_PROJECT_NAME} CMake")
 
 add_executable(${PROJECT_NAME}
 	"Main.cpp"
+        Components/RotateComponent.cpp
+        Components/RotateComponent.hpp
 
 )
  
