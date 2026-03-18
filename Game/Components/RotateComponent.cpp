@@ -1,8 +1,7 @@
 #include "RotateComponent.hpp"
 
-#include <valarray>
+#include <array>
 
-#include "ext/scalar_constants.hpp"
 #include "Singletons/GameTime.h"
 
 

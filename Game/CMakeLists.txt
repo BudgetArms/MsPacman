@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.26)
+﻿cmake_minimum_required(VERSION 4.0.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -7,9 +7,8 @@ message("\n${CMAKE_PROJECT_NAME} CMake")
 
 add_executable(${PROJECT_NAME}
 	"Main.cpp"
-        Components/RotateComponent.cpp
-        Components/RotateComponent.hpp
-
+    "Components/RotateComponent.cpp"
+    "Components/RotateComponent.hpp"
 )
  
 

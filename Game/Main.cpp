@@ -1,7 +1,6 @@
-﻿#if _DEBUG
-#if __has_include(<vld.h>)
-#include <vld.h>
-#endif
+﻿
+#if _DEBUG && __has_include(<vld.h>)
+    #include <vld.h>
 #endif
 
 
@@ -16,13 +15,13 @@
 
 #pragma region BudgetArmsEngine Includes
 
-#include <glm.hpp>
-#include <SDL.h>
+#include <glm/glm.hpp>
+#include <SDL3/SDL.h>
 #include <imgui.h>
 #include <imgui_plot.h>
 
-#include "Components/RotateComponent.hpp"
-#include "Components/TextureComponent.h"
+// testing
+#define STEAMWORKS_ENABLED
 
 #ifdef STEAMWORKS_ENABLED
 #pragma warning (push)
@@ -31,6 +30,8 @@
 #pragma warning (pop)
 #endif
 
+
+#include <SDL3_mixer/SDL_mixer.h>
 
 #include "Core/BudgetEngine.h"
 #include "Core/GameObject.h"
@@ -65,7 +66,7 @@ using namespace bae;
 
 void Start();
 void LoadFpsCounterScene();
-void LoadRotatingScene();
+void PlayBeepSound();
 
 
 int main(int, char* [])
@@ -125,8 +126,7 @@ int main(int, char* [])
 void Start()
 {
     LoadFpsCounterScene();
-    LoadRotatingScene();
-
+    PlayBeepSound();
 
 }
 
@@ -141,34 +141,51 @@ void LoadFpsCounterScene()
     const auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
     fpsCounter->AddComponent<FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
 
-    const auto background = std::make_shared<GameObject>("Background");
-    background->AddComponent<TextureComponent>(*background, "Textures/background.png");
-
     SDL_Window* window = Renderer::GetInstance().GetSDLWindow();
     int width, height;
     SDL_GetWindowSize(window, &width, &height);
     fpsCounter->SetWorldLocation({ width, 0.f });
     fpsCounter->AddLocation({ -75.f, 5.f });
 
-    fpsScene.Add(background);
     fpsScene.Add(fpsCounter);
 }
 
-void LoadRotatingScene()
+
+void PlayBeepSound()
 {
-    auto& rotatingScene = SceneManager::GetInstance().CreateScene("RotateScene");
+    if (!MIX_Init())
+    {
+         std::cout << "Failed to initialize MIX: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("Failed to initialize MIX: " + std::string(SDL_GetError()));
+    }
 
-    const auto playerBig = std::make_shared<GameObject>("MainPlayer");
-    playerBig->AddComponent<Game::RotateComponent>(*playerBig, glm::vec2(400, 200), 50.f, 5.f);
-    playerBig->AddComponent<TextureComponent>(*playerBig, "Textures/SpriteExample.png");
 
+    MIX_Mixer* mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
+    if (!mixer)
+    {
+        std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("Failed to make a MixerDevice Error: " + std::string(SDL_GetError()));
+    }
 
-    const auto playerSmall = std::make_shared<GameObject>("SmallPlayer");
-    playerSmall->AddComponent<Game::RotateComponent>(*playerSmall, glm::vec2(400, 100), 10.f, -5.f);
-    playerSmall->AddComponent<TextureComponent>(*playerSmall, "Textures/SpriteExample.png");
+    const std::string beepSoundPath = std::filesystem::absolute(bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.mp3").string();
 
-    playerBig->AttachChild(playerSmall.get(), false, false, false);
+    MIX_Audio* audio = MIX_LoadAudio(mixer, beepSoundPath.c_str(), false);
+    if (!audio)
+    {
+        std::cout << beepSoundPath << std::endl;
+        std::cout << "Failed to load Audio, Error: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("Failed to load Audio, Error: " + std::string(SDL_GetError()));
+    }
 
-    rotatingScene.Add(playerBig);
-    rotatingScene.Add(playerSmall);
+    MIX_Track* track = MIX_CreateTrack(mixer);
+    if (!track)
+    {
+        std::cout << "Failed to load Track, Error: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("Failed to load Track, Error: " + std::string(SDL_GetError()));
+    }
+
+    MIX_SetTrackAudio(track, audio);
+    MIX_PlayTrack(track, 0);
+
 }
+
