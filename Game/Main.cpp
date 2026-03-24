@@ -20,8 +20,6 @@
 #include <imgui.h>
 #include <imgui_plot.h>
 
-// testing
-#define STEAMWORKS_ENABLED
 
 #ifdef STEAMWORKS_ENABLED
 #pragma warning (push)
