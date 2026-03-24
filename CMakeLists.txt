@@ -16,7 +16,7 @@ set(EMSCRIPTEN OFF)
 set(ENABLE_CONSOLE ON)
 
 
-if(ENABLE_STEAMWORKS AND NOT EMSCRIPTEN)
+if(ENABLE_STEAMWORKS AND NOT EMSCRIPTEN AND EXISTS STEAMWORKS_ROOT)
     set(ENABLE_STEAMWORKS ON)
 else()
     set(ENABLE_STEAMWORKS OFF)
@@ -24,9 +24,9 @@ endif()
 
 
 # Force updates submodule, so that it's exactly identical to latest version of submodule
-#[[
+##[[
 execute_process(
-  COMMAND git submodule update --init --remote --force
+  COMMAND git submodule update --remote --merge
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 #]]
