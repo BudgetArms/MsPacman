@@ -407,3 +407,5 @@ imgui.ini
 /cmake-build-debug/
 .idea/
 /out/
+
+/3rdParty/
