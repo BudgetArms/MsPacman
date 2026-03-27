@@ -7,7 +7,10 @@
 #include <memory>
 #include <cassert>
 
-#include <Windows.h>
+#if WIN32
+    #include <Windows.h>
+#endif
+
 #include <filesystem>
 #include <iostream>
 #include <chrono>
@@ -70,15 +73,11 @@ void PlayBeepSound();
 int main(int, char* [])
 {
 
-#ifdef WIN32
-    if (AllocConsole())
-    {
-        FILE* pEmpty;
-        freopen_s(&pEmpty, "CONOUT$", "w", stdout);
-        freopen_s(&pEmpty, "CONOUT$", "w", stderr);
-    }
+#if defined(_DEBUG) && __has_include(<vld.h>)
+    std::cout << "VLD enabled" << '\n';
+#else
+    std::cout << "VLD disabled" << '\n';
 #endif
-
 
     bae::Utils::Window window{ "Ms Pacman", "./Resources/", 960, 612, false };
 
