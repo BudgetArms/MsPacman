@@ -1,45 +1,43 @@
-﻿
+﻿// VLD include
 #if _DEBUG && __has_include(<vld.h>)
     #include <vld.h>
 #endif
 
-
+// STD includes
 #include <memory>
 #include <cassert>
-
-#if WIN32
-    #include <Windows.h>
-#endif
-
 #include <filesystem>
 #include <iostream>
 #include <chrono>
 
 
-#pragma region BudgetArmsEngine Includes
+// External libraries includes
+#if WIN32
+    #include <Windows.h>
+#endif
 
 #include <glm/glm.hpp>
-#include <SDL3/SDL.h>
 #include <imgui.h>
 #include <imgui_plot.h>
-
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 #ifdef STEAMWORKS_ENABLED
-#pragma warning (push)
-#pragma warning (disable: 4996)
-#include <steam_api.h>
-#pragma warning (pop)
+    #pragma warning (push)
+    #pragma warning (disable: 4996)
+    #include <steam_api.h>
+    #pragma warning (pop)
 #endif
 
 
-#include <SDL3_mixer/SDL_mixer.h>
-
+// BudgetArmsEngine includes
 #include "Core/BudgetEngine.h"
 #include "Core/GameObject.h"
 #include "Core/Renderer.h"
 #include "Core/Scene.h"
-#include "Components/TextComponent.h"
 
+#include "Components/TextComponent.h"
 #include "Components/FpsCounterComponent.h"
 
 #include "Managers/ResourceManager.h"
@@ -50,15 +48,11 @@
 
 
 #ifdef STEAMWORKS_ENABLED
+    #include "Core/Achievement.h"
 
-#include "Core/Achievement.h"
-#include "Managers/SteamManager.h"
-#include "Managers/AchievementManager.h"
-
+    #include "Managers/AchievementManager.h"
+    #include "Managers/SteamManager.h"
 #endif
-
-
-#pragma endregion
 
 
 
@@ -73,35 +67,34 @@ void PlayBeepSound();
 int main(int, char* [])
 {
 
-#if defined(_DEBUG) && __has_include(<vld.h>)
-    std::cout << "VLD enabled" << '\n';
-#else
-    std::cout << "VLD disabled" << '\n';
-#endif
+    #if defined(_DEBUG) && __has_include(<vld.h>)
+        std::cout << "VLD enabled" << '\n';
+    #else
+        std::cout << "VLD disabled" << '\n';
+    #endif
 
     bae::Utils::Window window{ "Ms Pacman", "./Resources/", 960, 612, false };
 
 
-#if __EMSCRIPTEN__
-    window.resourceFolder = "";
-#else
+    #if __EMSCRIPTEN__
+        window.resourceFolder = "";
+    #else
 
-    if (!fs::exists(window.resourceFolder))
-        window.resourceFolder = "../Resources/";
+        if (!fs::exists(window.resourceFolder))
+            window.resourceFolder = "../Resources/";
 
-    if (!fs::exists(window.resourceFolder))
-    {
-        std::cout << "Resources Folder Not Found" << '\n';
-        assert("Resources Folder Not Found");
-        exit(-1);
-    }
+        if (!fs::exists(window.resourceFolder))
+        {
+            std::cout << "Resources Folder Not Found" << '\n';
+            assert("Resources Folder Not Found");
+            exit(-1);
+        }
 
-#ifdef STEAMWORKS_ENABLED
-    SteamManager::GetInstance().Initialize();
+        #ifdef STEAMWORKS_ENABLED
+            SteamManager::GetInstance().Initialize();
+        #endif
 
-#endif
-
-#endif
+    #endif
 
 
     BudgetEngine engine(window);
@@ -112,9 +105,7 @@ int main(int, char* [])
     SteamManager::GetInstance().Shutdown();
 #endif
 
-
     std::cout << "\n\n";
-
 
     return 0;
 }
@@ -152,7 +143,7 @@ void PlayBeepSound()
 {
     if (!MIX_Init())
     {
-         std::cout << "Failed to initialize MIX: " << SDL_GetError() << std::endl;
+        std::cout << "Failed to initialize MIX: " << SDL_GetError() << std::endl;
         throw std::runtime_error("Failed to initialize MIX: " + std::string(SDL_GetError()));
     }
 
