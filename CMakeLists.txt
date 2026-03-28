@@ -25,7 +25,7 @@ endif()
 
 
 
-set(UPDATE_SUBMODULES OFF)
+set(UPDATE_SUBMODULES ON)
 
 if(UPDATE_SUBMODULES)
     execute_process(
