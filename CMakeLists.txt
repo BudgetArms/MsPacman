@@ -29,7 +29,7 @@ set(UPDATE_SUBMODULES OFF)
 
 if(UPDATE_SUBMODULES)
     execute_process(
-        COMMAND git submodule update --init --recursive
+        COMMAND git submodule update --remote --rebase
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         RESULT_VARIABLE GIT_SUBMODULE_RESULT
     )

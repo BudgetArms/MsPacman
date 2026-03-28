@@ -1,3 +1,4 @@
 [submodule "BudgetArmsEngine"]
 	path = BudgetArmsEngine
 	url = https://github.com/BudgetArms/BudgetArmsEngine
+	branch = main
