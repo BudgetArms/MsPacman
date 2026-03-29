@@ -19,8 +19,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository & enable Submodules
         uses: actions/checkout@v4
+        with:
+          submodules: 'true'
 
       - uses: actions/cache@v4
         with:
