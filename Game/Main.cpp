@@ -66,6 +66,14 @@ void PlayBeepSound();
 
 int main(int, char* [])
 {
+    #ifdef WIN32
+        if (AllocConsole())
+        {
+            FILE* pEmpty;
+            freopen_s(&pEmpty, "CONOUT$", "w", stdout);
+            freopen_s(&pEmpty, "CONOUT$", "w", stderr);
+        }
+    #endif
 
     #if defined(_DEBUG) && __has_include(<vld.h>)
         std::cout << "VLD enabled" << '\n';
