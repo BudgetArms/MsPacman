@@ -18,10 +18,11 @@
 
 #include <glm/glm.hpp>
 #include <imgui.h>
-#include <imgui_plot.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_mixer/SDL_mixer.h>
+
+#include "Components/TextureComponent.h"
 
 #ifdef STEAMWORKS_ENABLED
     #pragma warning (push)
@@ -60,7 +61,10 @@ namespace fs = std::filesystem;
 using namespace bae;
 
 void Start();
+void LoadBackground();
+void LoadGameNameScene();
 void LoadFpsCounterScene();
+void LoadRotatingObectsScene();
 void PlayBeepSound();
 
 
@@ -81,7 +85,8 @@ int main(int, char* [])
         std::cout << "VLD disabled" << '\n';
     #endif
 
-    bae::Utils::Window window{ "Ms Pacman", "./Resources/", 960, 612, false };
+
+    bae::Utils::Window window{ "Ms Pacman", "./Resources/", 1024, 576, false };
 
 
     #if __EMSCRIPTEN__
@@ -121,31 +126,76 @@ int main(int, char* [])
 
 void Start()
 {
+    LoadBackground();
     LoadFpsCounterScene();
+    LoadGameNameScene();
+    LoadRotatingObectsScene();
     PlayBeepSound();
 
 }
 
+void LoadBackground()
+{
+    auto& backgroundScene = SceneManager::GetInstance().CreateScene("Background Scene");
+
+    const auto backgroundTexture = std::make_shared<GameObject>("BackgroundTexture");
+    backgroundTexture->AddComponent<TextureComponent>(*backgroundTexture, "Textures/background.png");
+    backgroundScene.Add(backgroundTexture);
+
+
+    const auto backgroundLogoTexture = std::make_shared<GameObject>("Background Logo Texture");
+    backgroundLogoTexture->AddComponent<TextureComponent>(*backgroundLogoTexture, "Textures/logo.png");
+    auto backgroundLogotTextureComp = backgroundLogoTexture->GetComponent<TextureComponent>();
+
+    const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
+    backgroundLogotTextureComp->m_bIsCenteredAtPosition = true;
+    backgroundLogoTexture->SetWorldLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f});
+    backgroundScene.Add(backgroundLogoTexture);
+
+    bae::Utils::DrawCircle({0, 0}, 1000, Utils::Color::Blue);
+
+}
+
+void LoadGameNameScene()
+{
+    auto& gameNameScene = SceneManager::GetInstance().CreateScene("Game Name Scene");
+    auto font = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 48);
+
+    const auto gameName = std::make_shared<GameObject>("Game Name");
+    // gameName->AddComponent<TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Cyan);
+    gameName->AddComponent<TextComponent>(*gameName, "MsPacMan", font, SDL_Color(255, 255, 0, 1));
+
+    gameNameScene.Add(gameName);
+    std::cout << "test\n";
+}
 
 void LoadFpsCounterScene()
 {
     auto& fpsScene = SceneManager::GetInstance().CreateScene("FpsCounterScene");
 
-    auto font = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 36);
     auto fontSmall = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
 
     const auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
     fpsCounter->AddComponent<FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
 
-    SDL_Window* window = Renderer::GetInstance().GetSDLWindow();
-    int width, height;
-    SDL_GetWindowSize(window, &width, &height);
-    fpsCounter->SetWorldLocation({ width, 0.f });
+    const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
+
+    fpsCounter->SetWorldLocation({ windowSize.Width, 0.f });
     fpsCounter->AddLocation({ -75.f, 5.f });
 
     fpsScene.Add(fpsCounter);
 }
 
+void LoadRotatingObectsScene()
+{
+    auto& ballScene = SceneManager::GetInstance().CreateScene("Rotating Ball Scene");
+
+    const auto parentBall = std::make_shared<GameObject>("ParentBall");
+    parentBall->AddComponent<bae::TextureComponent>(*parentBall, "Textures/SpriteExample.png");
+
+
+    ballScene.Add(parentBall);
+}
 
 void PlayBeepSound()
 {
