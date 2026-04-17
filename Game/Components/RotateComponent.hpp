@@ -8,16 +8,18 @@ namespace Game
     class RotateComponent : public bae::Component
     {
     public:
-        explicit RotateComponent(bae::GameObject& owner, const glm::vec2& centerPosition, const float radius, const float angularSpeed);
+        explicit RotateComponent(bae::GameObject& owner, float radius, float angularSpeed);
 
         void Update() override;
 
     private:
-        glm::vec2 m_CenterPosition;
+        // glm::vec2 m_CenterPosition;
         float m_Radius;
-        float m_AngularSpeed;
+        float m_AngularSpeed{ 1.f };
 
         float m_Angle{};
+
+        bool m_bHasPrintedMessage{};
 
     };
 

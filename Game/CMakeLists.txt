@@ -17,6 +17,12 @@ endif()
 
 add_executable(${PROJECT_NAME} ${TARGET_PARAM}
 	"Main.cpp"
+
+    "Base/DirectionEnum.hpp"
+
+    "Commands/MoveCommand.cpp"
+    "Commands/MoveOnGridCommand.cpp"
+
     "Components/RotateComponent.cpp"
     "Components/RotateComponent.hpp"
 )
@@ -58,8 +64,7 @@ if(EMSCRIPTEN)
     )
 
     set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
-    # set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}@/\"")
-    set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH -sNO_DISABLE_EXCEPTION_CATCHING --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}@/\"")
+    set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}@/\"")
 
     # Use the Emscripten toolchain
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/cmake/EmscriptenToolchain.cmake")
