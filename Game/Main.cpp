@@ -22,7 +22,11 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
+#include "Commands/GameActorCommand.h"
+#include "Commands/MoveCommand.hpp"
+#include "Components/RotateComponent.hpp"
 #include "Components/TextureComponent.h"
+#include "Wrappers/Keyboard.h"
 
 #ifdef STEAMWORKS_ENABLED
     #pragma warning (push)
@@ -64,7 +68,7 @@ void Start();
 void LoadBackground();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
-void LoadRotatingObectsScene();
+void LoadRotatingObjectsScene();
 void PlayBeepSound();
 
 
@@ -129,7 +133,7 @@ void Start()
     LoadBackground();
     LoadFpsCounterScene();
     LoadGameNameScene();
-    LoadRotatingObectsScene();
+    LoadRotatingObjectsScene();
     PlayBeepSound();
 
 }
@@ -166,7 +170,6 @@ void LoadGameNameScene()
     gameName->AddComponent<TextComponent>(*gameName, "MsPacMan", font, SDL_Color(255, 255, 0, 1));
 
     gameNameScene.Add(gameName);
-    std::cout << "test\n";
 }
 
 void LoadFpsCounterScene()
@@ -186,15 +189,77 @@ void LoadFpsCounterScene()
     fpsScene.Add(fpsCounter);
 }
 
-void LoadRotatingObectsScene()
+void LoadRotatingObjectsScene()
 {
+    auto& keyboard = InputManager::GetInstance().GetKeyboard();
+
     auto& ballScene = SceneManager::GetInstance().CreateScene("Rotating Ball Scene");
 
-    const auto parentBall = std::make_shared<GameObject>("ParentBall");
-    parentBall->AddComponent<bae::TextureComponent>(*parentBall, "Textures/SpriteExample.png");
+    constexpr float moveSpeed = 800.f;
+    const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
+
+    // LonelyRotatingBall
+    const auto lonelyParent = std::make_shared<GameObject>("LonelyRotatingBall Parent");
+    lonelyParent->SetWorldLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f });
+
+    const auto lonelyRotatingBall = std::make_shared<GameObject>("LonelyRotatingBall");
+    lonelyRotatingBall->AddComponent<bae::TextureComponent>(*lonelyRotatingBall, "Textures/SpriteExample.png");
+    lonelyRotatingBall->AddComponent<Game::RotateComponent>(*lonelyRotatingBall, 100.f, 1.f);
+
+    lonelyParent->AttachChild(lonelyRotatingBall.get());
+
+    ballScene.Add(lonelyParent);
+    ballScene.Add(lonelyRotatingBall);
+
+    // Lonely Parent Commands
+    auto moveUpLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(*lonelyParent, Game::Direction::Up, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveUpLonelyRotatingBallParentCommand), SDLK_W, InputManager::ButtonState::Pressed);
+
+    auto moveDownLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(*lonelyParent, Game::Direction::Down, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveDownLonelyRotatingBallParentCommand), SDLK_S, InputManager::ButtonState::Pressed);
+
+    auto moveLeftLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(*lonelyParent, Game::Direction::Left, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveLeftLonelyRotatingBallParentCommand), SDLK_A, InputManager::ButtonState::Pressed);
+
+    auto moveRightLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(*lonelyParent, Game::Direction::Right, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveRightLonelyRotatingBallParentCommand), SDLK_D, InputManager::ButtonState::Pressed);
 
 
-    ballScene.Add(parentBall);
+    // Grouped Parent
+    const auto groupedParent = std::make_shared<GameObject>("Grouped Main Parent");
+    groupedParent->SetWorldLocation({ windowSize.Width / 2.f - 200.f, windowSize.Height / 2.f });
+    ballScene.Add(groupedParent);
+
+    // Grouped Parent Commands
+    auto moveUpGroupedParentCommand = std::make_unique<Game::MoveCommand>(*groupedParent, Game::Direction::Up, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveUpGroupedParentCommand), SDLK_I, InputManager::ButtonState::Pressed);
+
+    auto moveDownGroupedParentCommand = std::make_unique<Game::MoveCommand>(*groupedParent, Game::Direction::Down, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveDownGroupedParentCommand), SDLK_K, InputManager::ButtonState::Pressed);
+
+    auto moveLeftGroupedParentCommand = std::make_unique<Game::MoveCommand>(*groupedParent, Game::Direction::Left, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveLeftGroupedParentCommand), SDLK_J, InputManager::ButtonState::Pressed);
+
+    auto moveRightGroupedParentCommand = std::make_unique<Game::MoveCommand>(*groupedParent, Game::Direction::Right, moveSpeed);
+    keyboard.AddKeyboardCommands(std::move(moveRightGroupedParentCommand), SDLK_L, InputManager::ButtonState::Pressed);
+
+    // Grouped Rotating Ball
+    const auto groupedRotatingBall = std::make_shared<GameObject>("Grouped Rotating Ball");
+    groupedRotatingBall->AddComponent<bae::TextureComponent>(*groupedRotatingBall, "Textures/SpriteExample.png");
+    groupedRotatingBall->AddComponent<Game::RotateComponent>(*groupedRotatingBall, 10.f, 5.f);
+
+    groupedParent->AttachChild(groupedRotatingBall.get());
+
+    ballScene.Add(groupedRotatingBall);
+
+    // Grouped Rotating Child Ball
+    const auto groupedRotatingChildBall = std::make_shared<GameObject>("Grouped Rotating Child Ball");
+    groupedRotatingChildBall->AddComponent<bae::TextureComponent>(*groupedRotatingChildBall, "Textures/SpriteExample.png");
+    groupedRotatingChildBall->AddComponent<Game::RotateComponent>(*groupedRotatingChildBall, 40.f, -2.f);
+
+    groupedRotatingBall->AttachChild(groupedRotatingChildBall.get());
+
+    ballScene.Add(groupedRotatingChildBall);
 }
 
 void PlayBeepSound()
