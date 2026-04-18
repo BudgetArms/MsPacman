@@ -19,9 +19,11 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
 	"Main.cpp"
 
     "Base/DirectionEnum.hpp"
+        "Base/SmartpointerHelpers.cpp"
 
     "Commands/MoveCommand.cpp"
     "Commands/MoveOnGridCommand.cpp"
+
 
     "Components/RotateComponent.cpp"
     "Components/RotateComponent.hpp"

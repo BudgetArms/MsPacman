@@ -22,11 +22,6 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
-#include "Commands/GameActorCommand.h"
-#include "Commands/MoveCommand.hpp"
-#include "Components/RotateComponent.hpp"
-#include "Components/TextureComponent.h"
-#include "Wrappers/Keyboard.h"
 
 #ifdef STEAMWORKS_ENABLED
     #pragma warning (push)
@@ -35,20 +30,21 @@
     #pragma warning (pop)
 #endif
 
-
 // BudgetArmsEngine includes
 #include "Core/BudgetEngine.h"
 #include "Core/GameObject.h"
 #include "Core/Renderer.h"
 #include "Core/Scene.h"
 
-#include "Components/TextComponent.h"
 #include "Components/FpsCounterComponent.h"
+#include "Components/TextComponent.h"
+#include "Components/TextureComponent.h"
 
 #include "Managers/ResourceManager.h"
 #include "Managers/SceneManager.h"
 
 #include "Wrappers/Controller.h"
+#include "Wrappers/Keyboard.h"
 #include "Wrappers/Texture2D.h"
 
 
@@ -59,6 +55,12 @@
     #include "Managers/SteamManager.h"
 #endif
 
+
+// Game Includes
+#include "Base/SmartpointerHelpers.hpp"
+#include "Commands/MoveCommand.hpp"
+#include "Commands/MoveOnGridCommand.hpp"
+#include "Components/RotateComponent.hpp"
 
 
 namespace fs = std::filesystem;
@@ -123,7 +125,6 @@ int main(int, char* [])
 #endif
 
     std::cout << "\n\n";
-
     return 0;
 }
 
@@ -153,7 +154,7 @@ void LoadBackground()
 
     const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
     backgroundLogotTextureComp->m_bIsCenteredAtPosition = true;
-    backgroundLogoTexture->SetWorldLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f});
+    backgroundLogoTexture->SetWorldLocation({ static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2});
     backgroundScene.Add(backgroundLogoTexture);
 
     bae::Utils::DrawCircle({0, 0}, 1000, Utils::Color::Blue);
@@ -200,7 +201,7 @@ void LoadRotatingObjectsScene()
 
     // LonelyRotatingBall
     const auto lonelyParent = std::make_shared<GameObject>("LonelyRotatingBall Parent");
-    lonelyParent->SetWorldLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f });
+    lonelyParent->SetWorldLocation({ static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2 });
 
     const auto lonelyRotatingBall = std::make_shared<GameObject>("LonelyRotatingBall");
     lonelyRotatingBall->AddComponent<bae::TextureComponent>(*lonelyRotatingBall, "Textures/SpriteExample.png");
@@ -227,7 +228,7 @@ void LoadRotatingObjectsScene()
 
     // Grouped Parent
     const auto groupedParent = std::make_shared<GameObject>("Grouped Main Parent");
-    groupedParent->SetWorldLocation({ windowSize.Width / 2.f - 200.f, windowSize.Height / 2.f });
+    groupedParent->SetWorldLocation({ static_cast<float>(windowSize.Width) / 2 - 200.f, static_cast<float>(windowSize.Height) / 2 });
     ballScene.Add(groupedParent);
 
     // Grouped Parent Commands
@@ -270,8 +271,7 @@ void PlayBeepSound()
         throw std::runtime_error("Failed to initialize MIX: " + std::string(SDL_GetError()));
     }
 
-
-    MIX_Mixer* mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
+    const auto mixer = std::unique_ptr<MIX_Mixer, Game::MIX_MixerDeletor>(MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr));
     if (!mixer)
     {
         std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() << std::endl;
@@ -280,7 +280,7 @@ void PlayBeepSound()
 
     const std::string beepSoundPath = std::filesystem::absolute(bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.mp3").string();
 
-    MIX_Audio* audio = MIX_LoadAudio(mixer, beepSoundPath.c_str(), false);
+    const auto audio = std::unique_ptr<MIX_Audio, Game::MIX_AudioDeletor>(MIX_LoadAudio(mixer.get(), beepSoundPath.c_str(), false));
     if (!audio)
     {
         std::cout << beepSoundPath << std::endl;
@@ -288,15 +288,14 @@ void PlayBeepSound()
         throw std::runtime_error("Failed to load Audio, Error: " + std::string(SDL_GetError()));
     }
 
-    MIX_Track* track = MIX_CreateTrack(mixer);
+    const auto track = std::unique_ptr<MIX_Track, Game::MIX_TrackDeletor>(MIX_CreateTrack(mixer.get()));
     if (!track)
     {
         std::cout << "Failed to load Track, Error: " << SDL_GetError() << std::endl;
         throw std::runtime_error("Failed to load Track, Error: " + std::string(SDL_GetError()));
     }
 
-    MIX_SetTrackAudio(track, audio);
-    MIX_PlayTrack(track, 0);
-
+    MIX_SetTrackAudio(track.get(), audio.get());
+    MIX_PlayTrack(track.get(), 0);
 }
 
