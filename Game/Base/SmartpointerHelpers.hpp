@@ -1,9 +1,16 @@
 #pragma once
 
+#include <mutex>
+#include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
 namespace Game
 {
+    struct SDL_AudioStreamDeletor
+    {
+        void operator() (SDL_AudioStream* stream) const;
+    };
+
     struct MIX_MixerDeletor
     {
         void operator() (MIX_Mixer* mixer) const;

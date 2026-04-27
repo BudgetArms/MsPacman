@@ -294,9 +294,6 @@ void PlayBeepSound()
         throw std::runtime_error("Failed to load Track, Error: " + std::string(SDL_GetError()));
     }
 
-    MIX_SetTrackAudio(track.get(), audio.get());
-    MIX_PlayTrack(track.get(), 0);
-}
     SDL_Delay(2000);
     MIX_SetTrackAudio(track, audio);
     MIX_PlayTrack(track, 0);

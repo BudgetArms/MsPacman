@@ -14,25 +14,24 @@ Game::MoveCommand::MoveCommand(bae::GameObject& owner, Game::Direction direction
 
 void Game::MoveCommand::Execute()
 {
+    const float DeltaSpeed = m_Speed * bae::GameTime::GetInstance().GetDeltaTime();
     switch (m_Direction)
     {
         case Direction::Down:
         {
-            GetActor()->AddLocation({0.f, +m_Speed * bae::GameTime::GetInstance().GetDeltaTime()});
+            GetActor()->AddLocation({0.f, +DeltaSpeed});
         } break;
         case Direction::Up:
         {
-            GetActor()->AddLocation({0.f, -m_Speed * bae::GameTime::GetInstance().GetDeltaTime()});
+            GetActor()->AddLocation({0.f, -DeltaSpeed});
         } break;
         case Direction::Left:
         {
-            GetActor()->AddLocation({-m_Speed * bae::GameTime::GetInstance().GetDeltaTime(), 0.f});
+            GetActor()->AddLocation({-DeltaSpeed, 0.f});
         } break;
         case Direction::Right:
         {
-            GetActor()->AddLocation({+m_Speed * bae::GameTime::GetInstance().GetDeltaTime(), 0.f});
+            GetActor()->AddLocation({+DeltaSpeed, 0.f});
         } break;
     }
-
-
 }

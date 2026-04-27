@@ -1,6 +1,14 @@
 #include "SmartpointerHelpers.hpp"
 
 
+void Game::SDL_AudioStreamDeletor::operator()(SDL_AudioStream* stream) const
+{
+    if (stream)
+    {
+        SDL_DestroyAudioStream(stream);
+    }
+}
+
 void Game::MIX_MixerDeletor::operator() (MIX_Mixer* mixer) const
 {
     if (mixer)
