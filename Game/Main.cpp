@@ -72,6 +72,7 @@ void LoadGameNameScene();
 void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
 void PlayBeepSound();
+void PlayBeepSoundWithAudioStream();
 
 
 int main(int, char* [])
@@ -90,8 +91,6 @@ int main(int, char* [])
     #else
         std::cout << "VLD disabled" << '\n';
     #endif
-
-
     bae::Utils::Window window{ "Ms Pacman", "./Resources/", 1024, 576, false };
 
 
@@ -136,7 +135,7 @@ void Start()
     LoadGameNameScene();
     LoadRotatingObjectsScene();
     PlayBeepSound();
-
+    // PlayBeepSoundWithAudioStream();
 }
 
 void LoadBackground()
@@ -158,7 +157,6 @@ void LoadBackground()
     backgroundScene.Add(backgroundLogoTexture);
 
     bae::Utils::DrawCircle({0, 0}, 1000, Utils::Color::Blue);
-
 }
 
 void LoadGameNameScene()
@@ -271,16 +269,17 @@ void PlayBeepSound()
         throw std::runtime_error("Failed to initialize MIX: " + std::string(SDL_GetError()));
     }
 
-    const auto mixer = std::unique_ptr<MIX_Mixer, Game::MIX_MixerDeletor>(MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr));
+    const auto mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
     if (!mixer)
     {
         std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() << std::endl;
         throw std::runtime_error("Failed to make a MixerDevice Error: " + std::string(SDL_GetError()));
     }
 
-    const std::string beepSoundPath = std::filesystem::absolute(bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.mp3").string();
+    const std::string beepSoundPath = std::filesystem::absolute(
+        bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.mp3").string();
 
-    const auto audio = std::unique_ptr<MIX_Audio, Game::MIX_AudioDeletor>(MIX_LoadAudio(mixer.get(), beepSoundPath.c_str(), false));
+    const auto audio = MIX_LoadAudio(mixer, beepSoundPath.c_str(), false);
     if (!audio)
     {
         std::cout << beepSoundPath << std::endl;
@@ -288,7 +287,7 @@ void PlayBeepSound()
         throw std::runtime_error("Failed to load Audio, Error: " + std::string(SDL_GetError()));
     }
 
-    const auto track = std::unique_ptr<MIX_Track, Game::MIX_TrackDeletor>(MIX_CreateTrack(mixer.get()));
+    const auto track = MIX_CreateTrack(mixer);
     if (!track)
     {
         std::cout << "Failed to load Track, Error: " << SDL_GetError() << std::endl;
@@ -298,4 +297,55 @@ void PlayBeepSound()
     MIX_SetTrackAudio(track.get(), audio.get());
     MIX_PlayTrack(track.get(), 0);
 }
+    SDL_Delay(2000);
+    MIX_SetTrackAudio(track, audio);
+    MIX_PlayTrack(track, 0);
+}
 
+
+void PlayBeepSoundWithAudioStream()
+{
+    SDL_AudioSpec audioSpec
+    {
+        .format = SDL_AUDIO_F32,
+        .channels = 2,
+        .freq = 44100
+    };
+
+    Uint8* audioData = nullptr;
+    Uint32 audioDataSize = 0;
+
+    if (!SDL_Init(SDL_INIT_AUDIO))
+    {
+        std::cout << "Initialization Audio failed: " << SDL_GetError() << '\n';
+        return;
+    }
+
+    const std::string beepWavSoundPath = std::filesystem::absolute(
+        bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.wav").string();
+
+    bool result = SDL_LoadWAV(beepWavSoundPath.c_str(), &audioSpec, &audioData, &audioDataSize);
+
+    if (!result)
+    {
+        std::cout << "Failed to load Wav File (path: " << beepWavSoundPath << " ), Error: " << SDL_GetError() << '\n';
+        return;
+    }
+
+    const auto audioStream = std::unique_ptr<SDL_AudioStream, Game::SDL_AudioStreamDeletor>(SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec, nullptr, nullptr));
+    if (!audioStream)
+    {
+        std::cout << "Failed to create audio stream, Error: " << SDL_GetError() << '\n';
+        return;
+    }
+
+    SDL_ResumeAudioStreamDevice(audioStream.get());
+
+    result = SDL_PutAudioStreamData(audioStream.get(), audioData, static_cast<int>(audioDataSize));
+    if (!result)
+    {
+        std::cout << "Failed to put data on audio's stream data, Error: " << SDL_GetError() << '\n';
+        return;
+    }
+
+}
