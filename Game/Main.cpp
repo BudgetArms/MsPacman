@@ -4,11 +4,11 @@
 #endif
 
 // STD includes
-#include <memory>
 #include <cassert>
+#include <chrono>
 #include <filesystem>
 #include <iostream>
-#include <chrono>
+#include <memory>
 
 
 // External libraries includes
@@ -16,8 +16,8 @@
 #include <Windows.h>
 #endif
 
-#include <glm/glm.hpp>
 #include <imgui.h>
+#include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_mixer/SDL_mixer.h>
@@ -64,7 +64,6 @@
 
 
 namespace fs = std::filesystem;
-using namespace bae;
 
 void Start();
 void LoadBackground();
@@ -116,7 +115,7 @@ int main(int, char*[])
     #endif
 
 
-    BudgetEngine engine(window);
+    bae::BudgetEngine engine(window);
     engine.Run(Start);
 
 
@@ -141,18 +140,18 @@ void Start()
 
 void LoadBackground()
 {
-    auto& backgroundScene = SceneManager::GetInstance().CreateScene("Background Scene");
+    auto& backgroundScene = bae::SceneManager::GetInstance().CreateScene("Background Scene");
 
-    const auto backgroundTexture = std::make_shared<GameObject>("BackgroundTexture");
-    backgroundTexture->AddComponent<TextureComponent>(*backgroundTexture, "Textures/background.png");
+    const auto backgroundTexture = std::make_shared<bae::GameObject>("BackgroundTexture");
+    backgroundTexture->AddComponent<bae::TextureComponent>(*backgroundTexture, "Textures/background.png");
     backgroundScene.Add(backgroundTexture);
 
 
-    const auto backgroundLogoTexture = std::make_shared<GameObject>("Background Logo Texture");
-    backgroundLogoTexture->AddComponent<TextureComponent>(*backgroundLogoTexture, "Textures/logo.png");
-    const auto backgroundLogotTextureComp = backgroundLogoTexture->GetComponent<TextureComponent>();
+    const auto backgroundLogoTexture = std::make_shared<bae::GameObject>("Background Logo Texture");
+    backgroundLogoTexture->AddComponent<bae::TextureComponent>(*backgroundLogoTexture, "Textures/logo.png");
+    const auto backgroundLogotTextureComp = backgroundLogoTexture->GetComponent<bae::TextureComponent>();
 
-    const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
     backgroundLogotTextureComp->m_bIsCenteredAtPosition = true;
     backgroundLogoTexture->SetWorldLocation(
@@ -164,31 +163,31 @@ void LoadBackground()
 
     backgroundScene.Add(backgroundLogoTexture);
 
-    bae::Utils::DrawCircle({ 0, 0 }, 1000, Utils::Color::Blue);
+    bae::Utils::DrawCircle({ 0, 0 }, 1000, bae::Utils::Color::Blue);
 }
 
 void LoadGameNameScene()
 {
-    auto& gameNameScene = SceneManager::GetInstance().CreateScene("Game Name Scene");
-    auto font           = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 48);
+    auto& gameNameScene = bae::SceneManager::GetInstance().CreateScene("Game Name Scene");
+    auto font           = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 48);
 
-    const auto gameName = std::make_shared<GameObject>("Game Name");
-    // gameName->AddComponent<TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Cyan);
-    gameName->AddComponent<TextComponent>(*gameName, "MsPacMan", font, SDL_Color(255, 255, 0, 1));
+    const auto gameName = std::make_shared<bae::GameObject>("Game Name");
+    // gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Cyan);
+    gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, SDL_Color(255, 255, 0, 1));
 
     gameNameScene.Add(gameName);
 }
 
 void LoadFpsCounterScene()
 {
-    auto& fpsScene = SceneManager::GetInstance().CreateScene("FpsCounterScene");
+    auto& fpsScene = bae::SceneManager::GetInstance().CreateScene("FpsCounterScene");
 
-    auto fontSmall = ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
+    auto fontSmall = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
 
-    const auto fpsCounter = std::make_shared<GameObject>("Fps Counter");
-    fpsCounter->AddComponent<FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
+    const auto fpsCounter = std::make_shared<bae::GameObject>("Fps Counter");
+    fpsCounter->AddComponent<bae::FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
 
-    const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
     fpsCounter->SetWorldLocation({ windowSize.Width, 0.f });
     fpsCounter->AddLocation({ -75.f, 5.f });
@@ -198,19 +197,19 @@ void LoadFpsCounterScene()
 
 void LoadRotatingObjectsScene()
 {
-    auto& keyboard = InputManager::GetInstance().GetKeyboard();
+    auto& keyboard = bae::InputManager::GetInstance().GetKeyboard();
 
-    auto& ballScene = SceneManager::GetInstance().CreateScene("Rotating Ball Scene");
+    auto& ballScene = bae::SceneManager::GetInstance().CreateScene("Rotating Ball Scene");
 
-    constexpr float moveSpeed   = 800.f;
-    const WindowSize windowSize = Renderer::GetInstance().GetSDLWindowSize();
+    constexpr float moveSpeed        = 800.f;
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
     // LonelyRotatingBall
-    const auto lonelyParent = std::make_shared<GameObject>("LonelyRotatingBall Parent");
+    const auto lonelyParent = std::make_shared<bae::GameObject>("LonelyRotatingBall Parent");
     lonelyParent->SetWorldLocation(
         glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
 
-    const auto lonelyRotatingBall = std::make_shared<GameObject>("LonelyRotatingBall");
+    const auto lonelyRotatingBall = std::make_shared<bae::GameObject>("LonelyRotatingBall");
     lonelyRotatingBall->AddComponent<bae::TextureComponent>(*lonelyRotatingBall, "Textures/SpriteExample.png");
     lonelyRotatingBall->AddComponent<Game::RotateComponent>(*lonelyRotatingBall, 100.f, 1.f);
 
@@ -223,26 +222,26 @@ void LoadRotatingObjectsScene()
     auto moveUpLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
         *lonelyParent, Game::Direction::Up, moveSpeed);
     keyboard.AddKeyboardCommands(std::move(moveUpLonelyRotatingBallParentCommand), SDLK_W,
-                                 InputManager::ButtonState::Pressed);
+                                 bae::InputManager::ButtonState::Pressed);
 
     auto moveDownLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
         *lonelyParent, Game::Direction::Down, moveSpeed);
     keyboard.AddKeyboardCommands(std::move(moveDownLonelyRotatingBallParentCommand), SDLK_S,
-                                 InputManager::ButtonState::Pressed);
+                                 bae::InputManager::ButtonState::Pressed);
 
     auto moveLeftLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
         *lonelyParent, Game::Direction::Left, moveSpeed);
     keyboard.AddKeyboardCommands(std::move(moveLeftLonelyRotatingBallParentCommand), SDLK_A,
-                                 InputManager::ButtonState::Pressed);
+                                 bae::InputManager::ButtonState::Pressed);
 
     auto moveRightLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
         *lonelyParent, Game::Direction::Right, moveSpeed);
     keyboard.AddKeyboardCommands(std::move(moveRightLonelyRotatingBallParentCommand), SDLK_D,
-                                 InputManager::ButtonState::Pressed);
+                                 bae::InputManager::ButtonState::Pressed);
 
 
     // Grouped Parent
-    const auto groupedParent = std::make_shared<GameObject>("Grouped Main Parent");
+    const auto groupedParent = std::make_shared<bae::GameObject>("Grouped Main Parent");
     groupedParent->SetWorldLocation(
         glm::vec2(static_cast<float>(windowSize.Width) / 2 - 200.f, static_cast<float>(windowSize.Height) / 2));
     ballScene.Add(groupedParent);
@@ -250,22 +249,26 @@ void LoadRotatingObjectsScene()
     // Grouped Parent Commands
     auto moveUpGroupedParentCommand = std::make_unique<Game::MoveCommand>(
         *groupedParent, Game::Direction::Up, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveUpGroupedParentCommand), SDLK_I, InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveUpGroupedParentCommand), SDLK_I,
+                                 bae::InputManager::ButtonState::Pressed);
 
     auto moveDownGroupedParentCommand = std::make_unique<Game::MoveCommand>(
         *groupedParent, Game::Direction::Down, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveDownGroupedParentCommand), SDLK_K, InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveDownGroupedParentCommand), SDLK_K,
+                                 bae::InputManager::ButtonState::Pressed);
 
     auto moveLeftGroupedParentCommand = std::make_unique<Game::MoveCommand>(
         *groupedParent, Game::Direction::Left, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveLeftGroupedParentCommand), SDLK_J, InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveLeftGroupedParentCommand), SDLK_J,
+                                 bae::InputManager::ButtonState::Pressed);
 
     auto moveRightGroupedParentCommand = std::make_unique<Game::MoveCommand>(
         *groupedParent, Game::Direction::Right, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveRightGroupedParentCommand), SDLK_L, InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveRightGroupedParentCommand), SDLK_L,
+                                 bae::InputManager::ButtonState::Pressed);
 
     // Grouped Rotating Ball
-    const auto groupedRotatingBall = std::make_shared<GameObject>("Grouped Rotating Ball");
+    const auto groupedRotatingBall = std::make_shared<bae::GameObject>("Grouped Rotating Ball");
     groupedRotatingBall->AddComponent<bae::TextureComponent>(*groupedRotatingBall, "Textures/SpriteExample.png");
     groupedRotatingBall->AddComponent<Game::RotateComponent>(*groupedRotatingBall, 10.f, 5.f);
 
@@ -274,7 +277,7 @@ void LoadRotatingObjectsScene()
     ballScene.Add(groupedRotatingBall);
 
     // Grouped Rotating Child Ball
-    const auto groupedRotatingChildBall = std::make_shared<GameObject>("Grouped Rotating Child Ball");
+    const auto groupedRotatingChildBall = std::make_shared<bae::GameObject>("Grouped Rotating Child Ball");
     groupedRotatingChildBall->AddComponent<bae::TextureComponent>(*groupedRotatingChildBall,
                                                                   "Textures/SpriteExample.png");
     groupedRotatingChildBall->AddComponent<Game::RotateComponent>(*groupedRotatingChildBall, 40.f, -2.f);
