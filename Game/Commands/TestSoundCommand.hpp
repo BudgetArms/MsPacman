@@ -2,6 +2,7 @@
 #include "../Base/SmartpointerHelpers.hpp"
 #include "Commands/GameActorCommand.h"
 
+
 namespace std::filesystem
 {
     class path;
@@ -23,7 +24,5 @@ namespace Game
         std::unique_ptr<MIX_Audio, MIX_AudioDeletor> m_Audio{};
         std::unique_ptr<MIX_Track, MIX_TrackDeletor> m_Track{};
         bool m_bIsMixerValid{};
-
-
     };
 }

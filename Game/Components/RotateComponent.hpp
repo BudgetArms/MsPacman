@@ -13,14 +13,11 @@ namespace Game
         void Update() override;
 
     private:
-        // glm::vec2 m_CenterPosition;
         float m_Radius;
         float m_AngularSpeed{ 1.f };
 
         float m_Angle{};
 
         bool m_bHasPrintedMessage{};
-
     };
-
 }

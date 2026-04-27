@@ -14,6 +14,5 @@ namespace Game
 
     private:
         Direction m_Direction;
-
     };
 }

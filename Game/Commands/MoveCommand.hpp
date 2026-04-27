@@ -3,6 +3,7 @@
 
 #include "../Base/DirectionEnum.hpp"
 
+
 namespace Game
 {
     class MoveCommand : public bae::GameActorCommand
@@ -15,6 +16,5 @@ namespace Game
     private:
         Direction m_Direction;
         float m_Speed;
-
     };
 }

@@ -12,12 +12,13 @@ Game::RotateComponent::RotateComponent(bae::GameObject& owner, const float radiu
 {
 }
 
+
 void Game::RotateComponent::Update()
 {
     // Uses parent position to know the center position
-    if (!m_Owner->GetParent())
+    if(!m_Owner->GetParent())
     {
-        if (!m_bHasPrintedMessage)
+        if(!m_bHasPrintedMessage)
         {
             // Verbose
             std::cout << "RotateComponent Warning: " << m_Owner->GetName() << " has no owner" << '\n';

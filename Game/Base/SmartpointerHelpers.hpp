@@ -8,22 +8,21 @@ namespace Game
 {
     struct SDL_AudioStreamDeletor
     {
-        void operator() (SDL_AudioStream* stream) const;
+        void operator()(SDL_AudioStream* stream) const;
     };
 
     struct MIX_MixerDeletor
     {
-        void operator() (MIX_Mixer* mixer) const;
+        void operator()(MIX_Mixer* mixer) const;
     };
 
     struct MIX_AudioDeletor
     {
-        void operator() (MIX_Audio* audio) const;
+        void operator()(MIX_Audio* audio) const;
     };
+
     struct MIX_TrackDeletor
     {
-        void operator() (MIX_Track* track) const;
+        void operator()(MIX_Track* track) const;
     };
-
-
 }

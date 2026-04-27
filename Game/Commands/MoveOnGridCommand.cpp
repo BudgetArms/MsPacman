@@ -1,9 +1,12 @@
 #include "MoveOnGridCommand.hpp"
 
+
+#include <filesystem>
+#include <SDL3_mixer/SDL_mixer.h>
 #include "Singletons/GameTime.h"
 
 #include "../Game/Base/DirectionEnum.hpp"
-
+#include "Managers/ResourceManager.h"
 
 
 Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, Direction direction) :
