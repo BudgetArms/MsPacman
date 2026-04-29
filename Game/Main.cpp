@@ -22,6 +22,8 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
+#include "Core/HelperFunctions.h"
+
 
 #ifdef STEAMWORKS_ENABLED
 #pragma warning (push)
@@ -61,6 +63,7 @@
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
 #include "Components/RotateComponent.hpp"
+#include "Components/TrashTheCacheComponent.hpp"
 
 
 namespace fs = std::filesystem;
@@ -70,6 +73,7 @@ void LoadBackground();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
+void LoadTrashTheCacheScene();
 void PlayBeepSound();
 void PlayBeepSoundWithAudioStream();
 
@@ -85,6 +89,7 @@ int main(int, char*[])
     }
     #endif
 
+
     #if defined(_DEBUG) && __has_include(<vld.h>)
     std::cout << "VLD enabled" << '\n';
     #else
@@ -95,13 +100,15 @@ int main(int, char*[])
 
 
     #if __EMSCRIPTEN__
-    window.resourceFolder = "";
+    window.ResourceFolder = "";
     #else
 
-    if(!fs::exists(window.resourceFolder))
-        window.resourceFolder = "../Resources/";
+    if(!fs::exists(window.ResourceFolder))
+    {
+        window.ResourceFolder = "../Resources/";
+    }
 
-    if(!fs::exists(window.resourceFolder))
+    if(!fs::exists(window.ResourceFolder))
     {
         std::cout << "Resources Folder Not Found" << '\n';
         assert("Resources Folder Not Found");
@@ -134,6 +141,7 @@ void Start()
     LoadFpsCounterScene();
     LoadGameNameScene();
     LoadRotatingObjectsScene();
+    // LoadTrashTheCacheScene();
     PlayBeepSound();
     // PlayBeepSoundWithAudioStream();
 }
@@ -172,8 +180,7 @@ void LoadGameNameScene()
     auto font           = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 48);
 
     const auto gameName = std::make_shared<bae::GameObject>("Game Name");
-    // gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Cyan);
-    gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, SDL_Color(255, 255, 0, 1));
+    gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Green);
 
     gameNameScene.Add(gameName);
 }
@@ -185,7 +192,7 @@ void LoadFpsCounterScene()
     auto fontSmall = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
 
     const auto fpsCounter = std::make_shared<bae::GameObject>("Fps Counter");
-    fpsCounter->AddComponent<bae::FpsTextComponent>(*fpsCounter, fontSmall, SDL_Color(255, 255, 255, 255));
+    fpsCounter->AddComponent<bae::FpsTextComponent>(*fpsCounter, fontSmall, bae::Utils::Color::White);
 
     const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
@@ -197,7 +204,7 @@ void LoadFpsCounterScene()
 
 void LoadRotatingObjectsScene()
 {
-    auto& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+    const auto& keyboard = bae::InputManager::GetInstance().GetKeyboard();
 
     auto& ballScene = bae::SceneManager::GetInstance().CreateScene("Rotating Ball Scene");
 
@@ -283,23 +290,37 @@ void LoadRotatingObjectsScene()
     groupedRotatingChildBall->AddComponent<Game::RotateComponent>(*groupedRotatingChildBall, 40.f, -2.f);
 
     groupedRotatingBall->AttachChild(groupedRotatingChildBall.get());
+    groupedRotatingChildBall->AddComponent<Game::TrashTheCacheComponent>(*groupedRotatingChildBall, true);
 
     ballScene.Add(groupedRotatingChildBall);
+}
+
+void LoadTrashTheCacheScene()
+{
+    auto& trashCacheScene = bae::SceneManager::GetInstance().CreateScene("Trash The Cache");
+    auto fontSmall        = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
+
+    const auto imguiObject = std::make_shared<bae::GameObject>("ImGui Object");
+    imguiObject->AddComponent<Game::TrashTheCacheComponent>(*imguiObject, true);
+
+    trashCacheScene.Add(imguiObject);
 }
 
 void PlayBeepSound()
 {
     if(!MIX_Init())
     {
-        std::cout << "Failed to initialize MIX: " << SDL_GetError() << std::endl;
-        throw std::runtime_error("Failed to initialize MIX: " + std::string(SDL_GetError()));
+        std::cout << "Failed to initialize MIX: " << SDL_GetError() <<  '\n';
+        throw std::runtime_error(
+            FUNCTION_NAME + std::string(" Failed to initialize MIX: ") + SDL_GetError());
     }
 
     const auto mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
     if(!mixer)
     {
-        std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() << std::endl;
-        throw std::runtime_error("Failed to make a MixerDevice Error: " + std::string(SDL_GetError()));
+        std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() <<  '\n';
+        throw std::runtime_error(
+            FUNCTION_NAME + std::string(" Failed to make a MixerDevice Error: ") + SDL_GetError());
     }
 
     const std::string beepSoundPath = std::filesystem::absolute(
@@ -308,16 +329,18 @@ void PlayBeepSound()
     const auto audio = MIX_LoadAudio(mixer, beepSoundPath.c_str(), false);
     if(!audio)
     {
-        std::cout << beepSoundPath << std::endl;
-        std::cout << "Failed to load Audio, Error: " << SDL_GetError() << std::endl;
-        throw std::runtime_error("Failed to load Audio, Error: " + std::string(SDL_GetError()));
+        std::cout << beepSoundPath <<  '\n';
+        std::cout << "Failed to load Audio, Error: " << SDL_GetError() <<  '\n';
+        throw std::runtime_error(
+            FUNCTION_NAME + std::string(" Failed to load Audio, Error: ") + SDL_GetError());
     }
 
     const auto track = MIX_CreateTrack(mixer);
     if(!track)
     {
-        std::cout << "Failed to load Track, Error: " << SDL_GetError() << std::endl;
-        throw std::runtime_error("Failed to load Track, Error: " + std::string(SDL_GetError()));
+        std::cout << "Failed to load Track, Error: " << SDL_GetError() <<  '\n';
+        throw std::runtime_error(
+            FUNCTION_NAME + std::string(" Failed to load Track, Error: ") + SDL_GetError());
     }
 
     SDL_Delay(2000);
@@ -369,6 +392,5 @@ void PlayBeepSoundWithAudioStream()
     if(!result)
     {
         std::cout << "Failed to put data on audio's stream data, Error: " << SDL_GetError() << '\n';
-        return;
     }
 }
