@@ -190,11 +190,11 @@ void TrashTheCacheComponent::TimingExercise1()
     {
         int timingIndex{ 0 };
 
-        for(int stepsize{ 1 }; stepsize <= 1024; stepsize *= 2)
+        for(size_t stepsize{ 1 }; stepsize <= 1024; stepsize *= 2)
         {
             const auto beginIteration{ std::chrono::high_resolution_clock::now() };
 
-            for(int i{ 0 }; i < buffer.size(); i += stepsize)
+            for(size_t i{ 0 }; i < buffer.size(); i += stepsize)
             {
                 buffer[i] *= 2;
             }
@@ -229,11 +229,11 @@ void TrashTheCacheComponent::TimingExercise2()
     {
         int timingIndex{ 0 };
 
-        for(int stepsize{ 1 }; stepsize <= 1024; stepsize *= 2)
+        for(size_t stepsize{ 1 }; stepsize <= 1024; stepsize *= 2)
         {
             const auto beginIteration{ std::chrono::high_resolution_clock::now() };
 
-            for(int i{ 0 }; i < buffer.size(); i += stepsize)
+            for(size_t i{ 0 }; i < buffer.size(); i += stepsize)
             {
                 buffer[i].ID *= 2;
             }
@@ -266,11 +266,11 @@ void TrashTheCacheComponent::TimingExercise2Alt()
     {
         int timingIndex{ 0 };
 
-        for(int stepsize{ 1 }; stepsize <= 1024; stepsize *= 2)
+        for(size_t stepsize{ 1 }; stepsize <= 1024; stepsize *= 2)
         {
             const auto beginIteration{ std::chrono::high_resolution_clock::now() };
 
-            for(int i{ 0 }; i < buffer.size(); i += stepsize)
+            for(size_t i{ 0 }; i < buffer.size(); i += stepsize)
             {
                 buffer[i].ID *= 2;
             }
