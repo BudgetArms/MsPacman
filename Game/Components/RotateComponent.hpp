@@ -5,7 +5,7 @@
 
 namespace Game
 {
-    class RotateComponent : public bae::Component
+    class RotateComponent final : public bae::Component
     {
     public:
         explicit RotateComponent(bae::GameObject& owner, float radius, float angularSpeed);

@@ -5,7 +5,7 @@
 #include "Singletons/Singleton.h"
 
 
-Game::MoveCommand::MoveCommand(bae::GameObject& owner, Game::Direction direction, float speed) :
+Game::MoveCommand::MoveCommand(bae::GameObject& owner, const Direction direction, const float speed) :
     GameActorCommand(owner),
     m_Direction{ direction },
     m_Speed{ speed }
@@ -14,27 +14,27 @@ Game::MoveCommand::MoveCommand(bae::GameObject& owner, Game::Direction direction
 
 void Game::MoveCommand::Execute()
 {
-    const float DeltaSpeed = m_Speed * bae::GameTime::GetInstance().GetDeltaTime();
+    const float deltaSpeed = m_Speed * bae::GameTime::GetInstance().GetDeltaTime();
     switch(m_Direction)
     {
         case Direction::Down:
         {
-            GetActor()->AddLocation({ 0.f, +DeltaSpeed });
+            GetActor()->AddLocation({ 0.f, +deltaSpeed });
         }
         break;
         case Direction::Up:
         {
-            GetActor()->AddLocation({ 0.f, -DeltaSpeed });
+            GetActor()->AddLocation({ 0.f, -deltaSpeed });
         }
         break;
         case Direction::Left:
         {
-            GetActor()->AddLocation({ -DeltaSpeed, 0.f });
+            GetActor()->AddLocation({ -deltaSpeed, 0.f });
         }
         break;
         case Direction::Right:
         {
-            GetActor()->AddLocation({ +DeltaSpeed, 0.f });
+            GetActor()->AddLocation({ +deltaSpeed, 0.f });
         }
         break;
     }

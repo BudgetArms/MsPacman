@@ -5,7 +5,7 @@
 
 namespace Game
 {
-    class MoveOnGridCommand : public bae::GameActorCommand
+    class MoveOnGridCommand final : public bae::GameActorCommand
     {
     public:
         MoveOnGridCommand(bae::GameObject& owner, Direction direction);

@@ -6,7 +6,7 @@
 
 namespace Game
 {
-    class MoveCommand : public bae::GameActorCommand
+    class MoveCommand final : public bae::GameActorCommand
     {
     public:
         MoveCommand(bae::GameObject& owner, Direction direction, float speed);

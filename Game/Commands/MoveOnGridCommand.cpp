@@ -1,15 +1,9 @@
 #include "MoveOnGridCommand.hpp"
 
-
-#include <filesystem>
-#include <SDL3_mixer/SDL_mixer.h>
-#include "Singletons/GameTime.h"
-
 #include "../Game/Base/DirectionEnum.hpp"
-#include "Managers/ResourceManager.h"
 
 
-Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, Direction direction) :
+Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, const Direction direction) :
     GameActorCommand(owner),
     m_Direction{ direction }
 {
@@ -18,19 +12,24 @@ Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, Direction dir
 
 void Game::MoveOnGridCommand::Execute()
 {
-    switch (m_Direction)
+    // TODO: Implement logic
+    switch(m_Direction)
     {
         case Direction::Down:
         {
-        } break;
+        }
+        break;
         case Direction::Up:
         {
-        } break;
+        }
+        break;
         case Direction::Left:
         {
-        } break;
+        }
+        break;
         case Direction::Right:
         {
-        } break;
+        }
+        break;
     }
 }
