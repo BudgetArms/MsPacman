@@ -6,62 +6,61 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message("\n")
 message("${PROJECT_NAME} CMake")
 
-if (EMSCRIPTEN)
+if(EMSCRIPTEN)
     set(PROJECT_NAME ${PROJECT_NAME}_web)
     set(TARGET_PARAM)
-else ()
+else()
     set(PROJECT_NAME ${PROJECT_NAME})
     set(TARGET_PARAM WIN32)
-endif ()
+endif()
 
 
 add_executable(${PROJECT_NAME} ${TARGET_PARAM}
-        "Main.cpp"
+    "Main.cpp"
 
-        "Base/DirectionEnum.hpp"
-        "Base/SmartpointerHelpers.cpp"
+    "Base/DirectionEnum.hpp"
+    "Base/SmartpointerHelpers.cpp"
 
-        "Commands/MoveCommand.cpp"
-        "Commands/MoveOnGridCommand.cpp"
+    "Commands/MoveCommand.cpp"
+    "Commands/MoveOnGridCommand.cpp"
 
-
-        "Components/RotateComponent.cpp"
-        "Components/RotateComponent.hpp"
+    "Components/RotateComponent.cpp"
+    "Components/TrashTheCacheComponent.cpp"
 )
 
 
 # Compile at max warning level + treat warnings as errors
-if (MSVC)
+if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
-else ()
+else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
-endif ()
+endif()
 
 
 # Add Steamworks
-if (ENABLE_STEAMWORKS)
+if(ENABLE_STEAMWORKS)
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/steam")
     find_package(Steamworks QUIET)
-    if (NOT Steamworks_FOUND)
+    if(NOT Steamworks_FOUND)
         message("\n")
         message(WARNING "Steamworks package NOT found")
         set(STEAMWORKS_AVAILABLE FALSE)
 
-    else ()
+    else()
         message("\n")
         message("Steamworks package Found")
         set(STEAMWORKS_AVAILABLE TRUE)
 
-    endif ()
-endif ()
+    endif()
+endif()
 
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${ENGINE_NAME})
 
 
-if (EMSCRIPTEN)
+if(EMSCRIPTEN)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
 
     set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
@@ -72,18 +71,16 @@ if (EMSCRIPTEN)
 
     # Additional settings for Emscripten build
     set_target_properties(${PROJECT_NAME} PROPERTIES
-            COMPILE_FLAGS "${EMSCRIPTEN_COMPILE_FLAGS}"
-            LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS}"
+        COMPILE_FLAGS "${EMSCRIPTEN_COMPILE_FLAGS}"
+        LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS}"
     )
 
     add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND "${CMAKE_COMMAND}" -E copy_directory
-            "${CMAKE_SOURCE_DIR}/web"
-            #"${CMAKE_BINARY_DIR}/${PROJECT_FOLDER}"
-            "${CMAKE_BINARY_DIR}"
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+        "${CMAKE_SOURCE_DIR}/web"
+        "${CMAKE_BINARY_DIR}"
     )
-    #"$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
 
     message("binary dir: ${CMAKE_BINARY_DIR}")
     message("source dir: ${CMAKE_SOURCE_DIR}")
@@ -92,17 +89,17 @@ if (EMSCRIPTEN)
     # Have emscripten generate a html page too.
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-endif ()
+endif()
 
 
-if (WIN32)
+if(WIN32)
     add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND "${CMAKE_COMMAND}" -E copy_directory
-            "${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}"
-            "${CMAKE_BINARY_DIR}/${PROJECT_FOLDER}/${RESOURCE_FOLDER_NAME}"
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy_directory
+        "${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}"
+        "${CMAKE_BINARY_DIR}/${PROJECT_FOLDER}/${RESOURCE_FOLDER_NAME}"
     )
-endif ()
+endif()
 
 
 message("\n")

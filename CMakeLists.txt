@@ -17,26 +17,26 @@ message("\nRoot CMakeList")
 set(STEAMWORKS_ROOT "${CMAKE_SOURCE_DIR}/3rdParty/steamworks")
 set(ENABLE_STEAMWORKS ON)
 
-if (ENABLE_STEAMWORKS AND NOT EMSCRIPTEN AND EXISTS STEAMWORKS_ROOT)
+if(ENABLE_STEAMWORKS AND NOT EMSCRIPTEN AND EXISTS STEAMWORKS_ROOT)
     set(ENABLE_STEAMWORKS ON)
-else ()
+else()
     set(ENABLE_STEAMWORKS OFF)
-endif ()
+endif()
 
 
 set(UPDATE_SUBMODULES ON)
 
-if (UPDATE_SUBMODULES)
+if(UPDATE_SUBMODULES)
     execute_process(
-            COMMAND git submodule update --remote --rebase
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            RESULT_VARIABLE GIT_SUBMODULE_RESULT
+        COMMAND git submodule update --remote --rebase
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        RESULT_VARIABLE GIT_SUBMODULE_RESULT
     )
 
-    if (NOT GIT_SUBMODULE_RESULT EQUAL 0)
+    if(NOT GIT_SUBMODULE_RESULT EQUAL 0)
         message(FATAL_ERROR "Failed to update the submodules")
-    endif ()
-endif ()
+    endif()
+endif()
 
 
 add_subdirectory(BudgetArmsEngine)
