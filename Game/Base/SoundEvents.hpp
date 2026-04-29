@@ -7,36 +7,31 @@
 
 namespace Game::Sounds
 {
-	enum class SoundEvents
-	{
-		GameplayMusic,
-		CollectedEmerald,
-		GoldBagCountdown,
-		GoldBagFalling,
-		PlayerHit,
-		PlayerDeath,
-		PlayerDeathLong,
-		BallTravelingSound,
-		BallHitSound,
-	};
+    enum class SoundEvents
+    {
+        GameplayMusic,
+        BeepSound,
+        PlayerDeath,
+    };
 
 
-	static std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents;
+    static std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents;
 
-	// gives warning if not used
-#pragma warning (push)
-#pragma warning(disable : 4505)
+    // gives warning if not used
+    #pragma warning (push)
+    #pragma warning(disable : 4505)
 
-	static bae::SoundID GetSoundId(SoundEvents event)
-	{
-		auto it = g_sSoundEvents.find(event);
-		if (it == g_sSoundEvents.end())
-			return bae::SoundID{ .ID = -1 };
+    static bae::SoundID GetSoundId(const SoundEvents event)
+    {
+        const auto it = g_sSoundEvents.find(event);
+        if(it == g_sSoundEvents.end())
+        {
+            return bae::SoundID{ .ID = -1 };
+        }
 
-		return it->second;
-	}
+        return it->second;
+    }
 
-#pragma warning (pop)
-
+    #pragma warning (pop)
 }
 

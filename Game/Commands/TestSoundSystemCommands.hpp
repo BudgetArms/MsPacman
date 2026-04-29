@@ -3,8 +3,6 @@
 #include "Commands/Command.h"
 #include "Core/ServiceLocator.h"
 
-#include "../Base/SoundEvents.h"
-
 
 namespace Game::Sounds
 {
@@ -29,25 +27,25 @@ namespace Game::Sounds
     };
 
 
-    class TestSoundCommand : public bae::Command
+    class TestSoundSystemCommand : public bae::Command
     {
     public:
-        explicit TestSoundCommand(const TestSoundEvents soundEvent,
-                                  const bae::ActiveSoundID activeSoundId = bae::ActiveSoundID(-1),
-                                  const float volume                     = 1.f) :
+        explicit TestSoundSystemCommand(const TestSoundEvents soundEvent,
+                                        const bae::ActiveSoundID activeSoundId = bae::ActiveSoundID(-1),
+                                        const float volume                     = 1.f) :
             Command(),
-            m_TestEvent{ soundEvent },
             m_ActiveSoundId{ activeSoundId },
+            m_TestEvent{ soundEvent },
             m_Volume{ volume }
         {
         };
 
-        ~TestSoundCommand() override = default;
+        ~TestSoundSystemCommand() override = default;
 
-        TestSoundCommand(const TestSoundCommand& other)            = delete;
-        TestSoundCommand(TestSoundCommand&& other)                 = delete;
-        TestSoundCommand& operator=(const TestSoundCommand& other) = delete;
-        TestSoundCommand& operator=(TestSoundCommand&& other)      = delete;
+        TestSoundSystemCommand(const TestSoundSystemCommand& other)            = delete;
+        TestSoundSystemCommand(TestSoundSystemCommand&& other)                 = delete;
+        TestSoundSystemCommand& operator=(const TestSoundSystemCommand& other) = delete;
+        TestSoundSystemCommand& operator=(TestSoundSystemCommand&& other)      = delete;
 
 
         void Execute() override
@@ -76,15 +74,23 @@ namespace Game::Sounds
                     break;
                 case TestSoundEvents::TogglePause:
                     if(soundSystem.IsPaused(m_ActiveSoundId))
+                    {
                         soundSystem.Resume(m_ActiveSoundId);
+                    }
                     else
+                    {
                         soundSystem.Pause(m_ActiveSoundId);
+                    }
                     break;
                 case TestSoundEvents::ToggleMute:
                     if(soundSystem.IsMuted(m_ActiveSoundId))
+                    {
                         soundSystem.UnMute(m_ActiveSoundId);
+                    }
                     else
+                    {
                         soundSystem.Mute(m_ActiveSoundId);
+                    }
                     break;
 
                 case TestSoundEvents::StopAll:

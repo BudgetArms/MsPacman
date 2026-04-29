@@ -22,7 +22,12 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
+#include "Commands/TestSoundSystemCommands.hpp"
 #include "Core/HelperFunctions.h"
+#include "Core/ServiceLocator.h"
+#include "Sounds/LoggingSoundSystem.h"
+#include "Sounds/SdlAudioClip.h"
+#include "Sounds/SdlSoundSystem.h"
 
 
 #ifdef STEAMWORKS_ENABLED
@@ -60,6 +65,7 @@
 
 // Game Includes
 #include "Base/SmartpointerHelpers.hpp"
+#include "Base/SoundEvents.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
 #include "Components/RotateComponent.hpp"
@@ -74,6 +80,10 @@ void LoadGameNameScene();
 void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
 void LoadTrashTheCacheScene();
+
+void LoadSounds();
+void LoadTestSoundCommands();
+
 void PlayBeepSound();
 void PlayBeepSoundWithAudioStream();
 
@@ -142,8 +152,11 @@ void Start()
     LoadGameNameScene();
     LoadRotatingObjectsScene();
     // LoadTrashTheCacheScene();
-    PlayBeepSound();
+    // PlayBeepSound();
     // PlayBeepSoundWithAudioStream();
+
+    LoadSounds();
+    LoadTestSoundCommands();
 }
 
 void LoadBackground()
@@ -306,11 +319,93 @@ void LoadTrashTheCacheScene()
     trashCacheScene.Add(imguiObject);
 }
 
+
+void LoadSounds()
+{
+    namespace gs = Game::Sounds;
+
+    bae::ServiceLocator::RegisterAudioQueue<bae::SdlAudioClip>();
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::SdlSoundSystem>());
+    bae::ServiceLocator::RegisterSoundSystem(
+        std::make_unique<bae::LoggingSoundSystem>(std::make_unique<bae::SdlSoundSystem>()));
+    const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
+
+    // Sound files not made yet
+    gs::g_sSoundEvents =
+    {
+        { gs::SoundEvents::GameplayMusic, soundSystem->LoadSound("Resources/Sounds/beep.wav") },
+        { gs::SoundEvents::PlayerDeath, soundSystem->LoadSound("Resources/Sounds/AsmrVoice.wav") },
+    };
+}
+
+
+void LoadTestSoundCommands()
+{
+    namespace gs = Game::Sounds;
+
+    auto& keyboard   = bae::InputManager::GetInstance().GetKeyboard();
+    auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
+
+
+    // Play & Pause Immediately after
+    auto activeSoundId = soundSystem->Play(gs::GetSoundId(gs::SoundEvents::PlayerDeath), 1);
+    soundSystem->Pause(activeSoundId);
+
+
+    // Sound Commands:
+    std::unique_ptr<gs::TestPlaySoundCommand> soundPlayCommands{};
+    std::unique_ptr<gs::TestSoundSystemCommand> soundCommands{};
+
+    // Play
+    soundPlayCommands = std::make_unique<gs::TestPlaySoundCommand>(gs::GetSoundId(gs::SoundEvents::PlayerDeath));
+    keyboard.AddKeyboardCommands(std::move(soundPlayCommands), SDLK_1, bae::InputManager::ButtonState::Down);
+
+    // TogglePause
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::TogglePause, activeSoundId);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_2, bae::InputManager::ButtonState::Down);
+
+    // ToggleMute
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::ToggleMute, activeSoundId);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_3, bae::InputManager::ButtonState::Down);
+
+
+    // Change Volume
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolume, activeSoundId, 0.5f);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_4, bae::InputManager::ButtonState::Down);
+
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolume, activeSoundId, 1.0f);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_5, bae::InputManager::ButtonState::Down);
+
+
+    // All Sounds Commands
+
+    // Change Volume
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolumeAll,
+                                                                 bae::ActiveSoundID(-1), 0.2f);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_6, bae::InputManager::ButtonState::Down);
+
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolumeAll,
+                                                                 bae::ActiveSoundID(-1), 0.7f);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_7, bae::InputManager::ButtonState::Down);
+
+    // StopAll
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::StopAll);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_8, bae::InputManager::ButtonState::Down);
+
+    // TogglePauseAll/ToglleMuteAll
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::TogglePauseAll);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_9, bae::InputManager::ButtonState::Down);
+
+    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::ToggleMuteAll);
+    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_0, bae::InputManager::ButtonState::Down);
+}
+
+
 void PlayBeepSound()
 {
     if(!MIX_Init())
     {
-        std::cout << "Failed to initialize MIX: " << SDL_GetError() <<  '\n';
+        std::cout << "Failed to initialize MIX: " << SDL_GetError() << '\n';
         throw std::runtime_error(
             FUNCTION_NAME + std::string(" Failed to initialize MIX: ") + SDL_GetError());
     }
@@ -318,7 +413,7 @@ void PlayBeepSound()
     const auto mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
     if(!mixer)
     {
-        std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() <<  '\n';
+        std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() << '\n';
         throw std::runtime_error(
             FUNCTION_NAME + std::string(" Failed to make a MixerDevice Error: ") + SDL_GetError());
     }
@@ -329,8 +424,8 @@ void PlayBeepSound()
     const auto audio = MIX_LoadAudio(mixer, beepSoundPath.c_str(), false);
     if(!audio)
     {
-        std::cout << beepSoundPath <<  '\n';
-        std::cout << "Failed to load Audio, Error: " << SDL_GetError() <<  '\n';
+        std::cout << beepSoundPath << '\n';
+        std::cout << "Failed to load Audio, Error: " << SDL_GetError() << '\n';
         throw std::runtime_error(
             FUNCTION_NAME + std::string(" Failed to load Audio, Error: ") + SDL_GetError());
     }
@@ -338,7 +433,7 @@ void PlayBeepSound()
     const auto track = MIX_CreateTrack(mixer);
     if(!track)
     {
-        std::cout << "Failed to load Track, Error: " << SDL_GetError() <<  '\n';
+        std::cout << "Failed to load Track, Error: " << SDL_GetError() << '\n';
         throw std::runtime_error(
             FUNCTION_NAME + std::string(" Failed to load Track, Error: ") + SDL_GetError());
     }

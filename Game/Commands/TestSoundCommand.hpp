@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../Base/SmartpointerHelpers.hpp"
 #include "Commands/GameActorCommand.h"
 
