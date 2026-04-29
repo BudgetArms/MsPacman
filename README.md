@@ -9,19 +9,20 @@ The design patterns I used, will be mentioned in the game engine repository as w
 But for here's a short list of patterns that are used.
 
 ## Design patterns:
+
 * Dirty flags
 * Observers & subjects
 * Event Queues (uses enum class that has to be modified in game engine, bad design)
 * Sound Queues (runs on a different thread)
-* Component system (each game object can have 1 of same type component) 
-
+* Component system (each game object can have 1 of same type component)
 
 ## Todo's:
+
 * Add Hitbox component with debug draw toggles to easily issues
 * Add MsPacman texture and sound resources
 * Add level formats, to create/load levels
 * Implement simple spritesheet workflow, that doesn't require extra children to make spritesheets work properly
-
+* Implement MoveOnGrid Logic
 
 # Build Options
 
