@@ -26,7 +26,6 @@
 #include "Core/HelperFunctions.h"
 #include "Core/ServiceLocator.h"
 #include "Sounds/LoggingSoundSystem.h"
-#include "Sounds/SdlAudioClip.h"
 #include "Sounds/SdlSoundSystem.h"
 
 
@@ -64,7 +63,6 @@
 
 
 // Game Includes
-#include "Base/SmartpointerHelpers.hpp"
 #include "Base/SoundEvents.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
@@ -83,9 +81,7 @@ void LoadTrashTheCacheScene();
 
 void LoadSounds();
 void LoadTestSoundCommands();
-
-void PlayBeepSound();
-void PlayBeepSoundWithAudioStream();
+void TestSoundSystem();
 
 
 int main(int, char*[])
@@ -100,7 +96,7 @@ int main(int, char*[])
     #endif
 
 
-    #if defined(_DEBUG) && __has_include(<vld.h>)
+    #if _DEBUG && __has_include(<vld.h>)
     std::cout << "VLD enabled" << '\n';
     #else
     std::cout << "VLD disabled" << '\n';
@@ -152,11 +148,11 @@ void Start()
     LoadGameNameScene();
     LoadRotatingObjectsScene();
     // LoadTrashTheCacheScene();
-    // PlayBeepSound();
-    // PlayBeepSoundWithAudioStream();
 
     LoadSounds();
-    LoadTestSoundCommands();
+
+    TestSoundSystem();
+    // LoadTestSoundCommands();
 }
 
 void LoadBackground()
@@ -303,7 +299,6 @@ void LoadRotatingObjectsScene()
     groupedRotatingChildBall->AddComponent<Game::RotateComponent>(*groupedRotatingChildBall, 40.f, -2.f);
 
     groupedRotatingBall->AttachChild(groupedRotatingChildBall.get());
-    groupedRotatingChildBall->AddComponent<Game::TrashTheCacheComponent>(*groupedRotatingChildBall, true);
 
     ballScene.Add(groupedRotatingChildBall);
 }
@@ -324,33 +319,36 @@ void LoadSounds()
 {
     namespace gs = Game::Sounds;
 
-    bae::ServiceLocator::RegisterAudioQueue<bae::SdlAudioClip>();
-    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::SdlSoundSystem>());
-    bae::ServiceLocator::RegisterSoundSystem(
-        std::make_unique<bae::LoggingSoundSystem>(std::make_unique<bae::SdlSoundSystem>()));
+    // bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::SdlSoundSystem>());
+
+    // bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
+    // std::make_unique<bae::SdlSoundSystem>()));
+
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(nullptr));
+
+
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
     // Sound files not made yet
     gs::g_sSoundEvents =
     {
-        { gs::SoundEvents::GameplayMusic, soundSystem->LoadSound("Resources/Sounds/beep.wav") },
+        { gs::SoundEvents::BeepSound, soundSystem->LoadSound("Resources/Sounds/beep.wav") },
         { gs::SoundEvents::PlayerDeath, soundSystem->LoadSound("Resources/Sounds/AsmrVoice.wav") },
     };
 }
-
 
 void LoadTestSoundCommands()
 {
     namespace gs = Game::Sounds;
 
-    auto& keyboard   = bae::InputManager::GetInstance().GetKeyboard();
-    auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+    bae::SoundSystem& soundSystem = bae::ServiceLocator::GetSoundSystem();
 
+    const bae::SoundID gameplayMusicSoundId = gs::GetSoundId(gs::SoundEvents::GameplayMusic);
 
     // Play & Pause Immediately after
-    auto activeSoundId = soundSystem->Play(gs::GetSoundId(gs::SoundEvents::PlayerDeath), 1);
-    soundSystem->Pause(activeSoundId);
-
+    bae::ActiveSoundID activeSoundId = soundSystem.Play(gameplayMusicSoundId);
+    soundSystem.Pause(activeSoundId);
 
     // Sound Commands:
     std::unique_ptr<gs::TestPlaySoundCommand> soundPlayCommands{};
@@ -400,92 +398,35 @@ void LoadTestSoundCommands()
     keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_0, bae::InputManager::ButtonState::Down);
 }
 
-
-void PlayBeepSound()
+void TestSoundSystem()
 {
-    if(!MIX_Init())
-    {
-        std::cout << "Failed to initialize MIX: " << SDL_GetError() << '\n';
-        throw std::runtime_error(
-            FUNCTION_NAME + std::string(" Failed to initialize MIX: ") + SDL_GetError());
-    }
+    namespace gs = Game::Sounds;
+    bae::SoundSystem& soundSystem         = bae::ServiceLocator::GetSoundSystem();
+    const bae::SoundID playerDeathSoundId = gs::GetSoundId(gs::SoundEvents::PlayerDeath);
+    const bae::SoundID beepSoundId        = gs::GetSoundId(gs::SoundEvents::BeepSound);
 
-    const auto mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
-    if(!mixer)
-    {
-        std::cout << "Failed to make a MixerDevice Error: " << SDL_GetError() << '\n';
-        throw std::runtime_error(
-            FUNCTION_NAME + std::string(" Failed to make a MixerDevice Error: ") + SDL_GetError());
-    }
+    // Play & Pause & then Resume after 1s
+    const bae::ActiveSoundID playerDeathActiveSoundId = soundSystem.Play(playerDeathSoundId);
+    soundSystem.SetVolume(playerDeathActiveSoundId, 0.5f);
+    // soundSystem.Pause(playerDeathActiveSoundId);
 
-    const std::string beepSoundPath = std::filesystem::absolute(
-        bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.mp3").string();
 
-    const auto audio = MIX_LoadAudio(mixer, beepSoundPath.c_str(), false);
-    if(!audio)
-    {
-        std::cout << beepSoundPath << '\n';
-        std::cout << "Failed to load Audio, Error: " << SDL_GetError() << '\n';
-        throw std::runtime_error(
-            FUNCTION_NAME + std::string(" Failed to load Audio, Error: ") + SDL_GetError());
-    }
+    // Play & Stop After 100ms
+    bae::ActiveSoundID beepActiveSoundId = soundSystem.Play(beepSoundId);
+    soundSystem.SetVolume(beepActiveSoundId, 0.5f);
+    SDL_Delay(100);
+    soundSystem.Stop(beepActiveSoundId);
 
-    const auto track = MIX_CreateTrack(mixer);
-    if(!track)
-    {
-        std::cout << "Failed to load Track, Error: " << SDL_GetError() << '\n';
-        throw std::runtime_error(
-            FUNCTION_NAME + std::string(" Failed to load Track, Error: ") + SDL_GetError());
-    }
+    // Wait 1s
+    SDL_Delay(1000);
 
-    SDL_Delay(2000);
-    MIX_SetTrackAudio(track, audio);
-    MIX_PlayTrack(track, 0);
+    // Play & Loop
+    beepActiveSoundId = soundSystem.Play(beepSoundId);
+    soundSystem.SetVolume(beepActiveSoundId, 0.25f);
+    soundSystem.Loop(beepActiveSoundId);
+
+    // stop looping after 5s
+    SDL_Delay(5000);
+    soundSystem.UnLoop(beepActiveSoundId);
 }
 
-
-void PlayBeepSoundWithAudioStream()
-{
-    SDL_AudioSpec audioSpec
-    {
-        .format   = SDL_AUDIO_F32,
-        .channels = 2,
-        .freq     = 44100
-    };
-
-    Uint8* audioData     = nullptr;
-    Uint32 audioDataSize = 0;
-
-    if(!SDL_Init(SDL_INIT_AUDIO))
-    {
-        std::cout << "Initialization Audio failed: " << SDL_GetError() << '\n';
-        return;
-    }
-
-    const std::string beepWavSoundPath = std::filesystem::absolute(
-        bae::ResourceManager::GetInstance().GetResourcesPath() / "Sounds/beep.wav").string();
-
-    bool result = SDL_LoadWAV(beepWavSoundPath.c_str(), &audioSpec, &audioData, &audioDataSize);
-
-    if(!result)
-    {
-        std::cout << "Failed to load Wav File (path: " << beepWavSoundPath << " ), Error: " << SDL_GetError() << '\n';
-        return;
-    }
-
-    const auto audioStream = std::unique_ptr<SDL_AudioStream, Game::SDL_AudioStreamDeletor>(
-        SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &audioSpec, nullptr, nullptr));
-    if(!audioStream)
-    {
-        std::cout << "Failed to create audio stream, Error: " << SDL_GetError() << '\n';
-        return;
-    }
-
-    SDL_ResumeAudioStreamDevice(audioStream.get());
-
-    result = SDL_PutAudioStreamData(audioStream.get(), audioData, static_cast<int>(audioDataSize));
-    if(!result)
-    {
-        std::cout << "Failed to put data on audio's stream data, Error: " << SDL_GetError() << '\n';
-    }
-}

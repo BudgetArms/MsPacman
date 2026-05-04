@@ -168,8 +168,9 @@ namespace Game::Sounds
 
         void Execute() override
         {
-            auto& soundSystem = bae::ServiceLocator::GetSoundSystem();
-            soundSystem.Play(m_SoundId, m_Volume);
+            auto& soundSystem                      = bae::ServiceLocator::GetSoundSystem();
+            const bae::ActiveSoundID activeSoundId = soundSystem.Play(m_SoundId);
+            soundSystem.SetVolume(activeSoundId, m_Volume);
         };
 
     protected:

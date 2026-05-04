@@ -15,13 +15,9 @@ namespace Game::Sounds
     };
 
 
-    static std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents;
+    static std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents{};
 
-    // gives warning if not used
-    // #pragma warning (push)
-    // #pragma warning(disable : 4505)
-
-    static bae::SoundID GetSoundId(const SoundEvents event)
+    static bae::SoundID GetSoundId(const SoundEvents& event)
     {
         const auto it = g_sSoundEvents.find(event);
         if(it == g_sSoundEvents.end())
@@ -31,7 +27,5 @@ namespace Game::Sounds
 
         return it->second;
     }
-
-    // #pragma warning (pop)
 }
 
