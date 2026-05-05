@@ -67,7 +67,6 @@
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
 #include "Components/RotateComponent.hpp"
-#include "Components/TrashTheCacheComponent.hpp"
 
 
 namespace fs = std::filesystem;
@@ -77,7 +76,6 @@ void LoadBackground();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
-void LoadTrashTheCacheScene();
 
 void LoadSounds();
 void LoadTestSoundCommands();
@@ -122,7 +120,7 @@ int main(int, char*[])
     }
 
     #ifdef STEAMWORKS_ENABLED
-    SteamManager::GetInstance().Initialize();
+    bae::SteamManager::GetInstance().Initialize();
     #endif
 
     #endif
@@ -133,7 +131,7 @@ int main(int, char*[])
 
 
     #ifdef STEAMWORKS_ENABLED
-    SteamManager::GetInstance().Shutdown();
+    bae::SteamManager::GetInstance().Shutdown();
     #endif
 
     std::cout << "\n\n";
@@ -303,29 +301,13 @@ void LoadRotatingObjectsScene()
     ballScene.Add(groupedRotatingChildBall);
 }
 
-void LoadTrashTheCacheScene()
-{
-    auto& trashCacheScene = bae::SceneManager::GetInstance().CreateScene("Trash The Cache");
-    auto fontSmall        = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 18);
-
-    const auto imguiObject = std::make_shared<bae::GameObject>("ImGui Object");
-    imguiObject->AddComponent<Game::TrashTheCacheComponent>(*imguiObject, true);
-
-    trashCacheScene.Add(imguiObject);
-}
-
 
 void LoadSounds()
 {
     namespace gs = Game::Sounds;
 
-    // bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::SdlSoundSystem>());
-
-    // bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-    // std::make_unique<bae::SdlSoundSystem>()));
-
-    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(nullptr));
-
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
+        std::make_unique<bae::SdlSoundSystem>()));
 
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
@@ -426,7 +408,7 @@ void TestSoundSystem()
     soundSystem.Loop(beepActiveSoundId);
 
     // stop looping after 5s
-    SDL_Delay(5000);
+    SDL_Delay(2000);
     soundSystem.UnLoop(beepActiveSoundId);
 }
 

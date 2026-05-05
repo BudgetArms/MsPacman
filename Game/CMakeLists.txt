@@ -25,7 +25,6 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Commands/MoveOnGridCommand.cpp"
 
     "Components/RotateComponent.cpp"
-    "Components/TrashTheCacheComponent.cpp"
 )
 
 
@@ -37,23 +36,11 @@ else()
 endif()
 
 
-# Add Steamworks
-if(ENABLE_STEAMWORKS)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/steam")
-    find_package(Steamworks QUIET)
-    if(NOT Steamworks_FOUND)
-        message("\n")
-        message(WARNING "Steamworks package NOT found")
-        set(STEAMWORKS_AVAILABLE FALSE)
-
-    else()
-        message("\n")
-        message("Steamworks package Found")
-        set(STEAMWORKS_AVAILABLE TRUE)
-
-    endif()
+if(STEAMWORKS_ENABLED)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "STEAMWORKS_ENABLED"
+    )
 endif()
-
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${ENGINE_NAME})
 

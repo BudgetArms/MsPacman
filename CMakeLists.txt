@@ -15,12 +15,12 @@ message("\nRoot CMakeList")
 
 # Steamworks
 set(STEAMWORKS_ROOT "${CMAKE_SOURCE_DIR}/3rdParty/steamworks")
-set(ENABLE_STEAMWORKS ON)
+set(STEAMWORKS_ENABLED ON)
 
-if(ENABLE_STEAMWORKS AND NOT EMSCRIPTEN AND EXISTS STEAMWORKS_ROOT)
-    set(ENABLE_STEAMWORKS ON)
+if(STEAMWORKS_ENABLED AND NOT EMSCRIPTEN AND EXISTS "${STEAMWORKS_ROOT}")
+    set(STEAMWORKS_ENABLED ON)
 else()
-    set(ENABLE_STEAMWORKS OFF)
+    set(STEAMWORKS_ENABLED OFF)
 endif()
 
 
@@ -38,6 +38,23 @@ if(UPDATE_SUBMODULES)
     endif()
 endif()
 
+
+# Add Steamworks
+if(STEAMWORKS_ENABLED)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/steam")
+    find_package(Steamworks QUIET)
+    if(NOT Steamworks_FOUND)
+        message("\n")
+        message(WARNING "Steamworks package NOT found")
+        set(STEAMWORKS_ENABLED FALSE)
+
+    else()
+        message("\n")
+        message("Steamworks package Found")
+        set(STEAMWORKS_ENABLED TRUE)
+
+    endif()
+endif()
 
 add_subdirectory(BudgetArmsEngine)
 add_subdirectory(Game)
