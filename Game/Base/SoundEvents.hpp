@@ -15,7 +15,7 @@ namespace Game::Sounds
     };
 
 
-    static std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents{};
+    inline std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents{};
 
     static bae::SoundID GetSoundId(const SoundEvents& event)
     {
