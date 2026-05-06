@@ -11,8 +11,8 @@ Game::MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
     Component{ owner },
     m_MsPacmanState{ nullptr }
 {
-    auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 16);
-    m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Hehehe", font, bae::Utils::Color::Blue);
+    auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 32);
+    m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Default", font, bae::Utils::Color::Gray);
 
     m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
     m_MsPacmanState->OnEnter();

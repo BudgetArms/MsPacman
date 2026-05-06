@@ -9,6 +9,8 @@
 
 #include "../Base/SoundEvents.hpp"
 #include "../Components/MsPacmanComponent.hpp"
+#include "Components/TextComponent.h"
+#include "Core/Utils.h"
 
 
 using namespace Game::States;
@@ -30,11 +32,29 @@ void MsPacmanIdle::OnEnter()
     m_PlayingActiveSoundId = soundSystem.Play(startSoundID);
     soundSystem.SetVolume(m_PlayingActiveSoundId, 2.f);
     soundSystem.Loop(m_PlayingActiveSoundId);
+
+    m_GameObject->AddLocation({ -300, 0 });
+
+    auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
+    if(!textComponent)
+    {
+        return;
+    }
+    textComponent->SetColor(bae::Utils::Color::Blue);
+    textComponent->SetText(FUNCTION_NAME);
 }
 
 void MsPacmanIdle::OnExit()
 {
     std::cout << FUNCTION_NAME << '\n';
+
+    auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
+    if(!textComponent)
+    {
+        return;
+    }
+    textComponent->SetColor(bae::Utils::Color::Blue);
+    textComponent->SetText(FUNCTION_NAME);
 
     bae::SoundSystem& soundSystem = bae::ServiceLocator::GetSoundSystem();
     soundSystem.UnLoop(m_PlayingActiveSoundId);
@@ -62,6 +82,14 @@ void MsPacmanIdle::Update()
 void MsPacmanMoving::OnEnter()
 {
     std::cout << FUNCTION_NAME << '\n';
+
+    auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
+    if(!textComponent)
+    {
+        return;
+    }
+    textComponent->SetColor(bae::Utils::Color::Green);
+    textComponent->SetText(FUNCTION_NAME);
 }
 
 void MsPacmanMoving::OnExit()
@@ -132,6 +160,15 @@ void MsPacmanDying::OnEnter()
 
     const bae::ActiveSoundID playingSoundID = soundSystem.Play(startSoundID);
     soundSystem.SetVolume(playingSoundID, 2.f);
+
+
+    auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
+    if(!textComponent)
+    {
+        return;
+    }
+    textComponent->SetColor(bae::Utils::Color::Red);
+    textComponent->SetText(FUNCTION_NAME);
 }
 
 void MsPacmanDying::OnExit()
@@ -151,10 +188,10 @@ void MsPacmanDying::Update()
     {
         if(m_GameObject->HasComponent<MsPacmanComponent>())
         {
+            m_GameObject->Destroy();
+
             const auto msPacmanComp = m_GameObject->GetComponent<MsPacmanComponent>();
             msPacmanComp->SetState(nullptr);
-
-            m_GameObject->Destroy();
         }
     }
 }
