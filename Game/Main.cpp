@@ -20,10 +20,8 @@
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <SDL3_mixer/SDL_mixer.h>
 
 #include "Commands/TestSoundSystemCommands.hpp"
-#include "Core/HelperFunctions.h"
 #include "Core/ServiceLocator.h"
 #include "Sounds/LoggingSoundSystem.h"
 #include "Sounds/SdlSoundSystem.h"
@@ -66,6 +64,7 @@
 #include "Base/SoundEvents.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
+#include "Components/MsPacmanComponent.hpp"
 #include "Components/RotateComponent.hpp"
 
 
@@ -80,6 +79,7 @@ void LoadRotatingObjectsScene();
 void LoadSounds();
 void LoadTestSoundCommands();
 void TestSoundSystem();
+void LoadStatesExample();
 
 
 int main(int, char*[])
@@ -141,16 +141,18 @@ int main(int, char*[])
 
 void Start()
 {
-    LoadBackground();
+    // LoadBackground();
     LoadFpsCounterScene();
     LoadGameNameScene();
-    LoadRotatingObjectsScene();
+    // LoadRotatingObjectsScene();
     // LoadTrashTheCacheScene();
 
     LoadSounds();
 
     TestSoundSystem();
     // LoadTestSoundCommands();
+
+    LoadStatesExample();
 }
 
 void LoadBackground()
@@ -317,6 +319,7 @@ void LoadSounds()
         { gs::SoundEvents::BeepSound, soundSystem->LoadSound("Resources/Sounds/beep.wav") },
         { gs::SoundEvents::PlayerDeath, soundSystem->LoadSound("Resources/Sounds/AsmrVoice.wav") },
     };
+    std::cout << '\n';
 }
 
 void LoadTestSoundCommands()
@@ -412,3 +415,16 @@ void TestSoundSystem()
     soundSystem.UnLoop(beepActiveSoundId);
 }
 
+void LoadStatesExample()
+{
+    auto& msPacmanScene = bae::SceneManager::GetInstance().CreateScene("MsPacman Scene");
+
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
+    auto msPacman                    = std::make_shared<bae::GameObject>("MsPacman");
+    msPacman->SetWorldLocation(
+        glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
+
+    msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
+
+    msPacmanScene.Add(msPacman);
+}
