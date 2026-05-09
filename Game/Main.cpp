@@ -64,6 +64,7 @@
 #include "Base/SoundEvents.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
+#include "Components/HitboxComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RotateComponent.hpp"
 
@@ -80,6 +81,7 @@ void LoadSounds();
 void LoadTestSoundCommands();
 void TestSoundSystem();
 void LoadStatesExample();
+void LoadMsPacman();
 
 
 int main(int, char*[])
@@ -152,7 +154,8 @@ void Start()
     TestSoundSystem();
     // LoadTestSoundCommands();
 
-    LoadStatesExample();
+    // LoadStatesExample();
+    LoadMsPacman();
 }
 
 void LoadBackground()
@@ -425,6 +428,41 @@ void LoadStatesExample()
         glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
 
     msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
+
+    msPacmanScene.Add(msPacman);
+}
+
+void LoadMsPacman()
+{
+    auto& msPacmanScene = bae::SceneManager::GetInstance().CreateScene("MsPacman Scene");
+
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
+    const auto msPacman              = std::make_shared<bae::GameObject>("MsPacman");
+    msPacman->SetWorldLocation(
+        glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
+
+    msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
+
+    constexpr glm::vec2 dimensions = { 50, 50 };
+    constexpr glm::vec2 offset     = { 50, 20 };
+
+    msPacman->AddComponent<Game::HitboxComponent>(*msPacman, dimensions, offset);
+    const auto hitboxComp = msPacman->GetComponent<Game::HitboxComponent>();
+    hitboxComp->SetVisibility(true);
+
+    // Controls
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+
+    constexpr float msPacmanSpeed = 100.f;
+    auto moveLeftCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Left, msPacmanSpeed);
+    auto moveRightCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Right, msPacmanSpeed);
+    auto moveDownCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Down, msPacmanSpeed);
+    auto moveUpCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Up, msPacmanSpeed);
+
+    keyboard.AddKeyboardCommands(std::move(moveLeftCommand), SDLK_A, bae::InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
 
     msPacmanScene.Add(msPacman);
 }
