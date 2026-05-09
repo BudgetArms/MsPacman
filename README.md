@@ -20,9 +20,7 @@ But for here's a short list of patterns that are used.
 
 Visit the [MsPacman Project](https://github.com/users/BudgetArms/projects/2/) page
 
-# Build Options
-
-## Emscripten (web) version
+## How To Build Emscripten version (web)
 
 ### On Windows
 
@@ -33,14 +31,34 @@ The required tools
     Ninja
     Python
 
-Create a directory `build_web` in the root folder of your project. <br>
+I used `Chocolatey` to install the required tools. You can also manually install each of the tools. <br>
+I installed the latest [Chocolatey release](https://github.com/chocolatey/choco/releases), and used the following
+commands:
+
+    choco install -y cmake
+    choco install -y ninja
+    choco install -y python
+
+P.S.: For me, after running a command, Chocolatey seemed to be stuck for me, pressing enter a few times seemed to fix
+the problem. <br>
+
+Chocolatey unfortunately has only support for Emscripten 3.1.40, I want the latest version of Emscripten.
+Create a directory `EmscriptenSDK` in a location where it won't be deleted, and run the following commands.
+
+    git clone https://github.com/emscripten-core/emsdk.git
+    cd emsdk
+    emsdk.bat install latest
+    emsdk.bat activate latest --global
+
+Then create a directory `build_web` in the root folder of your project. <br>
 Open the terminal in the `build_web` folder, and run:
 
     emcmake cmake ..
     emmake ninja
 
-To be able to see the webpage you can start a python webserver in the build_web folder
+To see the webpage, start it with a python webserver by running the following command in the `build_web` folder
 
     python -m http.server
 
-Then browse to http://localhost:8000 and you're good to go.
+Then browse to http://localhost:8000 and you're good to go. <br>
+If you don't see anything, check the `Console` of your browser for any errors.
