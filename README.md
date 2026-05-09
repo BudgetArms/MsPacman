@@ -1,8 +1,8 @@
-# Ms Pacman
+# MsPacman
 
 Creating a MsPacman (1982) clone, which is a sequel to Pacman (1980). <br>
 
-The MsPacman uses [BudgetArmsEngine]("https://github.com/BudgetArms/BudgetArmsEngine") as game engine. <br>
+MsPacman uses [BudgetArmsEngine]("https://github.com/BudgetArms/BudgetArmsEngine") as game engine. <br>
 It's expanded from the [Minigin]("https://github.com/avadae/minigin/") template. <br>
 
 The design patterns I used, will be mentioned in the game engine repository as well. <br>
@@ -16,13 +16,9 @@ But for here's a short list of patterns that are used.
 * Sound Queues (runs on a different thread)
 * Component system (each game object can have 1 of same type component)
 
-## Todo's:
+## Features to be implemented:
 
-* Add Hitbox component with debug draw toggles to easily issues
-* Add MsPacman texture and sound resources
-* Add level formats, to create/load levels
-* Implement simple spritesheet workflow, that doesn't require extra children to make spritesheets work properly
-* Implement MoveOnGrid Logic
+Visit the [MsPacman Project](https://github.com/users/BudgetArms/projects/2/) page
 
 # Build Options
 
