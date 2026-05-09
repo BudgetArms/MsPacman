@@ -12,6 +12,11 @@ Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, const Directi
 
 void Game::MoveOnGridCommand::Execute()
 {
+    if(GetActor()->IsMarkedForDeletion())
+    {
+        return;
+    }
+
     // TODO: Implement logic
     switch(m_Direction)
     {

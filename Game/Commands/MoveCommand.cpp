@@ -14,6 +14,11 @@ Game::MoveCommand::MoveCommand(bae::GameObject& owner, const Direction direction
 
 void Game::MoveCommand::Execute()
 {
+    if(GetActor()->IsMarkedForDeletion())
+    {
+        return;
+    }
+
     const float deltaSpeed = m_Speed * bae::GameTime::GetInstance().GetDeltaTime();
     switch(m_Direction)
     {
