@@ -3,11 +3,7 @@
 #include "../Base/SmartpointerHelpers.hpp"
 #include "Commands/GameActorCommand.h"
 
-
-namespace std::filesystem
-{
-    class path;
-}
+#include "../Base/SoundEvents.hpp"
 
 class MIX_Init;
 
@@ -16,14 +12,11 @@ namespace Game
     class TestSoundCommand : public bae::GameActorCommand
     {
     public:
-        TestSoundCommand(bae::GameObject& owner, const std::filesystem::path& soundPath);
+        TestSoundCommand(bae::GameObject& owner, Sounds::SoundEvents soundEvent);
 
         void Execute() override;
 
     private:
-        std::unique_ptr<MIX_Mixer, Game::MIX_MixerDeletor> m_Mixer{};
-        std::unique_ptr<MIX_Audio, MIX_AudioDeletor> m_Audio{};
-        std::unique_ptr<MIX_Track, MIX_TrackDeletor> m_Track{};
-        bool m_bIsMixerValid{};
+        Sounds::SoundEvents m_SoundEvent;
     };
 }
