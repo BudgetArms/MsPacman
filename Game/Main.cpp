@@ -82,6 +82,7 @@ void LoadTestSoundCommands();
 void TestSoundSystem();
 void LoadStatesExample();
 void LoadMsPacman();
+void TestSdlSoundSystemDestruction();
 
 
 int main(int, char*[])
@@ -151,11 +152,12 @@ void Start()
 
     LoadSounds();
 
-    TestSoundSystem();
+    // TestSoundSystem();
     // LoadTestSoundCommands();
+    TestSdlSoundSystemDestruction();
 
     // LoadStatesExample();
-    LoadMsPacman();
+    // LoadMsPacman();
 }
 
 void LoadBackground()
@@ -312,7 +314,11 @@ void LoadSounds()
     namespace gs = Game::Sounds;
 
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::SdlSoundSystem>()));
+        // std::make_unique<bae::SdlSoundSystem>()));
+        std::make_unique<bae::NullSoundSystem>()));
+
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
+        std::make_unique<bae::NullSoundSystem>()));
 
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
@@ -465,4 +471,18 @@ void LoadMsPacman()
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
 
     msPacmanScene.Add(msPacman);
+}
+
+
+void TestSdlSoundSystemDestruction()
+{
+    std::cout << FUNCTION_NAME << " Begin" << '\n';
+    {
+        const auto sdlSoundSystem = std::make_unique<bae::SdlSoundSystem>();
+        if(!sdlSoundSystem)
+        {
+            std::cout << FUNCTION_NAME << " Failed to create SdlSoundSystem" << '\n';
+        }
+    }
+    std::cout << FUNCTION_NAME << " End" << '\n';
 }
