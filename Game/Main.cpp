@@ -154,10 +154,10 @@ void Start()
 
     // TestSoundSystem();
     // LoadTestSoundCommands();
-    TestSdlSoundSystemDestruction();
+    // TestSdlSoundSystemDestruction();
 
     // LoadStatesExample();
-    // LoadMsPacman();
+    LoadMsPacman();
 }
 
 void LoadBackground()
@@ -314,11 +314,7 @@ void LoadSounds()
     namespace gs = Game::Sounds;
 
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        // std::make_unique<bae::SdlSoundSystem>()));
-        std::make_unique<bae::NullSoundSystem>()));
-
-    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::NullSoundSystem>()));
+        std::make_unique<bae::SdlSoundSystem>()));
 
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
