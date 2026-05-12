@@ -24,7 +24,7 @@
 #include "Commands/TestSoundSystemCommands.hpp"
 #include "Core/ServiceLocator.h"
 #include "Sounds/LoggingSoundSystem.h"
-#include "Sounds/SdlSoundSystem.h"
+#include "Sounds/MixerSoundSystem.h"
 
 
 #ifdef STEAMWORKS_ENABLED
@@ -314,7 +314,7 @@ void LoadSounds()
     namespace gs = Game::Sounds;
 
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::SdlSoundSystem>()));
+        std::make_unique<bae::MixerSoundSystem>()));
 
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
@@ -474,10 +474,10 @@ void TestSdlSoundSystemDestruction()
 {
     std::cout << FUNCTION_NAME << " Begin" << '\n';
     {
-        const auto sdlSoundSystem = std::make_unique<bae::SdlSoundSystem>();
+        const auto sdlSoundSystem = std::make_unique<bae::MixerSoundSystem>();
         if(!sdlSoundSystem)
         {
-            std::cout << FUNCTION_NAME << " Failed to create SdlSoundSystem" << '\n';
+            std::cout << FUNCTION_NAME << " Failed to create MixerSoundSystem" << '\n';
         }
     }
     std::cout << FUNCTION_NAME << " End" << '\n';
