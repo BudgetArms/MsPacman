@@ -69,6 +69,9 @@
 #include "Components/RotateComponent.hpp"
 
 
+#include <soloud.h>
+#include <soloud_wav.h>
+
 namespace fs = std::filesystem;
 
 void Start();
@@ -80,9 +83,10 @@ void LoadRotatingObjectsScene();
 void LoadSounds();
 void LoadTestSoundCommands();
 void TestSoundSystem();
+void TestSoLoudSoundSystem();
 void LoadStatesExample();
 void LoadMsPacman();
-void TestSdlSoundSystemDestruction();
+void TestMixerSoundSystemDestruction();
 
 
 int main(int, char*[])
@@ -153,8 +157,9 @@ void Start()
     LoadSounds();
 
     // TestSoundSystem();
+    TestSoLoudSoundSystem();
     // LoadTestSoundCommands();
-    // TestSdlSoundSystemDestruction();
+    //TestMixerSoundSystemDestruction();
 
     // LoadStatesExample();
     LoadMsPacman();
@@ -420,6 +425,21 @@ void TestSoundSystem()
     soundSystem.UnLoop(beepActiveSoundId);
 }
 
+SoLoud::Soloud soLoud{};
+SoLoud::Wav sample{};
+
+void TestSoLoudSoundSystem()
+{
+    soLoud.init();
+
+    sample.load("Resources/Sounds/AsmrVoice.wav");
+
+    soLoud.play(sample);
+
+    SDL_Delay(1000);
+    soLoud.deinit();
+}
+
 void LoadStatesExample()
 {
     auto& msPacmanScene = bae::SceneManager::GetInstance().CreateScene("MsPacman Scene");
@@ -470,7 +490,7 @@ void LoadMsPacman()
 }
 
 
-void TestSdlSoundSystemDestruction()
+void TestMixerSoundSystemDestruction()
 {
     std::cout << FUNCTION_NAME << " Begin" << '\n';
     {
