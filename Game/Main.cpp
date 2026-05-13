@@ -25,6 +25,10 @@
 #include "Core/ServiceLocator.h"
 #include "Sounds/LoggingSoundSystem.h"
 #include "Sounds/MixerSoundSystem.h"
+#include "Sounds/SoLoudSoundSystem.hpp"
+
+#include <soloud.h>
+#include <soloud_wav.h>
 
 
 #ifdef STEAMWORKS_ENABLED
@@ -68,9 +72,6 @@
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RotateComponent.hpp"
 
-
-#include <soloud.h>
-#include <soloud_wav.h>
 
 namespace fs = std::filesystem;
 
@@ -156,13 +157,13 @@ void Start()
 
     LoadSounds();
 
-    // TestSoundSystem();
-    TestSoLoudSoundSystem();
+    TestSoundSystem();
+    // TestSoLoudSoundSystem();
     // LoadTestSoundCommands();
     //TestMixerSoundSystemDestruction();
 
     // LoadStatesExample();
-    LoadMsPacman();
+    // LoadMsPacman();
 }
 
 void LoadBackground()
@@ -319,7 +320,8 @@ void LoadSounds()
     namespace gs = Game::Sounds;
 
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::MixerSoundSystem>()));
+        // std::make_unique<bae::MixerSoundSystem>()));
+        std::make_unique<bae::SoLoudSoundSystem>()));
 
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
