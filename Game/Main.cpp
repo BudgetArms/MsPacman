@@ -24,7 +24,10 @@
 #include "Commands/TestSoundSystemCommands.hpp"
 #include "Core/ServiceLocator.h"
 #include "Sounds/LoggingSoundSystem.h"
+
+#ifndef __EMSCRIPTEN__
 #include "Sounds/MixerSoundSystem.h"
+#endif
 #include "Sounds/SoLoudSoundSystem.hpp"
 
 #include <soloud.h>
@@ -87,7 +90,6 @@ void TestSoundSystem();
 void TestSoLoudSoundSystem();
 void LoadStatesExample();
 void LoadMsPacman();
-void TestMixerSoundSystemDestruction();
 
 
 int main(int, char*[])
@@ -149,18 +151,17 @@ int main(int, char*[])
 
 void Start()
 {
-    // LoadBackground();
+    LoadBackground();
     LoadFpsCounterScene();
     LoadGameNameScene();
-    // LoadRotatingObjectsScene();
+    LoadRotatingObjectsScene();
     // LoadTrashTheCacheScene();
 
     LoadSounds();
 
-    TestSoundSystem();
-    // TestSoLoudSoundSystem();
+    // TestSoundSystem();
+    TestSoLoudSoundSystem();
     // LoadTestSoundCommands();
-    //TestMixerSoundSystemDestruction();
 
     // LoadStatesExample();
     // LoadMsPacman();
@@ -319,17 +320,25 @@ void LoadSounds()
 {
     namespace gs = Game::Sounds;
 
+    #if __EMSCRIPTEN__
+
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        // std::make_unique<bae::MixerSoundSystem>()));
         std::make_unique<bae::SoLoudSoundSystem>()));
+
+    #else
+
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
+        std::make_unique<bae::MixerSoundSystem>()));
+
+    #endif
 
     const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
 
     // Sound files not made yet
     gs::g_sSoundEvents =
     {
-        { gs::SoundEvents::BeepSound, soundSystem->LoadSound("Resources/Sounds/beep.wav") },
-        { gs::SoundEvents::PlayerDeath, soundSystem->LoadSound("Resources/Sounds/AsmrVoice.wav") },
+        { gs::SoundEvents::BeepSound, soundSystem->LoadSound("Sounds/beep.wav") },
+        { gs::SoundEvents::PlayerDeath, soundSystem->LoadSound("Sounds/AsmrVoice.wav") },
     };
     std::cout << '\n';
 }
@@ -427,14 +436,19 @@ void TestSoundSystem()
     soundSystem.UnLoop(beepActiveSoundId);
 }
 
-SoLoud::Soloud soLoud{};
-SoLoud::Wav sample{};
-
 void TestSoLoudSoundSystem()
 {
+    SoLoud::Soloud soLoud{};
+    SoLoud::Wav sample{};
+
     soLoud.init();
 
+    std::cout << "Loading Sound\n";
+    #if __EMSCRIPTEN__
+    sample.load("Sounds/AsmrVoice.wav");
+    #else
     sample.load("Resources/Sounds/AsmrVoice.wav");
+    #endif
 
     soLoud.play(sample);
 
@@ -491,16 +505,3 @@ void LoadMsPacman()
     msPacmanScene.Add(msPacman);
 }
 
-
-void TestMixerSoundSystemDestruction()
-{
-    std::cout << FUNCTION_NAME << " Begin" << '\n';
-    {
-        const auto sdlSoundSystem = std::make_unique<bae::MixerSoundSystem>();
-        if(!sdlSoundSystem)
-        {
-            std::cout << FUNCTION_NAME << " Failed to create MixerSoundSystem" << '\n';
-        }
-    }
-    std::cout << FUNCTION_NAME << " End" << '\n';
-}

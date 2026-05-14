@@ -19,10 +19,10 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Main.cpp"
 
     "Base/DirectionEnum.hpp"
-    "Base/SmartpointerHelpers.cpp"
 
     "Commands/MoveCommand.cpp"
     "Commands/MoveOnGridCommand.cpp"
+    "Commands/TestSoundCommand.cpp"
 
     "Components/HitboxComponent.cpp"
     "Components/MsPacmanComponent.cpp"
@@ -40,6 +40,13 @@ else()
 endif()
 
 
+if(EMSCRIPTEN)
+    target_link_options(${PROJECT_NAME} PRIVATE
+        "-sEXPORTED_FUNCTIONS=[_main,_malloc,_free]"
+        "-sEXPORTED_RUNTIME_METHODS=[HEAPF32,ccall,cwrap]"
+    )
+endif()
+
 if(STEAMWORKS_ENABLED)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         "STEAMWORKS_ENABLED"
@@ -55,7 +62,8 @@ if(EMSCRIPTEN)
     )
 
     set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
-    set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}@/\"")
+    set(EMSCRIPTEN_LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -sUSE_FREETYPE=1 -sUSE_HARFBUZZ=1 -g -sALLOW_MEMORY_GROWTH \
+        --preload-file \"${CMAKE_SOURCE_DIR}/${RESOURCE_FOLDER_NAME}@/\"")
 
     # Use the Emscripten toolchain
     set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/cmake/EmscriptenToolchain.cmake")
@@ -72,10 +80,6 @@ if(EMSCRIPTEN)
         "${CMAKE_SOURCE_DIR}/web"
         "${CMAKE_BINARY_DIR}"
     )
-
-    message("binary dir: ${CMAKE_BINARY_DIR}")
-    message("source dir: ${CMAKE_SOURCE_DIR}")
-    message("project name: ${PROJECT_NAME}")
 
     # Have emscripten generate a html page too.
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
