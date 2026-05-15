@@ -21,7 +21,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
-#include "Commands/TestSoundSystemCommands.hpp"
 #include "Core/ServiceLocator.h"
 #include "Sounds/LoggingSoundSystem.h"
 
@@ -29,9 +28,6 @@
 #include "Sounds/MixerSoundSystem.h"
 #endif
 #include "Sounds/SoLoudSoundSystem.hpp"
-
-#include <soloud.h>
-#include <soloud_wav.h>
 
 
 #ifdef STEAMWORKS_ENABLED
@@ -61,7 +57,6 @@
 
 #ifdef STEAMWORKS_ENABLED
 #include "Core/Achievement.h"
-
 #include "Managers/AchievementManager.h"
 #include "Managers/SteamManager.h"
 #endif
@@ -85,10 +80,8 @@ void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
 
 void LoadSounds();
-void LoadTestSoundCommands();
 void TestSoundSystem();
 void TestSoLoudSoundSystem();
-void LoadStatesExample();
 void LoadMsPacman();
 
 
@@ -151,20 +144,14 @@ int main(int, char*[])
 
 void Start()
 {
+    LoadSounds();
+
     LoadBackground();
     LoadFpsCounterScene();
     LoadGameNameScene();
     LoadRotatingObjectsScene();
-    // LoadTrashTheCacheScene();
 
-    LoadSounds();
-
-    // TestSoundSystem();
-    TestSoLoudSoundSystem();
-    // LoadTestSoundCommands();
-
-    // LoadStatesExample();
-    // LoadMsPacman();
+    LoadMsPacman();
 }
 
 void LoadBackground()
@@ -343,132 +330,6 @@ void LoadSounds()
     std::cout << '\n';
 }
 
-void LoadTestSoundCommands()
-{
-    namespace gs = Game::Sounds;
-
-    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
-    bae::SoundSystem& soundSystem = bae::ServiceLocator::GetSoundSystem();
-
-    const bae::SoundID gameplayMusicSoundId = gs::GetSoundId(gs::SoundEvents::GameplayMusic);
-
-    // Play & Pause Immediately after
-    bae::ActiveSoundID activeSoundId = soundSystem.Play(gameplayMusicSoundId);
-    soundSystem.Pause(activeSoundId);
-
-    // Sound Commands:
-    std::unique_ptr<gs::TestPlaySoundCommand> soundPlayCommands{};
-    std::unique_ptr<gs::TestSoundSystemCommand> soundCommands{};
-
-    // Play
-    soundPlayCommands = std::make_unique<gs::TestPlaySoundCommand>(gs::GetSoundId(gs::SoundEvents::PlayerDeath));
-    keyboard.AddKeyboardCommands(std::move(soundPlayCommands), SDLK_1, bae::InputManager::ButtonState::Down);
-
-    // TogglePause
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::TogglePause, activeSoundId);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_2, bae::InputManager::ButtonState::Down);
-
-    // ToggleMute
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::ToggleMute, activeSoundId);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_3, bae::InputManager::ButtonState::Down);
-
-
-    // Change Volume
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolume, activeSoundId, 0.5f);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_4, bae::InputManager::ButtonState::Down);
-
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolume, activeSoundId, 1.0f);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_5, bae::InputManager::ButtonState::Down);
-
-
-    // All Sounds Commands
-
-    // Change Volume
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolumeAll,
-                                                                 bae::ActiveSoundID(-1), 0.2f);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_6, bae::InputManager::ButtonState::Down);
-
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::SetVolumeAll,
-                                                                 bae::ActiveSoundID(-1), 0.7f);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_7, bae::InputManager::ButtonState::Down);
-
-    // StopAll
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::StopAll);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_8, bae::InputManager::ButtonState::Down);
-
-    // TogglePauseAll/ToglleMuteAll
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::TogglePauseAll);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_9, bae::InputManager::ButtonState::Down);
-
-    soundCommands = std::make_unique<gs::TestSoundSystemCommand>(gs::TestSoundEvents::ToggleMuteAll);
-    keyboard.AddKeyboardCommands(std::move(soundCommands), SDLK_0, bae::InputManager::ButtonState::Down);
-}
-
-void TestSoundSystem()
-{
-    namespace gs = Game::Sounds;
-    bae::SoundSystem& soundSystem         = bae::ServiceLocator::GetSoundSystem();
-    const bae::SoundID playerDeathSoundId = gs::GetSoundId(gs::SoundEvents::PlayerDeath);
-    const bae::SoundID beepSoundId        = gs::GetSoundId(gs::SoundEvents::BeepSound);
-
-    // Play & Pause & then Resume after 1s
-    const bae::ActiveSoundID playerDeathActiveSoundId = soundSystem.Play(playerDeathSoundId);
-    soundSystem.SetVolume(playerDeathActiveSoundId, 0.5f);
-    // soundSystem.Pause(playerDeathActiveSoundId);
-
-
-    // Play & Stop After 100ms
-    bae::ActiveSoundID beepActiveSoundId = soundSystem.Play(beepSoundId);
-    soundSystem.SetVolume(beepActiveSoundId, 0.5f);
-    SDL_Delay(100);
-    soundSystem.Stop(beepActiveSoundId);
-
-    // Wait 1s
-    SDL_Delay(1000);
-
-    // Play & Loop
-    beepActiveSoundId = soundSystem.Play(beepSoundId);
-    soundSystem.SetVolume(beepActiveSoundId, 0.25f);
-    soundSystem.Loop(beepActiveSoundId);
-
-    // stop looping after 5s
-    SDL_Delay(2000);
-    soundSystem.UnLoop(beepActiveSoundId);
-}
-
-void TestSoLoudSoundSystem()
-{
-    SoLoud::Soloud soLoud{};
-    SoLoud::Wav sample{};
-
-    soLoud.init();
-
-    std::cout << "Loading Sound\n";
-    #if __EMSCRIPTEN__
-    sample.load("Sounds/AsmrVoice.wav");
-    #else
-    sample.load("Resources/Sounds/AsmrVoice.wav");
-    #endif
-
-    soLoud.play(sample);
-
-    SDL_Delay(1000);
-    soLoud.deinit();
-}
-
-void LoadStatesExample()
-{
-    auto& msPacmanScene = bae::SceneManager::GetInstance().CreateScene("MsPacman Scene");
-
-    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-    auto msPacman                    = std::make_shared<bae::GameObject>("MsPacman");
-    msPacman->SetWorldLocation(
-        glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
-
-    msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
-
-    msPacmanScene.Add(msPacman);
-}
 
 void LoadMsPacman()
 {
