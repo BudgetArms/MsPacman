@@ -7,7 +7,7 @@
 
 namespace Game::Sounds
 {
-    enum class SoundEvents
+    enum class SoundAssets
     {
         GameplayMusic,
         BeepSound,
@@ -15,9 +15,9 @@ namespace Game::Sounds
     };
 
 
-    inline std::unordered_map<SoundEvents, bae::SoundID> g_sSoundEvents{};
+    inline std::unordered_map<SoundAssets, bae::SoundID> g_sSoundEvents{};
 
-    static bae::SoundID GetSoundId(const SoundEvents& event)
+    [[maybe_unused]] static bae::SoundID GetSoundId(const SoundAssets& event)
     {
         const auto it = g_sSoundEvents.find(event);
         if(it == g_sSoundEvents.end())

@@ -7,7 +7,7 @@
 #include "Core/ServiceLocator.h"
 #include "Singletons/GameTime.h"
 
-#include "../Base/SoundEvents.hpp"
+#include "../Base/SoundAssets.hpp"
 #include "../Components/MsPacmanComponent.hpp"
 #include "Components/TextComponent.h"
 #include "Core/Utils.h"
@@ -27,7 +27,7 @@ void MsPacmanIdle::OnEnter()
     std::cout << FUNCTION_NAME << '\n';
 
     bae::SoundSystem& soundSystem   = bae::ServiceLocator::GetSoundSystem();
-    const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundEvents::BeepSound);
+    const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundAssets::BeepSound);
 
     m_PlayingActiveSoundId = soundSystem.Play(startSoundID);
     soundSystem.SetVolume(m_PlayingActiveSoundId, 2.f);
@@ -156,7 +156,7 @@ void MsPacmanDying::OnEnter()
     std::cout << FUNCTION_NAME << '\n';
 
     bae::SoundSystem& soundSystem   = bae::ServiceLocator::GetSoundSystem();
-    const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundEvents::PlayerDeath);
+    const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundAssets::PlayerDeath);
 
     const bae::ActiveSoundID playingSoundID = soundSystem.Play(startSoundID);
     soundSystem.SetVolume(playingSoundID, 2.f);

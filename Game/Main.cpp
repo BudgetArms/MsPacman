@@ -63,7 +63,7 @@
 
 
 // Game Includes
-#include "Base/SoundEvents.hpp"
+#include "Base/SoundAssets.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
 #include "Components/HitboxComponent.hpp"
@@ -324,8 +324,8 @@ void LoadSounds()
     // Sound files not made yet
     gs::g_sSoundEvents =
     {
-        { gs::SoundEvents::BeepSound, soundSystem->LoadSound("Sounds/beep.wav") },
-        { gs::SoundEvents::PlayerDeath, soundSystem->LoadSound("Sounds/AsmrVoice.wav") },
+        { gs::SoundAssets::BeepSound, soundSystem->LoadSound("Sounds/beep.wav") },
+        { gs::SoundAssets::PlayerDeath, soundSystem->LoadSound("Sounds/AsmrVoice.wav") },
     };
     std::cout << '\n';
 }

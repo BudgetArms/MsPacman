@@ -5,12 +5,11 @@
 #include "Core/HelperFunctions.h"
 #include "Core/ServiceLocator.h"
 #include "Sounds/SoundSystem.h"
-#include "Managers/ResourceManager.h"
 
-#include "../Base/SoundEvents.hpp"
+#include "../Base/SoundAssets.hpp"
 
 
-Game::TestSoundCommand::TestSoundCommand(bae::GameObject& owner, Sounds::SoundEvents soundEvent) :
+Game::TestSoundCommand::TestSoundCommand(bae::GameObject& owner, const Sounds::SoundAssets soundEvent) :
     GameActorCommand(owner),
     m_SoundEvent{ soundEvent }
 {
