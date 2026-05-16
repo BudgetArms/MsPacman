@@ -4,7 +4,7 @@
 #include "Core/GameObject.h"
 #include "Managers/ResourceManager.h"
 
-#include "../States/MsPacmanStates.hpp"
+#include "../States/Entities/MsPacmanIdle.hpp"
 
 
 Game::MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
@@ -24,26 +24,20 @@ Game::MsPacmanComponent::~MsPacmanComponent()
 
 void Game::MsPacmanComponent::Update()
 {
-    if(m_MsPacmanState)
+    if(!m_MsPacmanState)
     {
-        m_MsPacmanState->Update();
+        return;
     }
+
+    std::unique_ptr<States::EntityState> newState = m_MsPacmanState->Update();
+    if(!newState)
+    {
+        return;
+    }
+
+    m_MsPacmanState->OnExit();
+    m_MsPacmanState = std::move(newState);
+    m_MsPacmanState->OnEnter();
 }
 
-
-void Game::MsPacmanComponent::SetState(std::unique_ptr<States::MsPacmanState> state)
-{
-    if(m_MsPacmanState)
-    {
-        m_MsPacmanState->OnExit();
-    }
-
-    m_MsPacmanState = nullptr;
-
-    if(state)
-    {
-        m_MsPacmanState = std::move(state);
-        m_MsPacmanState->OnEnter();
-    }
-}
 

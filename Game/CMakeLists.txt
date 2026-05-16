@@ -28,7 +28,11 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Components/MsPacmanComponent.cpp"
     "Components/RotateComponent.cpp"
 
-    "States/MsPacmanStates.cpp"
+    "States/Entities/MsPacmanDying.cpp"
+    "States/Entities/MsPacmanIdle.cpp"
+    "States/Entities/MsPacmanInvincible.cpp"
+    "States/Entities/MsPacmanMoving.cpp"
+    "States/Entities/MsPacmanStates.cpp"
 )
 
 
