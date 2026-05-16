@@ -1,6 +1,6 @@
 #include "HitboxComponent.hpp"
 
-#include "Core/Utils.h"
+#include "Core/Utils.hpp"
 
 
 using namespace Game;

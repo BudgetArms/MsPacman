@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "Components/TextComponent.h"
-#include "Core/ServiceLocator.h"
-#include "Singletons/GameTime.h"
-#include "Sounds/SoundSystem.h"
+#include "Components/TextComponent.hpp"
+#include "Core/ServiceLocator.hpp"
+#include "Singletons/GameTime.hpp"
+#include "Sounds/SoundSystem.hpp"
 
 #include "MsPacmanMoving.hpp"
 #include "../Game/Base/SoundAssets.hpp"

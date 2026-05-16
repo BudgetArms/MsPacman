@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Components/Component.hpp"
+
 #include "../States/Entities/EntityState.hpp"
-#include "Components/Component.h"
 
 
 namespace Game::States

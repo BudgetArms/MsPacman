@@ -21,11 +21,11 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
-#include "Core/ServiceLocator.h"
-#include "Sounds/LoggingSoundSystem.h"
+#include "Core/ServiceLocator.hpp"
+#include "Sounds/LoggingSoundSystem.hpp"
 
 #ifndef __EMSCRIPTEN__
-#include "Sounds/MixerSoundSystem.h"
+#include "Sounds/MixerSoundSystem.hpp"
 #endif
 #include "Sounds/SoLoudSoundSystem.hpp"
 
@@ -38,27 +38,28 @@
 #endif
 
 // BudgetArmsEngine includes
-#include "Core/BudgetEngine.h"
-#include "Core/GameObject.h"
-#include "Core/Renderer.h"
-#include "Core/Scene.h"
+#include "Core/BudgetEngine.hpp"
+#include "Core/GameObject.hpp"
+#include "Core/Renderer.hpp"
+#include "Core/Scene.hpp"
 
-#include "Components/FpsCounterComponent.h"
-#include "Components/TextComponent.h"
-#include "Components/TextureComponent.h"
+#include "Components/FpsCounterComponent.hpp"
+#include "Components/TextComponent.hpp"
+#include "Components/TextureComponent.hpp"
 
-#include "Managers/ResourceManager.h"
-#include "Managers/SceneManager.h"
+#include "Managers/ResourceManager.hpp"
+#include "Managers/SceneManager.hpp"
 
-#include "Wrappers/Controller.h"
-#include "Wrappers/Keyboard.h"
-#include "Wrappers/Texture2D.h"
+#include "Wrappers/Controller.hpp"
+#include "Sounds/SdlAudioClip.hpp"
+#include "Wrappers/Keyboard.hpp"
+#include "Wrappers/Texture2D.hpp"
 
 
 #ifdef STEAMWORKS_ENABLED
-#include "Core/Achievement.h"
-#include "Managers/AchievementManager.h"
-#include "Managers/SteamManager.h"
+#include "Core/Achievement.hpp"
+#include "Managers/AchievementManager.hpp"
+#include "Managers/SteamManager.hpp"
 #endif
 
 

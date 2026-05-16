@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Components/Component.h"
-#include "Core/Utils.h"
+#include "Components/Component.hpp"
+#include "Core/Utils.hpp"
+
 
 namespace Game
 {

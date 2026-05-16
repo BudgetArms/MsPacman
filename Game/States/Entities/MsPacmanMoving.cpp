@@ -3,8 +3,8 @@
 #include <iostream>
 
 #include "MsPacmanDying.hpp"
-#include "Components/TextComponent.h"
-#include "Singletons/GameTime.h"
+#include "Components/TextComponent.hpp"
+#include "Singletons/GameTime.hpp"
 
 #include "../Game/Components/MsPacmanComponent.hpp"
 

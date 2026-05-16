@@ -2,7 +2,7 @@
 
 #include <numbers>
 
-#include "Singletons/GameTime.h"
+#include "Singletons/GameTime.hpp"
 
 
 Game::RotateComponent::RotateComponent(bae::GameObject& owner, const float radius, const float angularSpeed) :

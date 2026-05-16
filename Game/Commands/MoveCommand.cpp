@@ -1,8 +1,9 @@
 #include "MoveCommand.hpp"
 
+#include "Singletons/GameTime.hpp"
+#include "Singletons/Singleton.hpp"
+
 #include "../Base/DirectionEnum.hpp"
-#include "Singletons/GameTime.h"
-#include "Singletons/Singleton.h"
 
 
 Game::MoveCommand::MoveCommand(bae::GameObject& owner, const Direction direction, const float speed) :

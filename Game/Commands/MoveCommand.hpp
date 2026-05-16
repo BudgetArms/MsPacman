@@ -1,5 +1,6 @@
 #pragma once
-#include "Commands/GameActorCommand.h"
+
+#include "Commands/GameActorCommand.hpp"
 
 #include "../Base/DirectionEnum.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sounds/SoundStructs.h"
+#include "Sounds/SoundStructs.hpp"
 
 #include "EntityState.hpp"
 #include "MsPacmanStates.hpp"

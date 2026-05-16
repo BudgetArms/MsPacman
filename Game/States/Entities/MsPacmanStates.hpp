@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Core/GameObject.h"
+#include "Core/GameObject.hpp"
 
 #include "EntityState.hpp"
-#include "Sounds/SoundStructs.h"
+#include "Sounds/SoundStructs.hpp"
 
 
 namespace Game::States

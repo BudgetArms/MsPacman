@@ -2,9 +2,9 @@
 
 #include <filesystem>
 
-#include "Core/HelperFunctions.h"
-#include "Core/ServiceLocator.h"
-#include "Sounds/SoundSystem.h"
+#include "Core/HelperFunctions.hpp"
+#include "Core/ServiceLocator.hpp"
+#include "Sounds/SoundSystem.hpp"
 
 #include "../Base/SoundAssets.hpp"
 

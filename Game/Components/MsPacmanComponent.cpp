@@ -1,8 +1,8 @@
 #include "MsPacmanComponent.hpp"
 
-#include "Components/TextComponent.h"
-#include "Core/GameObject.h"
-#include "Managers/ResourceManager.h"
+#include "Components/TextComponent.hpp"
+#include "Core/GameObject.hpp"
+#include "Managers/ResourceManager.hpp"
 
 #include "../States/Entities/MsPacmanIdle.hpp"
 

@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include "Sounds/SoundSystem.h"
+#include "Sounds/SoundSystem.hpp"
 
 
 namespace Game::Sounds
