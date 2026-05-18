@@ -28,7 +28,7 @@ void MsPacmanIdle::OnEnter()
 
     m_GameObject->AddLocation({ -300, 0 });
 
-    auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
+    const auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
     if(!textComponent)
     {
         return;

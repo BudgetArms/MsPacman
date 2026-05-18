@@ -18,9 +18,6 @@ Game::MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
     m_MsPacmanState->OnEnter();
 }
 
-Game::MsPacmanComponent::~MsPacmanComponent()
-{
-}
 
 void Game::MsPacmanComponent::Update()
 {

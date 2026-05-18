@@ -16,7 +16,7 @@ void MsPacmanMoving::OnEnter()
 {
     std::cout << FUNCTION_NAME << '\n';
 
-    auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
+    const auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
     if(!textComponent)
     {
         return;

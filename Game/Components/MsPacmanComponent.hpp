@@ -16,7 +16,7 @@ namespace Game
     {
     public:
         explicit MsPacmanComponent(bae::GameObject& owner);
-        ~MsPacmanComponent() override;
+        ~MsPacmanComponent() override = default;
 
         void Update() override;
 
