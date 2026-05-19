@@ -6,7 +6,7 @@
 #include "Core/ServiceLocator.hpp"
 #include "Sounds/SoundSystem.hpp"
 
-#include "../Base/SoundAssets.hpp"
+#include "Base/SoundAssets.hpp"
 
 
 Game::TestSoundCommand::TestSoundCommand(bae::GameObject& owner, const Sounds::SoundAssets soundEvent) :

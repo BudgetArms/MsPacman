@@ -6,7 +6,7 @@
 #include "Components/TextComponent.hpp"
 #include "Singletons/GameTime.hpp"
 
-#include "../Game/Components/MsPacmanComponent.hpp"
+#include "Components/MsPacmanComponent.hpp"
 
 
 using namespace Game::States;

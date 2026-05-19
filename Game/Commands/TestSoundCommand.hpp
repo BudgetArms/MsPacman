@@ -2,7 +2,7 @@
 
 #include "Commands/GameActorCommand.hpp"
 
-#include "../Base/SoundAssets.hpp"
+#include "Base/SoundAssets.hpp"
 
 class MIX_Init;
 

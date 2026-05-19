@@ -4,7 +4,7 @@
 #include "Core/GameObject.hpp"
 #include "Managers/ResourceManager.hpp"
 
-#include "../States/Entities/MsPacmanIdle.hpp"
+#include "States/Entities/MsPacmanIdle.hpp"
 
 
 Game::MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :

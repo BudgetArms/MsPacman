@@ -1,6 +1,6 @@
 #include "MoveOnGridCommand.hpp"
 
-#include "../Game/Base/DirectionEnum.hpp"
+#include "Base/DirectionEnum.hpp"
 
 
 Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, const Direction direction) :

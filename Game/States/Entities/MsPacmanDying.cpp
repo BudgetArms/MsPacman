@@ -7,8 +7,8 @@
 #include "Singletons/GameTime.hpp"
 #include "Sounds/SoundSystem.hpp"
 
-#include "../Game/Base/SoundAssets.hpp"
-#include "../Game/Components/MsPacmanComponent.hpp"
+#include "Base/SoundAssets.hpp"
+#include "Components/MsPacmanComponent.hpp"
 
 
 using namespace Game::States;

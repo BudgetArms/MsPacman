@@ -2,7 +2,7 @@
 
 #include "Components/Component.hpp"
 
-#include "../States/Entities/EntityState.hpp"
+#include "States/Entities/EntityState.hpp"
 
 
 namespace Game::States

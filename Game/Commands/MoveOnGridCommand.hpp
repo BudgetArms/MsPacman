@@ -2,7 +2,7 @@
 
 #include "Commands/GameActorCommand.hpp"
 
-#include "../Base/DirectionEnum.hpp"
+#include "Base/DirectionEnum.hpp"
 
 namespace Game
 {
