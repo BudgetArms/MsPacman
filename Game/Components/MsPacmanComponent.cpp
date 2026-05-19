@@ -4,29 +4,53 @@
 #include "Core/GameObject.hpp"
 #include "Managers/ResourceManager.hpp"
 
+#include "Components/LifeComponent.hpp"
+#include "States/Entities/MsPacmanDying.hpp"
 #include "States/Entities/MsPacmanIdle.hpp"
 
 
-Game::MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
+using namespace Game;
+
+
+MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
     Component{ owner },
     m_MsPacmanState{ nullptr }
 {
     auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 32);
     m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Default", font, bae::Utils::Color::Gray);
+    m_Owner->AddComponent<LifeComponent>(*m_Owner, 3);
 
     m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
     m_MsPacmanState->OnEnter();
 }
 
 
-void Game::MsPacmanComponent::Update()
+void MsPacmanComponent::Update()
 {
-    if(!m_MsPacmanState)
+    UpdateToNewState(m_MsPacmanState->Update());
+
+    if(const auto lifeComponent = m_Owner->GetComponent<LifeComponent>(); lifeComponent)
+    {
+        if(!lifeComponent->IsAlive())
+        {
+            UpdateToNewState(std::make_unique<States::MsPacmanDying>(*m_Owner));
+        }
+    }
+}
+
+States::EntityState* MsPacmanComponent::GetState() const
+{
+    return m_MsPacmanState.get();
+}
+
+void MsPacmanComponent::UpdateToNewState(std::unique_ptr<States::EntityState> newState)
+{
+    // if dying, ignore new state
+    if(dynamic_cast<States::MsPacmanDying*>(m_MsPacmanState.get()))
     {
         return;
     }
 
-    std::unique_ptr<States::EntityState> newState = m_MsPacmanState->Update();
     if(!newState)
     {
         return;
@@ -36,5 +60,6 @@ void Game::MsPacmanComponent::Update()
     m_MsPacmanState = std::move(newState);
     m_MsPacmanState->OnEnter();
 }
+
 
 

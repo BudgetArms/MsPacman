@@ -26,7 +26,6 @@ void MsPacmanIdle::OnEnter()
     soundSystem.SetVolume(m_PlayingActiveSoundId, 2.f);
     soundSystem.Loop(m_PlayingActiveSoundId);
 
-    m_GameObject->AddLocation({ -300, 0 });
 
     const auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
     if(!textComponent)

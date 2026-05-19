@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "MsPacmanDying.hpp"
+#include "MsPacmanIdle.hpp"
+#include "Components/LifeComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Singletons/GameTime.hpp"
 
@@ -42,7 +44,7 @@ std::unique_ptr<EntityState> MsPacmanMoving::Update()
     {
         if(m_GameObject->HasComponent<MsPacmanComponent>())
         {
-            return std::make_unique<MsPacmanDying>(*m_GameObject);
+            return std::make_unique<MsPacmanIdle>(*m_GameObject);
         }
     }
 

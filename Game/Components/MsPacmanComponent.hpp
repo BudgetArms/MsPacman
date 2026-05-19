@@ -20,7 +20,12 @@ namespace Game
 
         void Update() override;
 
+        [[nodiscard]] States::EntityState* GetState() const;
+
     private:
+        void UpdateToNewState(std::unique_ptr<States::EntityState> newState);
+
+
         // std::unique_ptr<States::MsPacmanState> m_MsPacmanState;
         std::unique_ptr<States::EntityState> m_MsPacmanState;
     };
