@@ -66,6 +66,7 @@
 #include "Base/SoundAssets.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
+#include "Commands/TestDamageCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RotateComponent.hpp"
@@ -339,6 +340,7 @@ void LoadMsPacman()
     const auto msPacman              = std::make_shared<bae::GameObject>("MsPacman");
     msPacman->SetWorldLocation(
         glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
+    msPacman->AddLocation({ -300, 0 });
 
     msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
 
@@ -362,6 +364,12 @@ void LoadMsPacman()
     keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
     keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
+
+
+    // Test Damage Command (will be removed after testing)
+    auto damageCommand = std::make_unique<Game::TestDamageCommand>(*msPacman);
+    keyboard.AddKeyboardCommands(std::move(damageCommand), SDLK_V, bae::InputManager::ButtonState::Down);
+
 
     msPacmanScene.Add(msPacman);
 }
