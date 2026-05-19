@@ -57,6 +57,10 @@ if(STEAMWORKS_ENABLED)
     )
 endif()
 
+target_include_directories(${ENGINE_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC ${ENGINE_NAME})
 
 
