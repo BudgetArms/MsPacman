@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Commands/MoveOnGridCommand.cpp"
     "Commands/TestSoundCommand.cpp"
 
+    "Components/LifeComponent.cpp"
     "Components/HitboxComponent.cpp"
     "Components/MsPacmanComponent.cpp"
     "Components/RotateComponent.cpp"
