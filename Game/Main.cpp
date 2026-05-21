@@ -70,12 +70,14 @@
 #include "Components/HitboxComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RotateComponent.hpp"
+#include "Components/SpriteComponent.hpp"
 
 
 namespace fs = std::filesystem;
 
 void Start();
 void LoadBackground();
+void LoadBackgroundLevel();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
@@ -147,7 +149,8 @@ void Start()
 {
     LoadSounds();
 
-    LoadBackground();
+    // LoadBackground();
+    // LoadBackgroundLevel();
     LoadFpsCounterScene();
     LoadGameNameScene();
     LoadRotatingObjectsScene();
@@ -166,11 +169,11 @@ void LoadBackground()
 
     const auto backgroundLogoTexture = std::make_shared<bae::GameObject>("Background Logo Texture");
     backgroundLogoTexture->AddComponent<bae::TextureComponent>(*backgroundLogoTexture, "Textures/logo.png");
-    const auto backgroundLogotTextureComp = backgroundLogoTexture->GetComponent<bae::TextureComponent>();
+    const auto backgroundLogoTextureComp = backgroundLogoTexture->GetComponent<bae::TextureComponent>();
 
     const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
-    backgroundLogotTextureComp->m_bIsCenteredAtPosition = true;
+    backgroundLogoTextureComp->m_bIsCenteredAtPosition = true;
     backgroundLogoTexture->SetWorldLocation(
         {
             static_cast<float>(windowSize.Width) / 2,
@@ -181,6 +184,17 @@ void LoadBackground()
     backgroundScene.Add(backgroundLogoTexture);
 
     bae::Utils::DrawCircle({ 0, 0 }, 1000, bae::Utils::Color::Blue);
+}
+
+void LoadBackgroundLevel()
+{
+    auto& backgroundScene = bae::SceneManager::GetInstance().CreateScene("BackgroundLevel Scene");
+
+    const auto backgroundTexture = std::make_shared<bae::GameObject>("BackgroundTexture");
+    backgroundTexture->AddComponent<bae::SpriteComponent>(*backgroundTexture, "Textures/Level/Levels.png",
+                                                          SDL_FRect(0, 0, 224, 1488), 1, 6);
+
+    backgroundScene.Add(backgroundTexture);
 }
 
 void LoadGameNameScene()
@@ -226,7 +240,8 @@ void LoadRotatingObjectsScene()
         glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
 
     const auto lonelyRotatingBall = std::make_shared<bae::GameObject>("LonelyRotatingBall");
-    lonelyRotatingBall->AddComponent<bae::TextureComponent>(*lonelyRotatingBall, "Textures/SpriteExample.png");
+    lonelyRotatingBall->AddComponent<bae::SpriteComponent>(*lonelyRotatingBall, "Textures/Characters/MsPacman.png",
+                                                           SDL_FRect(0, 0, 48, 64), 3, 12);
     lonelyRotatingBall->AddComponent<Game::RotateComponent>(*lonelyRotatingBall, 100.f, 1.f);
 
     lonelyParent->AttachChild(lonelyRotatingBall.get());
@@ -285,7 +300,8 @@ void LoadRotatingObjectsScene()
 
     // Grouped Rotating Ball
     const auto groupedRotatingBall = std::make_shared<bae::GameObject>("Grouped Rotating Ball");
-    groupedRotatingBall->AddComponent<bae::TextureComponent>(*groupedRotatingBall, "Textures/SpriteExample.png");
+    groupedRotatingBall->AddComponent<bae::SpriteComponent>(*groupedRotatingBall, "Textures/Characters/Blinky.png",
+                                                            SDL_FRect(0, 0, 32, 64), 2, 8);
     groupedRotatingBall->AddComponent<Game::RotateComponent>(*groupedRotatingBall, 10.f, 5.f);
 
     groupedParent->AttachChild(groupedRotatingBall.get());
@@ -294,8 +310,8 @@ void LoadRotatingObjectsScene()
 
     // Grouped Rotating Child Ball
     const auto groupedRotatingChildBall = std::make_shared<bae::GameObject>("Grouped Rotating Child Ball");
-    groupedRotatingChildBall->AddComponent<bae::TextureComponent>(*groupedRotatingChildBall,
-                                                                  "Textures/SpriteExample.png");
+    groupedRotatingChildBall->AddComponent<bae::SpriteComponent>(*groupedRotatingBall, "Textures/Characters/Clyde.png",
+                                                                 SDL_FRect(0, 0, 32, 64), 2, 8);
     groupedRotatingChildBall->AddComponent<Game::RotateComponent>(*groupedRotatingChildBall, 40.f, -2.f);
 
     groupedRotatingBall->AttachChild(groupedRotatingChildBall.get());
@@ -345,7 +361,7 @@ void LoadMsPacman()
     msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
 
     constexpr glm::vec2 dimensions = { 50, 50 };
-    constexpr glm::vec2 offset     = { 50, 20 };
+    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
 
     msPacman->AddComponent<Game::HitboxComponent>(*msPacman, dimensions, offset);
     const auto hitboxComp = msPacman->GetComponent<Game::HitboxComponent>();
