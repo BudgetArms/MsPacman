@@ -1,5 +1,6 @@
 #include "MsPacmanComponent.hpp"
 
+#include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/GameObject.hpp"
 #include "Managers/ResourceManager.hpp"
@@ -19,6 +20,9 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
     auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 32);
     m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Default", font, bae::Utils::Color::Gray);
     m_Owner->AddComponent<LifeComponent>(*m_Owner, 3);
+
+    m_Owner->AddComponent<bae::SpriteComponent>(*m_Owner, "Textures/Characters/MsPacman.png",
+                                                SDL_FRect(0, 0, 48, 64), 3, 12);
 
     m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
     m_MsPacmanState->OnEnter();

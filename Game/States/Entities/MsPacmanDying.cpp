@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Base/Events.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/ServiceLocator.hpp"
 #include "Singletons/GameTime.hpp"
@@ -9,6 +10,7 @@
 
 #include "Base/SoundAssets.hpp"
 #include "Components/MsPacmanComponent.hpp"
+#include "Core/EventQueue.hpp"
 
 
 using namespace Game::States;
@@ -32,6 +34,8 @@ void MsPacmanDying::OnEnter()
     }
     textComponent->SetColor(bae::Utils::Color::Red);
     textComponent->SetText(FUNCTION_NAME);
+
+    bae::EventQueue::GetInstance().SendEvent(GetEventHash(Events::PlayerDied));
 }
 
 void MsPacmanDying::OnExit()
@@ -51,6 +55,7 @@ std::unique_ptr<EntityState> MsPacmanDying::Update()
     {
         if(m_GameObject->HasComponent<MsPacmanComponent>())
         {
+            bae::EventQueue::GetInstance().SendEvent(GetEventHash(Events::GameOver));
             m_GameObject->Destroy();
         }
     }
