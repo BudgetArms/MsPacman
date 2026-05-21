@@ -1,7 +1,9 @@
 ﻿#pragma once
 
-#include "Commands/Command.h"
+#include "Commands/Command.hpp"
 #include "Core/ServiceLocator.h"
+#include "Core/ServiceLocator.hpp"
+#include "Sounds/SoundStructs.hpp"
 
 
 namespace Game::Sounds
@@ -42,10 +44,10 @@ namespace Game::Sounds
 
         ~TestSoundSystemCommand() override = default;
 
-        TestSoundSystemCommand(const TestSoundSystemCommand& other)            = delete;
-        TestSoundSystemCommand(TestSoundSystemCommand&& other)                 = delete;
-        TestSoundSystemCommand& operator=(const TestSoundSystemCommand& other) = delete;
-        TestSoundSystemCommand& operator=(TestSoundSystemCommand&& other)      = delete;
+        TestSoundSystemCommand(const TestSoundSystemCommand&)            = delete;
+        TestSoundSystemCommand(TestSoundSystemCommand&&)                 = delete;
+        TestSoundSystemCommand& operator=(const TestSoundSystemCommand&) = delete;
+        TestSoundSystemCommand& operator=(TestSoundSystemCommand&&)      = delete;
 
 
         void Execute() override
@@ -160,10 +162,10 @@ namespace Game::Sounds
 
         ~TestPlaySoundCommand() override = default;
 
-        TestPlaySoundCommand(const TestPlaySoundCommand& other)            = delete;
-        TestPlaySoundCommand(TestPlaySoundCommand&& other)                 = delete;
-        TestPlaySoundCommand& operator=(const TestPlaySoundCommand& other) = delete;
-        TestPlaySoundCommand& operator=(TestPlaySoundCommand&& other)      = delete;
+        TestPlaySoundCommand(const TestPlaySoundCommand&)            = delete;
+        TestPlaySoundCommand(TestPlaySoundCommand&&)                 = delete;
+        TestPlaySoundCommand& operator=(const TestPlaySoundCommand&) = delete;
+        TestPlaySoundCommand& operator=(TestPlaySoundCommand&&)      = delete;
 
 
         void Execute() override
