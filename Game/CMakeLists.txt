@@ -19,6 +19,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Main.cpp"
 
     "Base/DirectionEnum.hpp"
+    "Base/Events.cpp"
 
     "Commands/MoveCommand.cpp"
     "Commands/MoveOnGridCommand.cpp"
