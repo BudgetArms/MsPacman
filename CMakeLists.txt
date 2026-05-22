@@ -17,6 +17,14 @@ message("\nRoot CMakeList")
 set(STEAMWORKS_ROOT "${CMAKE_SOURCE_DIR}/3rdParty/steamworks")
 set(STEAMWORKS_ENABLED ON)
 
+# Enable Console
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(ENABLE_CONSOLE ON)
+else()
+    set(ENABLE_CONSOLE OFF)
+endif()
+
+
 if(STEAMWORKS_ENABLED AND NOT EMSCRIPTEN AND EXISTS "${STEAMWORKS_ROOT}")
     set(STEAMWORKS_ENABLED ON)
 else()

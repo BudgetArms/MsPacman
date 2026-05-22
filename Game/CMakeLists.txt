@@ -11,7 +11,13 @@ if(EMSCRIPTEN)
     set(TARGET_PARAM)
 else()
     set(PROJECT_NAME ${PROJECT_NAME})
-    set(TARGET_PARAM WIN32)
+
+    if(ENABLE_CONSOLE)
+        set(TARGET_PARAM WIN32)
+    else()
+        set(TARGET_PARAM)
+    endif()
+
 endif()
 
 
