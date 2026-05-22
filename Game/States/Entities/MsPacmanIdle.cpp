@@ -23,7 +23,7 @@ void MsPacmanIdle::OnEnter()
     const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundAssets::BeepSound);
 
     m_PlayingActiveSoundId = soundSystem.Play(startSoundID);
-    soundSystem.SetVolume(m_PlayingActiveSoundId, 2.f);
+    soundSystem.SetVolume(m_PlayingActiveSoundId, 0.1f);
     soundSystem.Loop(m_PlayingActiveSoundId);
 
 

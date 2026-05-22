@@ -23,7 +23,7 @@ void MsPacmanInvincible::OnEnter()
     const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundAssets::PlayerDeath);
 
     const bae::ActiveSoundID playingSoundID = soundSystem.Play(startSoundID);
-    soundSystem.SetVolume(playingSoundID, 2.f);
+    soundSystem.SetVolume(playingSoundID, 0.5f);
 
 
     const auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
