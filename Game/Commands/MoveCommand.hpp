@@ -19,22 +19,31 @@ namespace Game
 
         void HandleEvent(const unsigned int eventHash) override
         {
+            const Events event = GetEvent(eventHash);
+
             std::cout << "MoveCommand::HandleEvent: ";
-            if(eventHash == GetEventHash(Events::GameOver))
+            switch(event)
             {
-                std::cout << " GameOver" << '\n';
-            }
-            if(eventHash == GetEventHash(Events::BeginLevel))
-            {
-                std::cout << " BeginLevel" << '\n';
-            }
-            if(eventHash == GetEventHash(Events::GhostDied))
-            {
-                std::cout << " GhostDied" << '\n';
-            }
-            if(eventHash == GetEventHash(Events::PlayerDied))
-            {
-                std::cout << " PlayerDied" << '\n';
+                case Events::GamePaused:
+                case Events::GameResumed:
+                case Events::PlayerDied:
+                    break;
+                case Events::GameOver:
+                    std::cout << " GameOver" << '\n';
+                    break;
+                case Events::GameWon:
+                case Events::GhostDied:
+                    break;
+                case Events::BeginLevel:
+                    std::cout << " GameOver" << '\n';
+                    break;
+                case Events::RestartLevel:
+                case Events::ScoreChanged:
+                case Events::NoEvent:
+                case Events::LivesChanged:
+                case Events::InvincibilityChanged:
+                default:
+                    break;
             }
         }
 

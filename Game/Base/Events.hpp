@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
+#include <unordered_map>
 
 #include "Core/HelperFunctions.hpp"
 
@@ -17,40 +19,63 @@ namespace Game
         GhostDied,
         BeginLevel,
         RestartLevel,
+        ScoreChanged,
+        LivesChanged,
+        InvincibilityChanged,
+        NoEvent,
     };
 
 
-    consteval unsigned int GetEventHash(const Events event)
+    inline const std::vector<std::pair<Events, unsigned int>> g_EventsMap
     {
-        switch(event)
+        { Events::GamePaused, bae::HashSDBM("GamePaused") },
+        { Events::GameResumed, bae::HashSDBM("GameResumed") },
+        { Events::PlayerDied, bae::HashSDBM("PlayerDied") },
+        { Events::GameOver, bae::HashSDBM("GameOver") },
+        { Events::GameWon, bae::HashSDBM("GameWon") },
+        { Events::GhostDied, bae::HashSDBM("GhostDied") },
+        { Events::BeginLevel, bae::HashSDBM("BeginLevel") },
+        { Events::RestartLevel, bae::HashSDBM("RestartLevel") },
+        { Events::ScoreChanged, bae::HashSDBM("ScoreChanged") },
+        { Events::NoEvent, bae::HashSDBM("NoEvent") },
+    };
+
+
+    constexpr unsigned int GetEventHash(const Events event)
+    {
+        const auto eventPairIt = std::ranges::find_if(g_EventsMap,
+                                                      [&](auto pair)
+                                                      {
+                                                          const auto& eventPair = pair.first;
+                                                          return event == eventPair;
+                                                      });
+
+        if(eventPairIt == g_EventsMap.end())
         {
-            case Events::PlayerDied:
-                return bae::HashSDBM("PlayerDied");
-                break;
-            case Events::GameOver:
-                return bae::HashSDBM("GameOver");
-                break;
-            case Events::GameWon:
-                return bae::HashSDBM("GameWon");
-                break;
-            case Events::GhostDied:
-                return bae::HashSDBM("GameDied");
-                break;
-            case Events::BeginLevel:
-                return bae::HashSDBM("BeginLevel");
-                break;
-            case Events::RestartLevel:
-                return bae::HashSDBM("RestartLevel");
-                break;
-            case Events::GamePaused:
-                return bae::HashSDBM("GamePaused");
-                break;
-            case Events::GameResumed:
-                return bae::HashSDBM("GameResumed");
-                break;
+            std::cout << FUNCTION_NAME << " Failed! Not Implemented" << '\n';
+            return bae::HashSDBM("NoEvent");
         }
 
-        std::cout << FUNCTION_NAME << " Failed to get Proper Event Hash! Event not added" << '\n';
-        return bae::HashSDBM("Unknown");
+        return eventPairIt->second;
+    }
+
+
+    constexpr Events GetEvent(unsigned int eventHash)
+    {
+        const auto eventPairIt = std::ranges::find_if(g_EventsMap,
+                                                      [&](auto pair)
+                                                      {
+                                                          const auto& eventHashPair = pair.second;
+                                                          return eventHash == eventHashPair;
+                                                      });
+
+        if(eventPairIt == g_EventsMap.end())
+        {
+            std::cout << FUNCTION_NAME << " Failed! Not Implemented" << '\n';
+            return Events::NoEvent;
+        }
+
+        return eventPairIt->first;
     }
 }
+
