@@ -1,5 +1,7 @@
 #include "MsPacmanComponent.hpp"
 
+#include "ScoreComponent.hpp"
+#include "Base/Events.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/GameObject.hpp"
@@ -24,6 +26,10 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
     m_Owner->AddComponent<bae::SpriteComponent>(*m_Owner, "Textures/Characters/MsPacman.png",
                                                 SDL_FRect(0, 0, 48, 64), 3, 12);
 
+    m_Owner->AddComponent<ScoreComponent>(*m_Owner);
+    auto scoreComponent = m_Owner->GetComponent<ScoreComponent>();
+    scoreComponent->SetScore(100);
+
     m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
     m_MsPacmanState->OnEnter();
 }
@@ -45,6 +51,36 @@ void MsPacmanComponent::Update()
 States::EntityState* MsPacmanComponent::GetState() const
 {
     return m_MsPacmanState.get();
+}
+
+void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*)
+{
+    switch(GetEvent(eventHash))
+    {
+        case Events::PlayerDied:
+        case Events::GameOver:
+        case Events::GameWon:
+        case Events::GhostDied:
+        case Events::BeginLevel:
+        case Events::RestartLevel:
+            break;
+        case Events::ScoreChanged:
+        {
+            const auto scoreComp = m_Owner->GetComponent<ScoreComponent>();
+            if(!scoreComp)
+            {
+                return;
+            }
+
+            std::cout << FUNCTION_NAME << " Score changed: " << scoreComp->GetScore() << '\n';
+        }
+        break;
+        case Events::GamePaused:
+        case Events::GameResumed:
+        case Events::NoEvent:
+        default:;
+            break;
+    }
 }
 
 void MsPacmanComponent::UpdateToNewState(std::unique_ptr<States::EntityState> newState)

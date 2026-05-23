@@ -3,6 +3,8 @@
 #include "Components/Component.hpp"
 #include "Core/Subject.hpp"
 
+#include "Base/Events.hpp"
+
 
 namespace Game
 {
@@ -11,9 +13,14 @@ namespace Game
     public:
         explicit LifeComponent(bae::GameObject& owner, int maxLives);
 
+
+        // Respects invincibility
         void AddLife();
+
+        // Respects invincibility
         void RemoveLife();
 
+        // Doesn't care about invincibility
         void RemoveAllLives();
 
         [[nodiscard]] int GetLives() const;
@@ -28,6 +35,8 @@ namespace Game
         [[nodiscard]] bool IsAlive() const;
 
     private:
+        void SendEventToObservers(Events event);
+
         int m_Lives;
         int m_MaxLives;
 

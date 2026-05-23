@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Components/Component.hpp"
+#include "Core/Observer.hpp"
 
 #include "States/Entities/EntityState.hpp"
 
@@ -12,7 +13,8 @@ namespace Game::States
 
 namespace Game
 {
-    class MsPacmanComponent final : public bae::Component
+    class MsPacmanComponent final : public bae::Component, public bae::Observer
+
     {
     public:
         explicit MsPacmanComponent(bae::GameObject& owner);
@@ -22,11 +24,11 @@ namespace Game
 
         [[nodiscard]] States::EntityState* GetState() const;
 
+        void Notify(unsigned eventHash, bae::Subject* subject) override;
+
     private:
         void UpdateToNewState(std::unique_ptr<States::EntityState> newState);
 
-
-        // std::unique_ptr<States::MsPacmanState> m_MsPacmanState;
         std::unique_ptr<States::EntityState> m_MsPacmanState;
     };
 }

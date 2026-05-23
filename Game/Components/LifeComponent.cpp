@@ -5,6 +5,7 @@
 
 using namespace Game;
 
+
 LifeComponent::LifeComponent(bae::GameObject& owner, const int maxLives) :
     Component(owner),
     Subject(owner),
@@ -42,13 +43,12 @@ void LifeComponent::RemoveLife()
 
     if(m_Lives > 0)
     {
-        // TODO: call removed life event
-
+        SendEventToObservers(Events::LivesChanged);
         return;
     }
 
-    // TODO: call death event
     m_bIsAlive = false;
+    SendEventToObservers(Events::LivesChanged);
 }
 
 void LifeComponent::RemoveAllLives()
@@ -60,7 +60,7 @@ void LifeComponent::RemoveAllLives()
 
     m_Lives    = 0;
     m_bIsAlive = false;
-    // TODO: call death event
+    SendEventToObservers(Events::LivesChanged);
 }
 
 int LifeComponent::GetLives() const
@@ -81,7 +81,7 @@ void LifeComponent::SetLives(const int lives)
     }
 
     m_Lives = lives;
-    // TODO: Call updated lives
+    SendEventToObservers(Events::LivesChanged);
 }
 
 int LifeComponent::GetMaxLives() const
@@ -102,7 +102,7 @@ void LifeComponent::SetMaxLives(const int maxLives)
     }
 
     m_MaxLives = maxLives;
-    // TODO: Call updated lives
+    SendEventToObservers(Events::LivesChanged);
 }
 
 bool LifeComponent::IsInvincible() const
@@ -119,11 +119,16 @@ void LifeComponent::SetInvincibility(const bool isInvincible)
 
     m_bIsInvincible = isInvincible;
 
-    // TODO: Call updated invincibility
+    SendEventToObservers(Events::InvincibilityChanged);
 }
 
 bool LifeComponent::IsAlive() const
 {
     return m_bIsAlive;
+}
+
+void LifeComponent::SendEventToObservers(Events event)
+{
+    NotifyObservers(GetEventHash(event));
 }
 
