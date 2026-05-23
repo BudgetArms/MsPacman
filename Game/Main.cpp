@@ -68,6 +68,7 @@
 #include "Commands/MoveOnGridCommand.hpp"
 #include "Commands/TestDamageCommand.hpp"
 #include "Components/HitboxComponent.hpp"
+#include "Components/LevelGridComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RotateComponent.hpp"
 #include "Components/SpriteComponent.hpp"
@@ -140,7 +141,7 @@ void Start()
     LoadSounds();
 
     // LoadBackground();
-    // LoadBackgroundLevel();
+    LoadBackgroundLevel();
     LoadFpsCounterScene();
     LoadGameNameScene();
     LoadRotatingObjectsScene();
@@ -184,7 +185,20 @@ void LoadBackgroundLevel()
     backgroundTexture->AddComponent<bae::SpriteComponent>(*backgroundTexture, "Textures/Level/Levels.png",
                                                           SDL_FRect(0, 0, 224, 1488), 1, 6);
 
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
+
+    const auto levelGrid = std::make_shared<bae::GameObject>("Level Grid");
+
+    constexpr glm::vec2 gridSize{ 500, 500 };
+    levelGrid->SetWorldLocation({ (windowSize.Width - gridSize.x) / 2.f, (windowSize.Height - gridSize.y) / 2.f });
+
+
+    levelGrid->AddComponent<Game::LevelGridComponent>(*levelGrid, gridSize, 10, 10);
+    auto const levelGridComponent = levelGrid->GetComponent<Game::LevelGridComponent>();
+    levelGridComponent->SetRenderNodes(true);
+
     backgroundScene.Add(backgroundTexture);
+    backgroundScene.Add(levelGrid);
 }
 
 void LoadGameNameScene()
