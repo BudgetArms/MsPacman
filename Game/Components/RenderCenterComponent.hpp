@@ -30,7 +30,7 @@ namespace Game
         bool m_bShouldRenderText{ true };
 
     private:
-        int m_CircleRadius{ 1 };
+        int m_CircleRadius{ 5 };
 
         bae::Utils::Color m_CircleColor{ bae::Utils::Color::Cyan };
 

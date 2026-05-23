@@ -18,9 +18,8 @@ LevelGridComponent::LevelGridComponent(bae::GameObject& owner, const glm::vec2& 
 {
 }
 
-LevelGridComponent::~LevelGridComponent()
-{
-}
+LevelGridComponent::~LevelGridComponent() = default;
+
 
 void LevelGridComponent::Render() const
 {
@@ -47,3 +46,4 @@ bool LevelGridComponent::IsInGrid(const bae::Graphs::GridPosition& gridPosition)
 {
     return m_LevelGridGraph->IsWithinBounds(gridPosition);
 }
+

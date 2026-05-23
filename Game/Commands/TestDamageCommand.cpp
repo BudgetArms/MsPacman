@@ -19,7 +19,7 @@ void TestDamageCommand::Execute()
         return;
     }
 
-    LifeComponent* lifeComponent = GetActor()->GetComponent<LifeComponent>();
+    auto const lifeComponent = GetActor()->GetComponent<LifeComponent>();
     if(!lifeComponent)
     {
         return;
