@@ -36,6 +36,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Components/HitboxComponent.cpp"
     "Components/MsPacmanComponent.cpp"
     "Components/RotateComponent.cpp"
+    "Components/ScoreComponent.cpp"
 
     "States/Entities/MsPacmanDying.cpp"
     "States/Entities/MsPacmanIdle.cpp"
