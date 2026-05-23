@@ -5,8 +5,9 @@ namespace Game
 {
     enum class LevelGridType
     {
-        Nothing,
-        Wall,
-        MirrorArea
+        Nothing    = 1,
+        Wall       = 1000000000,
+        MirrorArea = 2
     };
 }
+

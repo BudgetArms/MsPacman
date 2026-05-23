@@ -8,7 +8,7 @@
 
 Game::LevelGridGraph::LevelGridGraph(const glm::vec2& position, const int columns, const int rows,
                                      const glm::ivec2& cellSize) :
-    GridGraph(position, columns, rows, cellSize, true, false)
+    GridGraph(position, columns, rows, cellSize, false, false)
 {
 }
 
