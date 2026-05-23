@@ -66,6 +66,7 @@
 #include "Base/SoundAssets.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
+#include "Components/RenderCenterComponent.hpp"
 #include "Commands/TestDamageCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
@@ -194,8 +195,11 @@ void LoadBackgroundLevel()
 
 
     levelGrid->AddComponent<Game::LevelGridComponent>(*levelGrid, gridSize, 10, 10);
+
     auto const levelGridComponent = levelGrid->GetComponent<Game::LevelGridComponent>();
     levelGridComponent->SetRenderNodes(true);
+
+    levelGrid->AddComponent<Game::RenderCenterComponent>(*levelGrid);
 
     backgroundScene.Add(backgroundTexture);
     backgroundScene.Add(levelGrid);
@@ -336,7 +340,8 @@ void LoadSounds()
     #else
 
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::MixerSoundSystem>()));
+        // std::make_unique<bae::MixerSoundSystem>()));
+        std::make_unique<bae::NullSoundSystem>()));
 
     #endif
 
