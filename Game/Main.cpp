@@ -198,6 +198,7 @@ void LoadBackgroundLevel()
 
     auto const levelGridComponent = levelGrid->GetComponent<Game::LevelGridComponent>();
     levelGridComponent->SetRenderNodes(true);
+    levelGridComponent->SetRenderConnections(true);
 
     levelGrid->AddComponent<Game::RenderCenterComponent>(*levelGrid);
 
