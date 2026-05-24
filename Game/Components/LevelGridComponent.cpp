@@ -42,10 +42,10 @@ void LevelGridComponent::AddConnection(const glm::vec2& positionNode, const Dire
             directions.push_back({ 1, 0 });
             break;
         case Direction::Up:
-            directions.push_back({ -1, 0 });
+            directions.push_back({ 0, -1 });
             break;
         case Direction::Down:
-            directions.push_back({ 1, 0 });
+            directions.push_back({ 0, 1 });
             break;
     }
 
@@ -67,10 +67,10 @@ void LevelGridComponent::RemoveConnection(const glm::vec2& positionNode, const D
             directions.push_back({ 1, 0 });
             break;
         case Direction::Up:
-            directions.push_back({ -1, 0 });
+            directions.push_back({ 0, -1 });
             break;
         case Direction::Down:
-            directions.push_back({ 1, 0 });
+            directions.push_back({ 0, 1 });
             break;
     }
 
