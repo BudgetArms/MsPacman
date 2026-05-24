@@ -66,11 +66,12 @@
 #include "Base/SoundAssets.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
-#include "Components/RenderCenterComponent.hpp"
 #include "Commands/TestDamageCommand.hpp"
+#include "Commands/TestMousePositionCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
+#include "Components/RenderCenterComponent.hpp"
 #include "Components/RotateComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 
@@ -85,9 +86,9 @@ void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
 
 void LoadSounds();
-void TestSoundSystem();
-void TestSoLoudSoundSystem();
 void LoadMsPacman();
+
+void EnableLogMousePosition();
 
 
 int main(int, char*[])
@@ -139,6 +140,8 @@ int main(int, char*[])
 
 void Start()
 {
+    EnableLogMousePosition();
+
     LoadSounds();
 
     // LoadBackground();
@@ -398,5 +401,13 @@ void LoadMsPacman()
 
 
     msPacmanScene.Add(msPacman);
+}
+
+void EnableLogMousePosition()
+{
+    const bae::Mouse& mouse = bae::InputManager::GetInstance().GetMouse();
+
+    auto mousePressedCommand = std::make_unique<Game::TestMousePositionCommand>();
+    mouse.AddMouseCommands(std::move(mousePressedCommand), SDL_BUTTON_RIGHT, bae::InputManager::ButtonState::Pressed);
 }
 
