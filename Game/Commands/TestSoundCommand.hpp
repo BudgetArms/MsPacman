@@ -4,7 +4,6 @@
 
 #include "Base/SoundAssets.hpp"
 
-class MIX_Init;
 
 namespace Game
 {

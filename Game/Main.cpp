@@ -68,12 +68,14 @@
 #include "Commands/MoveOnGridCommand.hpp"
 #include "Commands/TestDamageCommand.hpp"
 #include "Commands/TestMousePositionCommand.hpp"
+#include "Commands/ToggleMuteAllSoundsCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RenderCenterComponent.hpp"
 #include "Components/RotateComponent.hpp"
 #include "Components/SpriteComponent.hpp"
+#include "Wrappers/Mouse.hpp"
 
 
 namespace fs = std::filesystem;
@@ -88,6 +90,7 @@ void LoadRotatingObjectsScene();
 void LoadSounds();
 void LoadMsPacman();
 
+void LoadSoundCommands();
 void EnableLogMousePosition();
 
 
@@ -151,6 +154,8 @@ void Start()
     LoadRotatingObjectsScene();
 
     LoadMsPacman();
+
+    LoadSoundCommands();
 }
 
 void LoadBackground()
@@ -401,6 +406,14 @@ void LoadMsPacman()
 
 
     msPacmanScene.Add(msPacman);
+}
+
+void LoadSoundCommands()
+{
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+
+    auto toggleMuteAllSoundsCommand = std::make_unique<Game::ToggleMuteAllSoundsCommand>();
+    keyboard.AddKeyboardCommands(std::move(toggleMuteAllSoundsCommand), SDLK_F2, bae::InputManager::ButtonState::Down);
 }
 
 void EnableLogMousePosition()
