@@ -212,25 +212,55 @@ void LoadBackgroundLevel()
     // Using position
     levelGridComponent->RemoveConnection({ 385, 112 }, Game::Direction::Down);
     levelGridComponent->RemoveConnection({ 385, 112 }, Game::Direction::Left);
-    levelGridComponent->RemoveNode({ 690, 465 });
 
     levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Left);
     levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Up);
     levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Down);
     levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Right);
+
+
+    levelGridComponent->AddNode({ 786, 64 });
+
     levelGridComponent->RemoveNode({ 690, 200 });
-
-    levelGridComponent->AddNode({ 110, 200 });
-    levelGridComponent->AddNode({ 690, 200 });
-
+    levelGridComponent->RemoveNode({ 690, 465 });
 
     // Using NodeId
     levelGridComponent->RemoveNode(0);
     levelGridComponent->RemoveNode(2);
     levelGridComponent->RemoveNode(11);
 
+    levelGridComponent->RemoveNode(77);
+    levelGridComponent->RemoveNode(87);
+    levelGridComponent->RemoveNode(97);
+
+    levelGridComponent->AddNode(97);
+    levelGridComponent->AddNode(87);
+    levelGridComponent->AddNode(77);
+    levelGridComponent->AddNode(77);
+    levelGridComponent->AddNode(-1);
+    levelGridComponent->AddNode(100);
+    levelGridComponent->AddNode(-2);
+    levelGridComponent->AddNode(99);
+    levelGridComponent->AddNode(100);
+
+    // Readding tests
+    levelGridComponent->RemoveNode(99);
+    levelGridComponent->AddNode(99);
+
+    levelGridComponent->RemoveNode(0);
+    levelGridComponent->AddNode(0);
+    levelGridComponent->AddConnection(0, Game::Direction::Left);
+    levelGridComponent->AddConnection(0, Game::Direction::Down);
+
+    levelGridComponent->AddConnection(11, Game::Direction::Down);
+
+    levelGridComponent->RemoveConnection(88, Game::Direction::Right);
+    levelGridComponent->AddConnection(99, Game::Direction::Left);
+
+    levelGridComponent->UpdateShortestPath();
 
     levelGrid->AddComponent<Game::RenderCenterComponent>(*levelGrid);
+
 
     backgroundScene.Add(backgroundTexture);
     backgroundScene.Add(levelGrid);
