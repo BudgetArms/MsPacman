@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Graphs/GraphNode.hpp"
+#include "Graphs/Node.hpp"
 
 #include "Base/LevelGridType.hpp"
 
 
 namespace Game
 {
-    class LevelGraphNode : public bae::Graphs::GraphNode
+    class LevelGraphNode : public bae::Graphs::Node
     {
     public:
-        LevelGraphNode(const glm::vec2& position);
+        explicit LevelGraphNode(const glm::vec2& position);
 
         LevelGridType m_GridType{ LevelGridType::Nothing };
     };
