@@ -208,6 +208,28 @@ void LoadBackgroundLevel()
     levelGridComponent->SetRenderNodes(true);
     levelGridComponent->SetRenderConnections(true);
 
+
+    // Using position
+    levelGridComponent->RemoveConnection({ 385, 112 }, Game::Direction::Down);
+    levelGridComponent->RemoveConnection({ 385, 112 }, Game::Direction::Left);
+    levelGridComponent->RemoveNode({ 690, 465 });
+
+    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Left);
+    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Up);
+    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Down);
+    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Right);
+    levelGridComponent->RemoveNode({ 690, 200 });
+
+    levelGridComponent->AddNode({ 110, 200 });
+    levelGridComponent->AddNode({ 690, 200 });
+
+
+    // Using NodeId
+    levelGridComponent->RemoveNode(0);
+    levelGridComponent->RemoveNode(2);
+    levelGridComponent->RemoveNode(11);
+
+
     levelGrid->AddComponent<Game::RenderCenterComponent>(*levelGrid);
 
     backgroundScene.Add(backgroundTexture);

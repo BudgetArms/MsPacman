@@ -46,20 +46,18 @@ namespace Game
         [[nodiscard]] bool IsInGrid(const bae::Graphs::GridPosition& gridPosition) const;
 
 
-        [[nodiscard]] std::vector<bae::Graphs::Node*> GetShortestPathNodes(int startNodeId, int endNodeId) const;
-        [[nodiscard]] std::vector<bae::Graphs::Node*> GetShortestPathNodes(const glm::vec2& startPos,
-                                                                           const glm::vec2& endPos) const;
+        [[nodiscard]] std::vector<glm::vec2> GetShortestPath(int startNodeId, int endNodeId) const;
+        [[nodiscard]] std::vector<glm::vec2> GetShortestPath(const glm::vec2& startPos,
+                                                             const glm::vec2& endPos) const;
 
-        [[nodiscard]] std::vector<glm::vec2> GetShortestPathPositions(int startNodeId, int endNodeId) const;
-        [[nodiscard]] std::vector<glm::vec2> GetShortestPathPositions(const glm::vec2& startPos,
-                                                                      const glm::vec2& endPos) const;
+        void UpdateShortestPath();
 
     private:
         std::unique_ptr<LevelGridGraph> m_LevelGridGraph;
         bae::Graphs::AStar m_AStar;
 
         //
-        std::vector<bae::Graphs::Node*> m_ShortestPath{};
+        std::vector<glm::vec2> m_ShortestPath{};
     };
 }
 

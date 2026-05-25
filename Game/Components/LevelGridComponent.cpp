@@ -19,7 +19,7 @@ LevelGridComponent::LevelGridComponent(bae::GameObject& owner, const glm::vec2& 
     LevelGridComponent(owner, columns, rows,
                        glm::ivec2(static_cast<float>(gridSize.x) / columns, static_cast<float>(gridSize.y) / rows))
 {
-    m_ShortestPath = GetShortestPathNodes(20, 99);
+    UpdateShortestPath();
 }
 
 LevelGridComponent::~LevelGridComponent() = default;
@@ -30,14 +30,9 @@ void LevelGridComponent::Render() const
     m_LevelGridGraph->Render();
 
     // Render AStar Path
-    for(const bae::Graphs::Node* node : m_ShortestPath)
+    for(const glm::vec2& pos : m_ShortestPath)
     {
-        if(!node || !node->IsValid())
-        {
-            continue;
-        }
-
-        bae::Utils::DrawCircle(node->m_Position, 10, bae::Utils::Color::Orange);
+        bae::Utils::DrawCircle(pos, 10, bae::Utils::Color::Orange);
     }
 }
 
@@ -45,8 +40,13 @@ void LevelGridComponent::Render() const
 void LevelGridComponent::AddNode(const int nodeId) const
 {
     // Gets existing (grid locked) node position
-    const glm::vec2 positionNode = m_LevelGridGraph->GetNodePos(nodeId);
-    m_LevelGridGraph->AddNode(std::make_unique<bae::Graphs::Node>(positionNode));
+    const glm::vec2 positionNode                 = m_LevelGridGraph->GetNodePos(nodeId);
+    const bae::Graphs::GridPosition gridPosition = m_LevelGridGraph->GetGridPosition(nodeId);
+
+    if(m_LevelGridGraph->IsWithinBounds(gridPosition))
+    {
+        m_LevelGridGraph->AddNode(std::make_unique<bae::Graphs::Node>(positionNode));
+    }
 }
 
 void LevelGridComponent::AddNode(const glm::vec2& positionNode) const
@@ -159,46 +159,35 @@ bool LevelGridComponent::IsInGrid(const bae::Graphs::GridPosition& gridPosition)
 }
 
 
-std::vector<bae::Graphs::Node*> LevelGridComponent::GetShortestPathNodes(
-    const int startNodeId, const int endNodeId) const
+std::vector<glm::vec2> LevelGridComponent::GetShortestPath(const int startNodeId, const int endNodeId) const
 {
     bae::Graphs::Node* startNode     = m_LevelGridGraph->GetNode(m_LevelGridGraph->GetGridPosition(startNodeId));
     const bae::Graphs::Node* endNode = m_LevelGridGraph->GetNode(m_LevelGridGraph->GetGridPosition(endNodeId));
 
     if(!startNode || !startNode->IsValid())
     {
-        return std::vector<bae::Graphs::Node*>{};
+        return std::vector<glm::vec2>{};
     }
     if(!endNode || !endNode->IsValid())
     {
-        return std::vector<bae::Graphs::Node*>{};
+        return std::vector<glm::vec2>{};
     }
 
-    return m_AStar.FindPath(startNode, endNode);
-}
-
-std::vector<bae::Graphs::Node*> LevelGridComponent::GetShortestPathNodes(const glm::vec2& startPos,
-                                                                         const glm::vec2& endPos) const
-{
-    const int startNodeId = m_LevelGridGraph->GetNodeIdAtPosition(startPos);
-    const int endNodeId   = m_LevelGridGraph->GetNodeIdAtPosition(endPos);
-
-    return GetShortestPathNodes(startNodeId, endNodeId);
-}
-
-std::vector<glm::vec2> LevelGridComponent::GetShortestPathPositions(int startNodeId, int endNodeId) const
-{
-    std::vector<bae::Graphs::Node*> pathNodes = GetShortestPathNodes(startNodeId, endNodeId);
+    std::vector<bae::Graphs::Node*> pathNodes = m_AStar.FindPath(startNode, endNode);
     return bae::Graphs::ConvertNodesToPositions(pathNodes);
 }
 
 
-std::vector<glm::vec2> LevelGridComponent::GetShortestPathPositions(const glm::vec2& startPos,
-                                                                    const glm::vec2& endPos) const
+std::vector<glm::vec2> LevelGridComponent::GetShortestPath(const glm::vec2& startPos, const glm::vec2& endPos) const
 {
     const int startNodeId = m_LevelGridGraph->GetNodeIdAtPosition(startPos);
     const int endNodeId   = m_LevelGridGraph->GetNodeIdAtPosition(endPos);
 
-    return GetShortestPathPositions(startNodeId, endNodeId);
+    return GetShortestPath(startNodeId, endNodeId);
+}
+
+void LevelGridComponent::UpdateShortestPath()
+{
+    m_ShortestPath = GetShortestPath(0, 99);
 }
 
