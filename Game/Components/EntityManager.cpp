@@ -12,12 +12,17 @@ EntityManager::EntityManager(bae::Scene* scene, bae::GameObject* gameObject) :
 
 LevelGridComponent* EntityManager::GetLevelGridComponent() const
 {
+    if(!m_Scene)
+    {
+        return nullptr;
+    }
+
     if(!m_GameObject)
     {
         return nullptr;
     }
 
-    
+
     return m_GameObject->GetComponent<LevelGridComponent>();
 }
 

@@ -224,7 +224,7 @@ void LevelManagerComponent::CreateGrid()
     }
 
 
-    LevelJson levelJson = currentLevelJson.value();
+    const LevelJson levelJson = currentLevelJson.value();
 
     const bae::WindowSize gridDimensions = levelJson.Dimensions;
     const glm::vec2 gridSize             = { gridDimensions.Width, gridDimensions.Height };
@@ -237,7 +237,7 @@ void LevelManagerComponent::CreateGrid()
         throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get LevelScene!"));
     }
 
-    auto levelGrid                   = std::make_shared<bae::GameObject>("LevelGrid");
+    const auto levelGrid             = std::make_shared<bae::GameObject>("LevelGrid");
     const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
     // gridSize
