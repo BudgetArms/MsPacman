@@ -1,0 +1,153 @@
+﻿{
+  "Name": "Level 1 :D",
+  "Grid": {
+    "Columns": 28,
+    "Rows": 31,
+    "Dimensions": {
+      "Width": 448,
+      "Height": 496
+    }
+  },
+  "PlayerStart": {
+    "Column": 7,
+    "Row": 9
+  },
+  "MirrorAreas": [
+    {
+      "Column": 0,
+      "Row": 10
+    },
+    {
+      "Column": 27,
+      "Row": 10
+    },
+    {
+      "Column": 0,
+      "Row": 20
+    },
+    {
+      "Column": 27,
+      "Row": 20
+    }
+  ],
+  "AmountOfDotsCollectedForBonusItem": 100,
+  "ScoreMap": {
+    "PacDot": 10,
+    "PowerPellet": 50,
+    "GhostOneInSuccession": 200,
+    "GhostTwoInSuccession": 400,
+    "GhostThreeInSuccession": 800,
+    "GhostFourInSuccession": 1600,
+    "BonusItem": 300
+  },
+  "NodesToAddAfterRemoval": [
+    {
+      "Column": 0,
+      "Row": 8
+    },
+    {
+      "Column": 0,
+      "Row": 17
+    },
+    {
+      "Column": 27,
+      "Row": 8
+    },
+    {
+      "Column": 27,
+      "Row": 17
+    }
+  ],
+  "NodeColumnsToRemove": [
+    0,
+    27
+  ],
+  "NodeRowsToRemove": [
+    0,
+    30
+  ],
+  "NodesToRemove": [
+    {
+      "Column": 2,
+      "Row": 2
+    },
+    {
+      "Column": 3,
+      "Row": 2
+    },
+    {
+      "Column": 4,
+      "Row": 2
+    },
+    {
+      "Column": 5,
+      "Row": 2
+    },
+    {
+      "Column": 2,
+      "Row": 3
+    },
+    {
+      "Column": 3,
+      "Row": 3
+    },
+    {
+      "Column": 4,
+      "Row": 3
+    },
+    {
+      "Column": 5,
+      "Row": 3
+    },
+    {
+      "Column": 7,
+      "Row": 1
+    },
+    {
+      "Column": 7,
+      "Row": 2
+    },
+    {
+      "Column": 7,
+      "Row": 3
+    },
+    {
+      "Column": 8,
+      "Row": 1
+    },
+    {
+      "Column": 8,
+      "Row": 2
+    },
+    {
+      "Column": 8,
+      "Row": 3
+    },
+    {
+      "Column": 19,
+      "Row": 1
+    },
+    {
+      "Column": 19,
+      "Row": 2
+    },
+    {
+      "Column": 19,
+      "Row": 3
+    },
+    {
+      "Column": 20,
+      "Row": 1
+    },
+    {
+      "Column": 20,
+      "Row": 2
+    },
+    {
+      "Column": 20,
+      "Row": 3
+    }
+  ]
+}
+
+
