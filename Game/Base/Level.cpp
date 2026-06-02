@@ -65,18 +65,6 @@ void Game::from_json(const nlohmann::json& json, LevelJson& level)
     }
 
 
-    for(const auto& nodeToAdd : json.at("NodesToAddAfterRemoval"))
-    {
-        const bae::Graphs::GridPosition gridPosition
-        {
-            .Column = nodeToAdd.at("Column"),
-            .Row    = nodeToAdd.at("Row"),
-        };
-
-        level.NodesToAddAfterRemoval.insert(gridPosition);
-    }
-
-
     for(const auto& nodeColumnToRemove : json.at("NodeColumnsToRemove"))
     {
         bae::Graphs::GridPosition gridPosition
@@ -109,12 +97,42 @@ void Game::from_json(const nlohmann::json& json, LevelJson& level)
 
     for(const auto& nodeToRemove : json.at("NodesToRemove"))
     {
-        const bae::Graphs::GridPosition gridPosition
+        bae::Graphs::GridPosition gridPosition
         {
             .Column = nodeToRemove.at("Column"),
             .Row    = nodeToRemove.at("Row"),
         };
 
-        level.NodesToRemove.insert(gridPosition);
+        for(int i{}; i < nodeToRemove.at("Width"); ++i)
+        {
+            for(int j{}; j < nodeToRemove.at("Height"); ++j)
+            {
+                level.NodesToRemove.insert(gridPosition);
+                ++gridPosition.Row;
+            }
+            ++gridPosition.Column;
+            gridPosition.Row = nodeToRemove.at("Row");
+        }
+    }
+
+
+    for(const auto& nodeToAdd : json.at("NodesToAddAfterRemoval"))
+    {
+        bae::Graphs::GridPosition gridPosition
+        {
+            .Column = nodeToAdd.at("Column"),
+            .Row    = nodeToAdd.at("Row"),
+        };
+
+        for(int i{}; i < nodeToAdd.at("Width"); ++i)
+        {
+            for(int j{}; j < nodeToAdd.at("Height"); ++j)
+            {
+                level.NodesToAddAfterRemoval.insert(gridPosition);
+                ++gridPosition.Row;
+            }
+            ++gridPosition.Column;
+            gridPosition.Row = nodeToAdd.at("Row");
+        }
     }
 }
