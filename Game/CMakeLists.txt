@@ -43,6 +43,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Components/RenderCenterComponent.cpp"
     "Components/LifeComponent.cpp"
     "Components/LevelGridComponent.cpp"
+    "Components/LevelManagerComponent.cpp"
     "Components/HitboxComponent.cpp"
     "Components/MsPacmanComponent.cpp"
     "Components/RotateComponent.cpp"
