@@ -60,11 +60,24 @@ void LevelGridComponent::RemoveNode(const int nodeId) const
     m_LevelGridGraph->RemoveNode(nodeId);
 }
 
-void LevelGridComponent::RemoveNode(const glm::vec2& positionNode) const
+void LevelGridComponent::RemoveNode(const bae::Graphs::GridPosition& position) const
+{
+    if(!m_LevelGridGraph->IsWithinBounds(position))
+    {
+        std::cout << FUNCTION_NAME << " Failed! GridPosition not in Grid!" << '\n';
+        return;
+    }
+
+    const int nodeId = m_LevelGridGraph->GetNodeId(position);
+    RemoveNode(nodeId);
+}
+
+void LevelGridComponent::RemoveNodeAtPosition(const glm::vec2& positionNode) const
 {
     const int nodeId = m_LevelGridGraph->GetNodeIdAtPosition(positionNode);
     RemoveNode(nodeId);
 }
+
 
 void LevelGridComponent::AddConnection(const int nodeId, const Direction direction) const
 {
@@ -124,6 +137,16 @@ void LevelGridComponent::RemoveConnection(const glm::vec2& positionNode, const D
 {
     const int nodeId = m_LevelGridGraph->GetNodeIdAtPosition(positionNode);
     RemoveConnection(nodeId, direction);
+}
+
+bool LevelGridComponent::GetRenderCells() const
+{
+    return m_LevelGridGraph->m_bRenderCells;
+}
+
+void LevelGridComponent::SetRenderCells(const bool bRenderCells) const
+{
+    m_LevelGridGraph->m_bRenderCells = bRenderCells;
 }
 
 bool LevelGridComponent::GetRenderNodes() const
@@ -188,6 +211,6 @@ std::vector<glm::vec2> LevelGridComponent::GetShortestPath(const glm::vec2& star
 
 void LevelGridComponent::UpdateShortestPath()
 {
-    m_ShortestPath = GetShortestPath(0, 99);
+    // m_ShortestPath = GetShortestPath(0, 20);
 }
 

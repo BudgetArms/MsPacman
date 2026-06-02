@@ -25,7 +25,8 @@ namespace Game
         void AddNode(const glm::vec2& positionNode) const;
 
         void RemoveNode(int nodeId) const;
-        void RemoveNode(const glm::vec2& positionNode) const;
+        void RemoveNode(const bae::Graphs::GridPosition& position) const;
+        void RemoveNodeAtPosition(const glm::vec2& positionNode) const;
 
         // Connections
         void AddConnection(int nodeId, Direction direction) const;
@@ -34,6 +35,9 @@ namespace Game
         void RemoveConnection(int nodeId, Direction direction) const;
         void RemoveConnection(const glm::vec2& positionNode, Direction direction) const;
 
+
+        [[nodiscard]] bool GetRenderCells() const;
+        void SetRenderCells(bool bRenderCells) const;
 
         [[nodiscard]] bool GetRenderNodes() const;
         void SetRenderNodes(bool bRenderNodes) const;
