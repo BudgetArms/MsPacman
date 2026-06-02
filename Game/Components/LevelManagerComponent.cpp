@@ -279,6 +279,8 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
+            HandlePlayerDied();
+            break;
         case Events::GameOver:
         case Events::LevelWon:
             break;
@@ -295,6 +297,22 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
         case Events::LivesChanged:
         case Events::InvincibilityChanged:
         case Events::NoEvent:
+            break;
+    }
+}
+
+void LevelManagerComponent::HandlePlayerDied() const
+{
+    switch(m_GameMode)
+    {
+        case GameMode::Singleplayer:
+            std::cout << FUNCTION_NAME << " Singleplayer\n";
+            break;
+        case GameMode::CoOp:
+            std::cout << FUNCTION_NAME << " Co-Op\n";
+            break;
+        case GameMode::Versus:
+            std::cout << FUNCTION_NAME << " Versus\n";
             break;
     }
 }
