@@ -71,6 +71,7 @@
 #include "Commands/ToggleMuteAllSoundsCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
+#include "Components/LevelManagerComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RenderCenterComponent.hpp"
 #include "Components/RotateComponent.hpp"
@@ -82,7 +83,8 @@ namespace fs = std::filesystem;
 
 void Start();
 void LoadBackground();
-void LoadBackgroundLevel();
+void LoadLevelManager();
+void LoadLevelGrid();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
 void LoadRotatingObjectsScene();
@@ -146,9 +148,9 @@ void Start()
     EnableLogMousePosition();
 
     LoadSounds();
+    LoadLevelManager();
+    // LoadLevelGrid();
 
-    // LoadBackground();
-    LoadBackgroundLevel();
     LoadFpsCounterScene();
     LoadGameNameScene();
     LoadRotatingObjectsScene();
@@ -186,13 +188,31 @@ void LoadBackground()
     bae::Utils::DrawCircle({ 0, 0 }, 1000, bae::Utils::Color::Blue);
 }
 
-void LoadBackgroundLevel()
+void LoadLevelManager()
+{
+    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene("ManagerComponent Scene");
+
+    const auto levelManager = std::make_shared<bae::GameObject>("LevelManagerObject");
+    levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
+
+    Game::LevelManagerComponent* const levelManagerComponent =
+            levelManager->GetComponent<Game::LevelManagerComponent>();
+
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
+    levelManagerComponent->SetSpriteSheetWorldLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f });
+    levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
+
+    levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
+    levelManagerComponent->CreateLevel();
+
+    managerComponentScene.Add(levelManager);
+
+    bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
+}
+
+void LoadLevelGrid()
 {
     auto& backgroundScene = bae::SceneManager::GetInstance().CreateScene("BackgroundLevel Scene");
-
-    const auto backgroundTexture = std::make_shared<bae::GameObject>("BackgroundTexture");
-    backgroundTexture->AddComponent<bae::SpriteComponent>(*backgroundTexture, "Textures/Level/Levels.png",
-                                                          SDL_FRect(0, 0, 224, 1488), 1, 6);
 
     const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
 
@@ -219,7 +239,7 @@ void LoadBackgroundLevel()
     levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Right);
 
 
-    levelGridComponent->AddNode({ 786, 64 });
+    levelGridComponent->AddNodeAtPosition({ 786, 64 });
 
     levelGridComponent->RemoveNode({ 690, 200 });
     levelGridComponent->RemoveNode({ 690, 465 });
@@ -261,8 +281,6 @@ void LoadBackgroundLevel()
 
     levelGrid->AddComponent<Game::RenderCenterComponent>(*levelGrid);
 
-
-    backgroundScene.Add(backgroundTexture);
     backgroundScene.Add(levelGrid);
 }
 
