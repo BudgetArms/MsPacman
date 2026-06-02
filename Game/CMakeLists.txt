@@ -39,6 +39,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Commands/TestMousePositionCommand.cpp"
     "Commands/ToggleMuteAllSoundsCommand.cpp"
 
+    "Components/EntityManager.cpp"
     "Components/RenderCenterComponent.cpp"
     "Components/LifeComponent.cpp"
     "Components/LevelGridComponent.cpp"
