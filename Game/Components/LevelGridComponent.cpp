@@ -49,7 +49,19 @@ void LevelGridComponent::AddNode(const int nodeId) const
     }
 }
 
-void LevelGridComponent::AddNode(const glm::vec2& positionNode) const
+void LevelGridComponent::AddNode(const bae::Graphs::GridPosition& position) const
+{
+    if(!m_LevelGridGraph->IsWithinBounds(position))
+    {
+        std::cout << FUNCTION_NAME << " Failed! GridPosition not in Grid!" << '\n';
+        return;
+    }
+
+    const int nodeId = m_LevelGridGraph->GetNodeId(position);
+    AddNode(nodeId);
+}
+
+void LevelGridComponent::AddNodeAtPosition(const glm::vec2& positionNode) const
 {
     const int nodeId = m_LevelGridGraph->GetNodeIdAtPosition(positionNode);
     AddNode(nodeId);
@@ -137,6 +149,11 @@ void LevelGridComponent::RemoveConnection(const glm::vec2& positionNode, const D
 {
     const int nodeId = m_LevelGridGraph->GetNodeIdAtPosition(positionNode);
     RemoveConnection(nodeId, direction);
+}
+
+void LevelGridComponent::AddConnectionsToNeighbors(bae::Graphs::GridPosition position) const
+{
+    m_LevelGridGraph->AddConnectionsToAdjacentCells(position);
 }
 
 bool LevelGridComponent::GetRenderCells() const
