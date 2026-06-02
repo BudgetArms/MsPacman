@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
 
 #include "Core/HelperFunctions.hpp"
 
@@ -11,11 +10,13 @@ namespace Game
 {
     enum class Events
     {
-        GamePaused,
-        GameResumed,
+        // GamePaused,
+        // GameResumed,
         PlayerDied,
         GameOver,
-        GameWon,
+        // GameWon,
+        LevelWon,
+        LevelLost,
         GhostDied,
         BeginLevel,
         RestartLevel,
@@ -28,11 +29,13 @@ namespace Game
 
     inline const std::vector<std::pair<Events, unsigned int>> g_EventsMap
     {
-        { Events::GamePaused, bae::HashSDBM("GamePaused") },
-        { Events::GameResumed, bae::HashSDBM("GameResumed") },
+        // { Events::GamePaused, bae::HashSDBM("GamePaused") },
+        // { Events::GameResumed, bae::HashSDBM("GameResumed") },
         { Events::PlayerDied, bae::HashSDBM("PlayerDied") },
         { Events::GameOver, bae::HashSDBM("GameOver") },
-        { Events::GameWon, bae::HashSDBM("GameWon") },
+        { Events::LevelWon, bae::HashSDBM("LevelWon") },
+        { Events::LevelLost, bae::HashSDBM("LevelLost") },
+        // { Events::GameWon, bae::HashSDBM("GameWon") },
         { Events::GhostDied, bae::HashSDBM("GhostDied") },
         { Events::BeginLevel, bae::HashSDBM("BeginLevel") },
         { Events::RestartLevel, bae::HashSDBM("RestartLevel") },

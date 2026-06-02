@@ -24,14 +24,13 @@ namespace Game
             std::cout << "MoveCommand::HandleEvent: ";
             switch(event)
             {
-                case Events::GamePaused:
-                case Events::GameResumed:
+                // case Events::GamePaused:
+                // case Events::GameResumed:
                 case Events::PlayerDied:
                     break;
                 case Events::GameOver:
                     std::cout << " GameOver" << '\n';
                     break;
-                case Events::GameWon:
                 case Events::GhostDied:
                     break;
                 case Events::BeginLevel:

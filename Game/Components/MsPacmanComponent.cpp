@@ -59,7 +59,6 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*)
     {
         case Events::PlayerDied:
         case Events::GameOver:
-        case Events::GameWon:
         case Events::GhostDied:
         case Events::BeginLevel:
         case Events::RestartLevel:
@@ -75,8 +74,8 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*)
             std::cout << FUNCTION_NAME << " Score changed: " << scoreComp->GetScore() << '\n';
         }
         break;
-        case Events::GamePaused:
-        case Events::GameResumed:
+        // case Events::GamePaused:
+        // case Events::GameResumed:
         case Events::NoEvent:
         default:;
             break;
