@@ -40,24 +40,6 @@
     "GhostFourInSuccession": 1600,
     "BonusItem": 300
   },
-  "NodesToAddAfterRemoval": [
-    {
-      "Column": 0,
-      "Row": 8
-    },
-    {
-      "Column": 0,
-      "Row": 17
-    },
-    {
-      "Column": 27,
-      "Row": 8
-    },
-    {
-      "Column": 27,
-      "Row": 17
-    }
-  ],
   "NodeColumnsToRemove": [
     0,
     27
@@ -68,84 +50,276 @@
   ],
   "NodesToRemove": [
     {
-      "Column": 2,
-      "Row": 2
+      "Column": 10,
+      "Row": 12,
+      "Width": 8,
+      "Height": 5
     },
     {
-      "Column": 3,
-      "Row": 2
+      "Column": 7,
+      "Row": 1,
+      "Width": 2,
+      "Height": 3
+    },
+    {
+      "Column": 19,
+      "Row": 1,
+      "Width": 2,
+      "Height": 3
+    },
+    {
+      "Column": 2,
+      "Row": 2,
+      "Width": 4,
+      "Height": 2
+    },
+    {
+      "Column": 10,
+      "Row": 2,
+      "Width": 8,
+      "Height": 2
+    },
+    {
+      "Column": 22,
+      "Row": 2,
+      "Width": 4,
+      "Height": 2
+    },
+    {
+      "Column": 7,
+      "Row": 5,
+      "Width": 5,
+      "Height": 3
+    },
+    {
+      "Column": 16,
+      "Row": 5,
+      "Width": 5,
+      "Height": 3
     },
     {
       "Column": 4,
-      "Row": 2
+      "Row": 21,
+      "Width": 5,
+      "Height": 2
     },
     {
-      "Column": 5,
-      "Row": 2
+      "Column": 19,
+      "Row": 21,
+      "Width": 5,
+      "Height": 2
     },
     {
       "Column": 2,
-      "Row": 3
+      "Row": 24,
+      "Width": 4,
+      "Height": 5
     },
     {
-      "Column": 3,
-      "Row": 3
+      "Column": 22,
+      "Row": 24,
+      "Width": 4,
+      "Height": 5
     },
     {
       "Column": 4,
-      "Row": 3
+      "Row": 5,
+      "Width": 2,
+      "Height": 6
     },
     {
-      "Column": 5,
-      "Row": 3
+      "Column": 13,
+      "Row": 5,
+      "Width": 2,
+      "Height": 6
+    },
+    {
+      "Column": 22,
+      "Row": 5,
+      "Width": 2,
+      "Height": 6
+    },
+    {
+      "Column": 4,
+      "Row": 12,
+      "Width": 2,
+      "Height": 5
+    },
+    {
+      "Column": 22,
+      "Row": 12,
+      "Width": 2,
+      "Height": 5
     },
     {
       "Column": 7,
-      "Row": 1
+      "Row": 15,
+      "Width": 2,
+      "Height": 4
+    },
+    {
+      "Column": 19,
+      "Row": 15,
+      "Width": 2,
+      "Height": 4
+    },
+    {
+      "Column": 13,
+      "Row": 18,
+      "Width": 2,
+      "Height": 4
     },
     {
       "Column": 7,
-      "Row": 2
+      "Row": 24,
+      "Width": 2,
+      "Height": 5
+    },
+    {
+      "Column": 13,
+      "Row": 24,
+      "Width": 2,
+      "Height": 4
+    },
+    {
+      "Column": 19,
+      "Row": 24,
+      "Width": 2,
+      "Height": 5
+    },
+    {
+      "Column": 4,
+      "Row": 9,
+      "Width": 5,
+      "Height": 2
+    },
+    {
+      "Column": 10,
+      "Row": 9,
+      "Width": 8,
+      "Height": 2
+    },
+    {
+      "Column": 19,
+      "Row": 9,
+      "Width": 5,
+      "Height": 2
+    },
+    {
+      "Column": 4,
+      "Row": 12,
+      "Width": 5,
+      "Height": 2
+    },
+    {
+      "Column": 19,
+      "Row": 12,
+      "Width": 5,
+      "Height": 2
+    },
+    {
+      "Column": 4,
+      "Row": 18,
+      "Width": 8,
+      "Height": 2
+    },
+    {
+      "Column": 16,
+      "Row": 18,
+      "Width": 8,
+      "Height": 2
+    },
+    {
+      "Column": 10,
+      "Row": 21,
+      "Width": 8,
+      "Height": 2
     },
     {
       "Column": 7,
-      "Row": 3
+      "Row": 24,
+      "Width": 5,
+      "Height": 2
     },
     {
-      "Column": 8,
-      "Row": 1
+      "Column": 16,
+      "Row": 24,
+      "Width": 5,
+      "Height": 2
     },
     {
-      "Column": 8,
-      "Row": 2
+      "Column": 16,
+      "Row": 24,
+      "Width": 5,
+      "Height": 2
     },
     {
-      "Column": 8,
-      "Row": 3
+      "Column": 10,
+      "Row": 27,
+      "Width": 8,
+      "Height": 2
     },
     {
-      "Column": 19,
-      "Row": 1
+      "Column": 1,
+      "Row": 5,
+      "Width": 2,
+      "Height": 3
     },
     {
-      "Column": 19,
-      "Row": 2
+      "Column": 25,
+      "Row": 5,
+      "Width": 2,
+      "Height": 3
     },
     {
-      "Column": 19,
-      "Row": 3
+      "Column": 1,
+      "Row": 9,
+      "Width": 2,
+      "Height": 8
     },
     {
-      "Column": 20,
-      "Row": 1
+      "Column": 25,
+      "Row": 9,
+      "Width": 2,
+      "Height": 8
     },
     {
-      "Column": 20,
-      "Row": 2
+      "Column": 1,
+      "Row": 18,
+      "Width": 2,
+      "Height": 5
     },
     {
-      "Column": 20,
-      "Row": 3
+      "Column": 25,
+      "Row": 18,
+      "Width": 2,
+      "Height": 5
+    }
+  ],
+  "NodesToAddAfterRemoval": [
+    {
+      "Column": 0,
+      "Row": 8,
+      "Width": 1,
+      "Height": 1
+    },
+    {
+      "Column": 0,
+      "Row": 17,
+      "Width": 1,
+      "Height": 1
+    },
+    {
+      "Column": 27,
+      "Row": 8,
+      "Width": 1,
+      "Height": 1
+    },
+    {
+      "Column": 27,
+      "Row": 17,
+      "Width": 1,
+      "Height": 1
     }
   ]
 }
