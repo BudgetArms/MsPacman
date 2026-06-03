@@ -20,7 +20,7 @@ void MsPacmanIdle::OnEnter()
     std::cout << FUNCTION_NAME << '\n';
 
     bae::SoundSystem& soundSystem   = bae::ServiceLocator::GetSoundSystem();
-    const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundAssets::BeepSound);
+    const bae::SoundID startSoundID = Game::Sounds::GetSoundId(Sounds::SoundAssets::EatEnergizer);
 
     m_PlayingActiveSoundId = soundSystem.Play(startSoundID);
     soundSystem.SetVolume(m_PlayingActiveSoundId, 0.1f);
