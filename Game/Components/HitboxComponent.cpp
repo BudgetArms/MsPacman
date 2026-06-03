@@ -7,7 +7,7 @@ using namespace Game;
 
 
 HitboxComponent::HitboxComponent(bae::GameObject& owner, const glm::vec2& dimensions, const glm::vec2& offsetPosition) :
-    Component{ owner },
+    Component(owner),
     m_Dimensions{ dimensions },
     m_OffsetPosition{ offsetPosition }
 {

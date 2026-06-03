@@ -1,7 +1,7 @@
 #include "ScoreComponent.hpp"
 
 #include "Base/Events.hpp"
-#include "Core/EventQueue.hpp"
+
 
 using namespace Game;
 

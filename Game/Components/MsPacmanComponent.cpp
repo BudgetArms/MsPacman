@@ -1,6 +1,5 @@
 #include "MsPacmanComponent.hpp"
 
-#include "ScoreComponent.hpp"
 #include "Base/Events.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
@@ -8,6 +7,7 @@
 #include "Managers/ResourceManager.hpp"
 
 #include "Components/LifeComponent.hpp"
+#include "Components/ScoreComponent.hpp"
 #include "States/Entities/MsPacmanDying.hpp"
 #include "States/Entities/MsPacmanIdle.hpp"
 

@@ -17,7 +17,6 @@
 #endif
 
 #include <imgui.h>
-#include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
@@ -50,7 +49,6 @@
 #include "Managers/ResourceManager.hpp"
 #include "Managers/SceneManager.hpp"
 
-#include "Wrappers/Controller.hpp"
 #include "Wrappers/Keyboard.hpp"
 #include "Wrappers/Texture2D.hpp"
 

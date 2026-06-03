@@ -1,7 +1,7 @@
 #include "TestDamageCommand.hpp"
 
 #include "Components/LifeComponent.hpp"
-#include "Components/MsPacmanComponent.hpp"
+#include "Core/HelperFunctions.hpp"
 
 
 using namespace Game;
@@ -25,7 +25,7 @@ void TestDamageCommand::Execute()
         return;
     }
 
-    std::cout << "TestDamageCommand: removing one life" << '\n';
+    std::cout << FUNCTION_NAME << " removing one life" << '\n';
     lifeComponent->RemoveLife();
-    std::cout << "TestDamageCommand: removed one life, lives left: " << lifeComponent->GetLives() << '\n';
+    std::cout << FUNCTION_NAME << " removed one life, lives left: " << lifeComponent->GetLives() << '\n';
 }
