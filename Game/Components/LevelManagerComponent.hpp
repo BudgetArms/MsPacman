@@ -37,9 +37,6 @@ namespace Game
         void SetSpriteSheetWorldRotation(float rotation) const;
         void SetSpriteSheetWorldScale(const glm::vec2& scale) const;
 
-
-        static constexpr std::string_view m_LevelManagersSceneName{ "LevelManagers" };
-
     private:
         void WonLevel();
         void LostLevel();
@@ -68,7 +65,6 @@ namespace Game
         std::unordered_map<int, LevelJson> m_LevelJson{};
 
         const std::filesystem::path m_BackgroundTexturePath{ "Textures/Level/Levels.png" };
-        const std::string m_LevelSceneName{ "LevelScene" };
         static constexpr int m_LevelRepeatTimes{ 2 };
         static constexpr int m_LevelTextures{ 4 };
     };

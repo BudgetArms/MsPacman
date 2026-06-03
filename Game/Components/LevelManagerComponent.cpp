@@ -8,6 +8,7 @@
 #include "LevelGridComponent.hpp"
 #include "MsPacmanComponent.hpp"
 #include "RenderCenterComponent.hpp"
+#include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/TestDamageCommand.hpp"
@@ -29,7 +30,7 @@ LevelManagerComponent::LevelManagerComponent(bae::GameObject& owner, const GameM
     m_BackgroundSpriteSheet = std::make_unique<bae::SpriteSheet>(m_BackgroundTexturePath,
                                                                  SDL_FRect(0, 0, 224, 1488), 1, 6);
 
-    bae::SceneManager::GetInstance().CreateScene(m_LevelSceneName);
+    bae::SceneManager::GetInstance().CreateScene(g_LevelSceneName.data());
 }
 
 LevelManagerComponent::~LevelManagerComponent()
@@ -192,7 +193,7 @@ void LevelManagerComponent::ClearLevel() const
         return;
     }
 
-    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(m_LevelSceneName);
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
     if(scene)
     {
         scene->ForceRemoveAll();
@@ -234,7 +235,7 @@ void LevelManagerComponent::CreateGrid()
     const int nrColumns                  = levelJson.NrColumns;
     const int nrRows                     = levelJson.NrRows;
 
-    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(m_LevelSceneName);
+    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
     if(!scene)
     {
         throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get LevelScene!"));
@@ -324,7 +325,7 @@ void LevelManagerComponent::HandlePlayerDied() const
 void LevelManagerComponent::AddPlayers() const
 {
     // Player One & Controls
-    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(m_LevelSceneName);
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
     const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
 
