@@ -67,8 +67,7 @@
 #include "Base/SoundAssets.hpp"
 #include "Commands/TestMousePositionCommand.hpp"
 #include "Commands/ToggleMuteAllSoundsCommand.hpp"
-#include "Components/HitboxComponent.hpp"
-#include "Components/LevelGridComponent.hpp"
+#include "Components/EntityManagerComponent.hpp"
 #include "Components/LevelManagerComponent.hpp"
 #include "Wrappers/Mouse.hpp"
 
@@ -77,6 +76,7 @@ namespace fs = std::filesystem;
 
 void Start();
 void LoadBackground();
+void LoadEntityManager();
 void LoadLevelManager();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
@@ -139,8 +139,8 @@ void Start()
     EnableLogMousePosition();
 
     LoadSounds();
+    LoadEntityManager();
     LoadLevelManager();
-    // LoadLevelGrid();
 
     LoadFpsCounterScene();
     LoadGameNameScene();
@@ -175,6 +175,18 @@ void LoadBackground()
     backgroundScene.Add(backgroundLogoTexture);
 
     bae::Utils::DrawCircle({ 0, 0 }, 1000, bae::Utils::Color::Blue);
+}
+
+void LoadEntityManager()
+{
+    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(
+        Game::LevelManagerComponent::m_LevelManagersSceneName.data());
+
+
+    const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
+    entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
+
+    managerComponentScene.Add(entityManager);
 }
 
 void LoadLevelManager()
