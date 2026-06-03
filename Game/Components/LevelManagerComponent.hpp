@@ -37,6 +37,9 @@ namespace Game
         void SetSpriteSheetWorldRotation(float rotation) const;
         void SetSpriteSheetWorldScale(const glm::vec2& scale) const;
 
+
+        static constexpr std::string_view m_LevelManagersSceneName{ "LevelManagers" };
+
     private:
         void WonLevel();
         void LostLevel();
@@ -47,7 +50,6 @@ namespace Game
 
         [[nodiscard]] std::optional<LevelJson> GetCurrentLevelJson();
 
-        void CreateBackground();
         void CreateGrid();
 
         void HandleEvent(unsigned int eventHash) override;

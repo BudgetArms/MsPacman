@@ -4,13 +4,18 @@
 
 #include <nlohmann/json.hpp>
 
+#include "HitboxComponent.hpp"
 #include "LevelGridComponent.hpp"
+#include "MsPacmanComponent.hpp"
 #include "RenderCenterComponent.hpp"
 #include "Base/Events.hpp"
+#include "Commands/MoveCommand.hpp"
+#include "Commands/TestDamageCommand.hpp"
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
 #include "Managers/SceneManager.hpp"
+#include "Wrappers/Keyboard.hpp"
 
 
 using namespace Game;
@@ -20,8 +25,10 @@ LevelManagerComponent::LevelManagerComponent(bae::GameObject& owner, const GameM
     Component(owner),
     m_GameMode{ gameMode }
 {
+    // Create Background
     m_BackgroundSpriteSheet = std::make_unique<bae::SpriteSheet>(m_BackgroundTexturePath,
                                                                  SDL_FRect(0, 0, 224, 1488), 1, 6);
+
     bae::SceneManager::GetInstance().CreateScene(m_LevelSceneName);
 }
 
@@ -82,10 +89,8 @@ void LevelManagerComponent::CreateLevel()
         return;
     }
 
-    LevelJson levelJson = currentLevelJson.value();
+    const LevelJson levelJson = currentLevelJson.value();
 
-    // TODO: add implementation
-    CreateBackground();
     CreateGrid();
 }
 
@@ -185,10 +190,10 @@ void LevelManagerComponent::ClearLevel() const
         return;
     }
 
-    const bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(m_LevelSceneName);
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(m_LevelSceneName);
     if(scene)
     {
-        scene->RemoveAll();
+        scene->ForceRemoveAll();
     }
 }
 
@@ -209,10 +214,6 @@ std::optional<LevelJson> LevelManagerComponent::GetCurrentLevelJson()
     }
 
     return levelJsonIt->second;
-}
-
-void LevelManagerComponent::CreateBackground()
-{
 }
 
 void LevelManagerComponent::CreateGrid()
@@ -242,7 +243,7 @@ void LevelManagerComponent::CreateGrid()
 
     // gridSize
     levelGrid->SetWorldLocation({ -gridSize.x / 2.f, -gridSize.y / 2.f });
-    levelGrid->AddLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f });
+    levelGrid->AddLocation({ static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f });
 
     levelGrid->AddComponent<LevelGridComponent>(*levelGrid, gridSize, nrColumns, nrRows);
     [[maybe_unused]] auto const levelGridComponent = levelGrid->GetComponent<Game::LevelGridComponent>();
@@ -289,6 +290,7 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
         case Events::GhostDied:
             break;
         case Events::BeginLevel:
+            ClearLevel();
             CreateLevel();
             break;
         case Events::RestartLevel:
