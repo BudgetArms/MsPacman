@@ -29,8 +29,6 @@ LevelManagerComponent::LevelManagerComponent(bae::GameObject& owner, const GameM
     // Create Background
     m_BackgroundSpriteSheet = std::make_unique<bae::SpriteSheet>(m_BackgroundTexturePath,
                                                                  SDL_FRect(0, 0, 224, 1488), 1, 6);
-
-    bae::SceneManager::GetInstance().CreateScene(g_LevelSceneName.data());
 }
 
 LevelManagerComponent::~LevelManagerComponent()

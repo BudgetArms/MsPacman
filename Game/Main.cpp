@@ -275,7 +275,7 @@ void LoadEntityManager()
 
 void LoadLevelManager()
 {
-    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
+    auto* managerComponentScene = bae::SceneManager::GetInstance().GetScene(Game::g_LevelManagersSceneName.data());
 
     const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
     levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
@@ -290,9 +290,8 @@ void LoadLevelManager()
     levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
 
     levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
-    // levelManagerComponent->CreateLevel();
 
-    managerComponentScene.Add(levelManager);
+    managerComponentScene->Add(levelManager);
 
     bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
 }
