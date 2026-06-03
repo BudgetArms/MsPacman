@@ -63,19 +63,13 @@
 
 
 // Game Includes
+#include "Base/Events.hpp"
 #include "Base/SoundAssets.hpp"
-#include "Commands/MoveCommand.hpp"
-#include "Commands/MoveOnGridCommand.hpp"
-#include "Commands/TestDamageCommand.hpp"
 #include "Commands/TestMousePositionCommand.hpp"
 #include "Commands/ToggleMuteAllSoundsCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "Components/LevelManagerComponent.hpp"
-#include "Components/MsPacmanComponent.hpp"
-#include "Components/RenderCenterComponent.hpp"
-#include "Components/RotateComponent.hpp"
-#include "Components/SpriteComponent.hpp"
 #include "Wrappers/Mouse.hpp"
 
 
@@ -84,13 +78,10 @@ namespace fs = std::filesystem;
 void Start();
 void LoadBackground();
 void LoadLevelManager();
-void LoadLevelGrid();
 void LoadGameNameScene();
 void LoadFpsCounterScene();
-void LoadRotatingObjectsScene();
 
 void LoadSounds();
-void LoadMsPacman();
 
 void LoadSoundCommands();
 void EnableLogMousePosition();
@@ -153,9 +144,7 @@ void Start()
 
     LoadFpsCounterScene();
     LoadGameNameScene();
-    LoadRotatingObjectsScene();
 
-    LoadMsPacman();
 
     LoadSoundCommands();
 }
@@ -190,98 +179,27 @@ void LoadBackground()
 
 void LoadLevelManager()
 {
-    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene("ManagerComponent Scene");
+    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(
+        Game::LevelManagerComponent::m_LevelManagersSceneName.data());
 
-    const auto levelManager = std::make_shared<bae::GameObject>("LevelManagerObject");
+    const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
     levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
 
-    Game::LevelManagerComponent* const levelManagerComponent =
+    const auto levelManagerComponent =
             levelManager->GetComponent<Game::LevelManagerComponent>();
 
     const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-    levelManagerComponent->SetSpriteSheetWorldLocation({ windowSize.Width / 2.f, windowSize.Height / 2.f });
+    levelManagerComponent->SetSpriteSheetWorldLocation({
+        static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f
+    });
     levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
 
     levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
-    levelManagerComponent->CreateLevel();
+    // levelManagerComponent->CreateLevel();
 
     managerComponentScene.Add(levelManager);
 
     bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
-}
-
-void LoadLevelGrid()
-{
-    auto& backgroundScene = bae::SceneManager::GetInstance().CreateScene("BackgroundLevel Scene");
-
-    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-
-    const auto levelGrid = std::make_shared<bae::GameObject>("Level Grid");
-
-    constexpr glm::vec2 gridSize{ 500, 500 };
-    levelGrid->SetWorldLocation({ (windowSize.Width - gridSize.x) / 2.f, (windowSize.Height - gridSize.y) / 2.f });
-
-
-    levelGrid->AddComponent<Game::LevelGridComponent>(*levelGrid, gridSize, 10, 10);
-
-    auto const levelGridComponent = levelGrid->GetComponent<Game::LevelGridComponent>();
-    levelGridComponent->SetRenderNodes(true);
-    levelGridComponent->SetRenderConnections(true);
-
-
-    // Using position
-    levelGridComponent->RemoveConnection({ 385, 112 }, Game::Direction::Down);
-    levelGridComponent->RemoveConnection({ 385, 112 }, Game::Direction::Left);
-
-    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Left);
-    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Up);
-    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Down);
-    levelGridComponent->RemoveConnection({ 690, 200 }, Game::Direction::Right);
-
-
-    levelGridComponent->AddNodeAtPosition({ 786, 64 });
-
-    levelGridComponent->RemoveNode({ 690, 200 });
-    levelGridComponent->RemoveNode({ 690, 465 });
-
-    // Using NodeId
-    levelGridComponent->RemoveNode(0);
-    levelGridComponent->RemoveNode(2);
-    levelGridComponent->RemoveNode(11);
-
-    levelGridComponent->RemoveNode(77);
-    levelGridComponent->RemoveNode(87);
-    levelGridComponent->RemoveNode(97);
-
-    levelGridComponent->AddNode(97);
-    levelGridComponent->AddNode(87);
-    levelGridComponent->AddNode(77);
-    levelGridComponent->AddNode(77);
-    levelGridComponent->AddNode(-1);
-    levelGridComponent->AddNode(100);
-    levelGridComponent->AddNode(-2);
-    levelGridComponent->AddNode(99);
-    levelGridComponent->AddNode(100);
-
-    // Readding tests
-    levelGridComponent->RemoveNode(99);
-    levelGridComponent->AddNode(99);
-
-    levelGridComponent->RemoveNode(0);
-    levelGridComponent->AddNode(0);
-    levelGridComponent->AddConnection(0, Game::Direction::Left);
-    levelGridComponent->AddConnection(0, Game::Direction::Down);
-
-    levelGridComponent->AddConnection(11, Game::Direction::Down);
-
-    levelGridComponent->RemoveConnection(88, Game::Direction::Right);
-    levelGridComponent->AddConnection(99, Game::Direction::Left);
-
-    levelGridComponent->UpdateShortestPath();
-
-    levelGrid->AddComponent<Game::RenderCenterComponent>(*levelGrid);
-
-    backgroundScene.Add(levelGrid);
 }
 
 void LoadGameNameScene()
@@ -312,100 +230,6 @@ void LoadFpsCounterScene()
     fpsScene.Add(fpsCounter);
 }
 
-void LoadRotatingObjectsScene()
-{
-    const auto& keyboard = bae::InputManager::GetInstance().GetKeyboard();
-
-    auto& ballScene = bae::SceneManager::GetInstance().CreateScene("Rotating Ball Scene");
-
-    constexpr float moveSpeed        = 800.f;
-    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-
-    // LonelyRotatingBall
-    const auto lonelyParent = std::make_shared<bae::GameObject>("LonelyRotatingBall Parent");
-    lonelyParent->SetWorldLocation(
-        glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
-
-    const auto lonelyRotatingBall = std::make_shared<bae::GameObject>("LonelyRotatingBall");
-    lonelyRotatingBall->AddComponent<bae::SpriteComponent>(*lonelyRotatingBall, "Textures/Characters/MsPacman.png",
-                                                           SDL_FRect(0, 0, 48, 64), 3, 12);
-    lonelyRotatingBall->AddComponent<Game::RotateComponent>(*lonelyRotatingBall, 100.f, 1.f);
-
-    lonelyParent->AttachChild(lonelyRotatingBall.get());
-
-    ballScene.Add(lonelyParent);
-    ballScene.Add(lonelyRotatingBall);
-
-    // Lonely Parent Commands
-    auto moveUpLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
-        *lonelyParent, Game::Direction::Up, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveUpLonelyRotatingBallParentCommand), SDLK_W,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    auto moveDownLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
-        *lonelyParent, Game::Direction::Down, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveDownLonelyRotatingBallParentCommand), SDLK_S,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    auto moveLeftLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
-        *lonelyParent, Game::Direction::Left, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveLeftLonelyRotatingBallParentCommand), SDLK_A,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    auto moveRightLonelyRotatingBallParentCommand = std::make_unique<Game::MoveCommand>(
-        *lonelyParent, Game::Direction::Right, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveRightLonelyRotatingBallParentCommand), SDLK_D,
-                                 bae::InputManager::ButtonState::Pressed);
-
-
-    // Grouped Parent
-    const auto groupedParent = std::make_shared<bae::GameObject>("Grouped Main Parent");
-    groupedParent->SetWorldLocation(
-        glm::vec2(static_cast<float>(windowSize.Width) / 2 - 200.f, static_cast<float>(windowSize.Height) / 2));
-    ballScene.Add(groupedParent);
-
-    // Grouped Parent Commands
-    auto moveUpGroupedParentCommand = std::make_unique<Game::MoveCommand>(
-        *groupedParent, Game::Direction::Up, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveUpGroupedParentCommand), SDLK_I,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    auto moveDownGroupedParentCommand = std::make_unique<Game::MoveCommand>(
-        *groupedParent, Game::Direction::Down, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveDownGroupedParentCommand), SDLK_K,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    auto moveLeftGroupedParentCommand = std::make_unique<Game::MoveCommand>(
-        *groupedParent, Game::Direction::Left, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveLeftGroupedParentCommand), SDLK_J,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    auto moveRightGroupedParentCommand = std::make_unique<Game::MoveCommand>(
-        *groupedParent, Game::Direction::Right, moveSpeed);
-    keyboard.AddKeyboardCommands(std::move(moveRightGroupedParentCommand), SDLK_L,
-                                 bae::InputManager::ButtonState::Pressed);
-
-    // Grouped Rotating Ball
-    const auto groupedRotatingBall = std::make_shared<bae::GameObject>("Grouped Rotating Ball");
-    groupedRotatingBall->AddComponent<bae::SpriteComponent>(*groupedRotatingBall, "Textures/Characters/Blinky.png",
-                                                            SDL_FRect(0, 0, 32, 64), 2, 8);
-    groupedRotatingBall->AddComponent<Game::RotateComponent>(*groupedRotatingBall, 10.f, 5.f);
-
-    groupedParent->AttachChild(groupedRotatingBall.get());
-
-    ballScene.Add(groupedRotatingBall);
-
-    // Grouped Rotating Child Ball
-    const auto groupedRotatingChildBall = std::make_shared<bae::GameObject>("Grouped Rotating Child Ball");
-    groupedRotatingChildBall->AddComponent<bae::SpriteComponent>(*groupedRotatingBall, "Textures/Characters/Clyde.png",
-                                                                 SDL_FRect(0, 0, 32, 64), 2, 8);
-    groupedRotatingChildBall->AddComponent<Game::RotateComponent>(*groupedRotatingChildBall, 40.f, -2.f);
-
-    groupedRotatingBall->AttachChild(groupedRotatingChildBall.get());
-
-    ballScene.Add(groupedRotatingChildBall);
-}
-
 
 void LoadSounds()
 {
@@ -433,49 +257,6 @@ void LoadSounds()
         { gs::SoundAssets::PlayerDeath, soundSystem->LoadSound("Sounds/AsmrVoice.wav") },
     };
     std::cout << '\n';
-}
-
-
-void LoadMsPacman()
-{
-    auto& msPacmanScene = bae::SceneManager::GetInstance().CreateScene("MsPacman Scene");
-
-    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-    const auto msPacman              = std::make_shared<bae::GameObject>("MsPacman");
-    msPacman->SetWorldLocation(
-        glm::vec2(static_cast<float>(windowSize.Width) / 2, static_cast<float>(windowSize.Height) / 2));
-    msPacman->AddLocation({ -300, 0 });
-
-    msPacman->AddComponent<Game::MsPacmanComponent>(*msPacman);
-
-    constexpr glm::vec2 dimensions = { 50, 50 };
-    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
-
-    msPacman->AddComponent<Game::HitboxComponent>(*msPacman, dimensions, offset);
-    const auto hitboxComp = msPacman->GetComponent<Game::HitboxComponent>();
-    hitboxComp->SetVisibility(true);
-
-    // Controls
-    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
-
-    constexpr float msPacmanSpeed = 100.f;
-    auto moveLeftCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Left, msPacmanSpeed);
-    auto moveRightCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Right, msPacmanSpeed);
-    auto moveDownCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Down, msPacmanSpeed);
-    auto moveUpCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Up, msPacmanSpeed);
-
-    keyboard.AddKeyboardCommands(std::move(moveLeftCommand), SDLK_A, bae::InputManager::ButtonState::Pressed);
-    keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
-    keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
-    keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
-
-
-    // Test Damage Command (will be removed after testing)
-    auto damageCommand = std::make_unique<Game::TestDamageCommand>(*msPacman);
-    keyboard.AddKeyboardCommands(std::move(damageCommand), SDLK_V, bae::InputManager::ButtonState::Down);
-
-
-    msPacmanScene.Add(msPacman);
 }
 
 void LoadSoundCommands()
