@@ -18,6 +18,8 @@
 #include "Commands/TestScoreCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
+#include "Components/LifeComponent.hpp"
+#include "Components/LifeDisplayComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
 #include "Components/RenderCenterComponent.hpp"
 #include "Components/ScoreComponent.hpp"
@@ -341,11 +343,19 @@ void LevelManagerComponent::AddPlayers() const
     const auto hitboxComp = msPacman->GetComponent<HitboxComponent>();
     hitboxComp->SetVisibility(true);
 
+    // Score Display
     auto text = std::make_unique<bae::Text2D>("Score: Test");
     msPacman->AddComponent<ScoreDisplayComponent>(*msPacman, glm::vec2{ 100, 550 }, std::move(text));
 
     const auto scoreDisplayComp = msPacman->GetComponent<ScoreDisplayComponent>();
     msPacman->GetComponent<ScoreComponent>()->AddObserver(scoreDisplayComp);
+
+    // Life Display
+    auto lifeTexture = bae::ResourceManager::GetInstance().LoadTexture("Textures/Popup/MsPacmanLife.png");
+    msPacman->AddComponent<LifeDisplayComponent>(*msPacman, glm::vec2{ 100, 400 }, lifeTexture);
+
+    const auto lifeDisplayComp = msPacman->GetComponent<LifeDisplayComponent>();
+    msPacman->GetComponent<LifeComponent>()->AddObserver(lifeDisplayComp);
 
 
     // // Controls
