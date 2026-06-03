@@ -92,6 +92,8 @@ void LevelManagerComponent::CreateLevel()
     const LevelJson levelJson = currentLevelJson.value();
 
     CreateGrid();
+
+    AddPlayers();
 }
 
 void LevelManagerComponent::ResetLevel()
@@ -317,6 +319,46 @@ void LevelManagerComponent::HandlePlayerDied() const
             std::cout << FUNCTION_NAME << " Versus\n";
             break;
     }
+}
+
+void LevelManagerComponent::AddPlayers() const
+{
+    // Player One & Controls
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(m_LevelSceneName);
+
+    const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
+
+    msPacman->AddComponent<MsPacmanComponent>(*msPacman);
+
+    constexpr glm::vec2 dimensions = { 50, 50 };
+    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
+
+    msPacman->AddComponent<HitboxComponent>(*msPacman, dimensions, offset);
+    const auto hitboxComp = msPacman->GetComponent<HitboxComponent>();
+    hitboxComp->SetVisibility(true);
+
+
+    // // Controls
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+
+    constexpr float msPacmanSpeed = 100.f;
+    auto moveLeftCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Left, msPacmanSpeed);
+    auto moveRightCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Right, msPacmanSpeed);
+    auto moveDownCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Down, msPacmanSpeed);
+    auto moveUpCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Up, msPacmanSpeed);
+
+    keyboard.AddKeyboardCommands(std::move(moveLeftCommand), SDLK_A, bae::InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
+    keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
+
+
+    // Test Damage Command (will be removed after testing)
+    auto damageCommand = std::make_unique<Game::TestDamageCommand>(*msPacman);
+    keyboard.AddKeyboardCommands(std::move(damageCommand), SDLK_V, bae::InputManager::ButtonState::Down);
+
+
+    scene->Add(msPacman);
 }
 
 

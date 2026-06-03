@@ -54,6 +54,7 @@ namespace Game
 
         void HandleEvent(unsigned int eventHash) override;
         void HandlePlayerDied() const;
+        void AddPlayers() const;
 
 
         std::unique_ptr<bae::SpriteSheet> m_BackgroundSpriteSheet{};
