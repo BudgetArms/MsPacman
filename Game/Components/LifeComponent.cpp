@@ -30,6 +30,7 @@ void LifeComponent::AddLife()
     }
 
     ++m_Lives;
+    SendEventToObservers(Events::LivesChanged);
 }
 
 void LifeComponent::RemoveLife()
@@ -49,6 +50,7 @@ void LifeComponent::RemoveLife()
 
     m_bIsAlive = false;
     SendEventToObservers(Events::LivesChanged);
+    SendEventToObservers(Events::PlayerDied);
 }
 
 void LifeComponent::RemoveAllLives()
@@ -61,6 +63,7 @@ void LifeComponent::RemoveAllLives()
     m_Lives    = 0;
     m_bIsAlive = false;
     SendEventToObservers(Events::LivesChanged);
+    SendEventToObservers(Events::PlayerDied);
 }
 
 int LifeComponent::GetLives() const
