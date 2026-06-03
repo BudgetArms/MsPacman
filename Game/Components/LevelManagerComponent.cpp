@@ -4,19 +4,24 @@
 
 #include <nlohmann/json.hpp>
 
-#include "HitboxComponent.hpp"
-#include "LevelGridComponent.hpp"
-#include "MsPacmanComponent.hpp"
-#include "RenderCenterComponent.hpp"
-#include "Base/CommonManagerVariables.hpp"
-#include "Base/Events.hpp"
-#include "Commands/MoveCommand.hpp"
-#include "Commands/TestDamageCommand.hpp"
+
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
 #include "Managers/SceneManager.hpp"
 #include "Wrappers/Keyboard.hpp"
+
+#include "Base/CommonManagerVariables.hpp"
+#include "Base/Events.hpp"
+#include "Commands/MoveCommand.hpp"
+#include "Commands/TestDamageCommand.hpp"
+#include "Commands/TestScoreCommand.hpp"
+#include "Components/HitboxComponent.hpp"
+#include "Components/LevelGridComponent.hpp"
+#include "Components/MsPacmanComponent.hpp"
+#include "Components/RenderCenterComponent.hpp"
+#include "Components/ScoreComponent.hpp"
+#include "Components/ScoreDisplayComponent.hpp"
 
 
 using namespace Game;
@@ -336,6 +341,12 @@ void LevelManagerComponent::AddPlayers() const
     const auto hitboxComp = msPacman->GetComponent<HitboxComponent>();
     hitboxComp->SetVisibility(true);
 
+    auto text = std::make_unique<bae::Text2D>("Score: Test");
+    msPacman->AddComponent<ScoreDisplayComponent>(*msPacman, glm::vec2{ 100, 550 }, std::move(text));
+
+    const auto scoreDisplayComp = msPacman->GetComponent<ScoreDisplayComponent>();
+    msPacman->GetComponent<ScoreComponent>()->AddObserver(scoreDisplayComp);
+
 
     // // Controls
     const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
@@ -352,9 +363,14 @@ void LevelManagerComponent::AddPlayers() const
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
 
 
+    // TODO: remove both
     // Test Damage Command (will be removed after testing)
-    auto damageCommand = std::make_unique<Game::TestDamageCommand>(*msPacman);
+    auto damageCommand = std::make_unique<TestDamageCommand>(*msPacman);
     keyboard.AddKeyboardCommands(std::move(damageCommand), SDLK_V, bae::InputManager::ButtonState::Down);
+
+    // Test Score Command (will be removed after testing)
+    auto scoreCommand = std::make_unique<TestScoreCommand>(*msPacman);
+    keyboard.AddKeyboardCommands(std::move(scoreCommand), SDLK_B, bae::InputManager::ButtonState::Down);
 
 
     scene->Add(msPacman);
