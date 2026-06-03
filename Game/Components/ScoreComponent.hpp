@@ -6,7 +6,7 @@
 
 namespace Game
 {
-    class ScoreComponent final : public bae::Component, bae::Subject
+    class ScoreComponent final : public bae::Component, public bae::Subject
     {
     public:
         explicit ScoreComponent(bae::GameObject& owner);
