@@ -63,6 +63,7 @@
 
 
 // Game Includes
+#include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Base/SoundAssets.hpp"
 #include "Commands/TestMousePositionCommand.hpp"
@@ -75,15 +76,20 @@
 namespace fs = std::filesystem;
 
 void Start();
-void LoadBackground();
-void LoadEntityManager();
-void LoadLevelManager();
-void LoadGameNameScene();
-void LoadFpsCounterScene();
 
 void LoadSounds();
-
 void LoadSoundCommands();
+
+void LoadStartMenu();
+
+void LoadEntityManager();
+void LoadLevelManager();
+
+
+void LoadDAEBackground();
+void LoadFpsCounterScene();
+void LoadGameNameScene();
+
 void EnableLogMousePosition();
 
 
@@ -136,20 +142,107 @@ int main(int, char*[])
 
 void Start()
 {
-    EnableLogMousePosition();
-
     LoadSounds();
+    LoadSoundCommands();
+
+    LoadStartMenu();
     LoadEntityManager();
     LoadLevelManager();
 
     LoadFpsCounterScene();
     LoadGameNameScene();
 
-
-    LoadSoundCommands();
+    EnableLogMousePosition();
 }
 
-void LoadBackground()
+
+void LoadSounds()
+{
+    namespace gs = Game::Sounds;
+
+    #if __EMSCRIPTEN__
+
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
+        std::make_unique<bae::SoLoudSoundSystem>()));
+
+    #else
+
+    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
+        // std::make_unique<bae::MixerSoundSystem>()));
+        std::make_unique<bae::NullSoundSystem>()));
+
+    #endif
+
+    const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
+    gs::g_sSoundEvents     =
+    {
+        { gs::SoundAssets::Credit, soundSystem->LoadSound("Sounds/Credit.wav") },
+        { gs::SoundAssets::EatDot, soundSystem->LoadSound("Sounds/EatDot.wav") },
+        { gs::SoundAssets::EatEnergizer, soundSystem->LoadSound("Sounds/EatEnergizer.wav") },
+        { gs::SoundAssets::EatFruit, soundSystem->LoadSound("Sounds/EatFruit.wav") },
+        { gs::SoundAssets::EatGhost, soundSystem->LoadSound("Sounds/EatGhost.wav") },
+        { gs::SoundAssets::ExtraLife, soundSystem->LoadSound("Sounds/ExtraLife.wav") },
+        { gs::SoundAssets::Eyes, soundSystem->LoadSound("Sounds/Eyes.wav") },
+        { gs::SoundAssets::EyesFirstLoop, soundSystem->LoadSound("Sounds/Eyes_FirstLoop.wav") },
+        { gs::SoundAssets::Fright, soundSystem->LoadSound("Sounds/Fright.wav") },
+        { gs::SoundAssets::FruitBounce, soundSystem->LoadSound("Sounds/FruitBounce.wav") },
+        { gs::SoundAssets::IntermissionTune1, soundSystem->LoadSound("Sounds/IntermissionTune1.wav") },
+        { gs::SoundAssets::IntermissionTune1_Bump, soundSystem->LoadSound("Sounds/IntermissionTune1_Bump.wav") },
+        { gs::SoundAssets::IntermissionTune2, soundSystem->LoadSound("Sounds/IntermissionTune2.wav") },
+        { gs::SoundAssets::IntermissionTune3, soundSystem->LoadSound("Sounds/IntermissionTune3.wav") },
+        { gs::SoundAssets::PlayerDeath, soundSystem->LoadSound("Sounds/Death.wav") },
+        { gs::SoundAssets::StartGame, soundSystem->LoadSound("Sounds/Death.wav") },
+    };
+}
+
+void LoadSoundCommands()
+{
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+
+    auto toggleMuteAllSoundsCommand = std::make_unique<Game::ToggleMuteAllSoundsCommand>();
+    keyboard.AddKeyboardCommands(std::move(toggleMuteAllSoundsCommand), SDLK_F2, bae::InputManager::ButtonState::Down);
+}
+
+void LoadStartMenu()
+{
+}
+
+void LoadEntityManager()
+{
+    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
+
+
+    const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
+    entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
+
+    managerComponentScene.Add(entityManager);
+}
+
+void LoadLevelManager()
+{
+    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
+
+    const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
+    levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
+
+    const auto levelManagerComponent =
+            levelManager->GetComponent<Game::LevelManagerComponent>();
+
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
+    levelManagerComponent->SetSpriteSheetWorldLocation({
+        static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f
+    });
+    levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
+
+    levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
+    // levelManagerComponent->CreateLevel();
+
+    managerComponentScene.Add(levelManager);
+
+    bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
+}
+
+void LoadDAEBackground()
 {
     auto& backgroundScene = bae::SceneManager::GetInstance().CreateScene("Background Scene");
 
@@ -177,53 +270,6 @@ void LoadBackground()
     bae::Utils::DrawCircle({ 0, 0 }, 1000, bae::Utils::Color::Blue);
 }
 
-void LoadEntityManager()
-{
-    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(
-        Game::LevelManagerComponent::m_LevelManagersSceneName.data());
-
-
-    const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
-    entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
-
-    managerComponentScene.Add(entityManager);
-}
-
-void LoadLevelManager()
-{
-    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(
-        Game::LevelManagerComponent::m_LevelManagersSceneName.data());
-
-    const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
-    levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
-
-    const auto levelManagerComponent =
-            levelManager->GetComponent<Game::LevelManagerComponent>();
-
-    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-    levelManagerComponent->SetSpriteSheetWorldLocation({
-        static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f
-    });
-    levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
-
-    levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
-    // levelManagerComponent->CreateLevel();
-
-    managerComponentScene.Add(levelManager);
-
-    bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
-}
-
-void LoadGameNameScene()
-{
-    auto& gameNameScene = bae::SceneManager::GetInstance().CreateScene("Game Name Scene");
-    auto font           = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 48);
-
-    const auto gameName = std::make_shared<bae::GameObject>("Game Name");
-    gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Green);
-
-    gameNameScene.Add(gameName);
-}
 
 void LoadFpsCounterScene()
 {
@@ -242,41 +288,15 @@ void LoadFpsCounterScene()
     fpsScene.Add(fpsCounter);
 }
 
-
-void LoadSounds()
+void LoadGameNameScene()
 {
-    namespace gs = Game::Sounds;
+    auto& gameNameScene = bae::SceneManager::GetInstance().CreateScene("Game Name Scene");
+    auto font           = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 48);
 
-    #if __EMSCRIPTEN__
+    const auto gameName = std::make_shared<bae::GameObject>("Game Name");
+    gameName->AddComponent<bae::TextComponent>(*gameName, "MsPacMan", font, bae::Utils::Color::Green);
 
-    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::SoLoudSoundSystem>()));
-
-    #else
-
-    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        // std::make_unique<bae::MixerSoundSystem>()));
-        std::make_unique<bae::NullSoundSystem>()));
-
-    #endif
-
-    const auto soundSystem = &bae::ServiceLocator::GetSoundSystem();
-
-    // Sound files not made yet
-    gs::g_sSoundEvents =
-    {
-        { gs::SoundAssets::BeepSound, soundSystem->LoadSound("Sounds/beep.wav") },
-        { gs::SoundAssets::PlayerDeath, soundSystem->LoadSound("Sounds/AsmrVoice.wav") },
-    };
-    std::cout << '\n';
-}
-
-void LoadSoundCommands()
-{
-    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
-
-    auto toggleMuteAllSoundsCommand = std::make_unique<Game::ToggleMuteAllSoundsCommand>();
-    keyboard.AddKeyboardCommands(std::move(toggleMuteAllSoundsCommand), SDLK_F2, bae::InputManager::ButtonState::Down);
+    gameNameScene.Add(gameName);
 }
 
 void EnableLogMousePosition()
