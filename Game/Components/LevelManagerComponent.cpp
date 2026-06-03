@@ -4,7 +4,6 @@
 
 #include <nlohmann/json.hpp>
 
-
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
@@ -95,8 +94,6 @@ void LevelManagerComponent::CreateLevel()
         return;
     }
 
-    const LevelJson levelJson = currentLevelJson.value();
-
     CreateGrid();
 
     AddPlayers();
@@ -118,10 +115,6 @@ void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*)
 {
     switch(GetEvent(eventHash))
     {
-        // case Events::GamePaused:
-        // break;
-        // case Events::GameResumed:
-        // break;
         case Events::PlayerDied:
             break;
         case Events::GameOver:
@@ -134,17 +127,11 @@ void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*)
             LostLevel();
             break;
         case Events::GhostDied:
-            break;
         case Events::BeginLevel:
-            break;
         case Events::RestartLevel:
-            break;
         case Events::ScoreChanged:
-            break;
         case Events::LivesChanged:
-            break;
         case Events::InvincibilityChanged:
-            break;
         case Events::NoEvent:
             break;
     }
@@ -213,7 +200,7 @@ std::optional<LevelJson> LevelManagerComponent::GetCurrentLevelJson()
     }
 
     const int currentLevelIndex = static_cast<int>(static_cast<float>(m_CurrentLevel)
-        / m_LevelRepeatTimes) % m_LevelJson.size();
+        / m_LevelRepeatTimes) % static_cast<int>(m_LevelJson.size());
 
     const auto levelJsonIt = m_LevelJson.find(currentLevelIndex);
     if(levelJsonIt == m_LevelJson.end())
@@ -233,7 +220,7 @@ void LevelManagerComponent::CreateGrid()
     }
 
 
-    const LevelJson levelJson = currentLevelJson.value();
+    const LevelJson& levelJson = currentLevelJson.value();
 
     const bae::WindowSize gridDimensions = levelJson.Dimensions;
     const glm::vec2 gridSize             = { gridDimensions.Width, gridDimensions.Height };
@@ -292,9 +279,7 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
             break;
         case Events::GameOver:
         case Events::LevelWon:
-            break;
         case Events::LevelLost:
-            break;
         case Events::GhostDied:
             break;
         case Events::BeginLevel:
@@ -302,7 +287,6 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
             CreateLevel();
             break;
         case Events::RestartLevel:
-            break;
         case Events::ScoreChanged:
         case Events::LivesChanged:
         case Events::InvincibilityChanged:

@@ -1,10 +1,10 @@
 #include "ScoreDisplayComponent.hpp"
 
-#include "Base/Events.hpp"
+#include "Core/HelperFunctions.hpp"
 #include "Core/Text2D.hpp"
 
+#include "Base/Events.hpp"
 #include "Components/ScoreComponent.hpp"
-#include "Core/HelperFunctions.hpp"
 
 
 using namespace Game;
