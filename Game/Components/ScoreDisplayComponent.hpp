@@ -31,7 +31,5 @@ namespace Game
 
     private:
         std::shared_ptr<bae::Text2D> m_Text;
-
-        ScoreComponent* m_ScoreComponent;
     };
 }

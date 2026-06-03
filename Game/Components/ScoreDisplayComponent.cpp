@@ -13,8 +13,7 @@ using namespace Game;
 ScoreDisplayComponent::ScoreDisplayComponent(bae::GameObject& owner, const glm::vec2& position,
                                              std::unique_ptr<bae::Text2D> text) :
     Component(owner),
-    m_Text{ std::move(text) },
-    m_ScoreComponent{}
+    m_Text{ std::move(text) }
 {
     SetPosition(position);
 }
