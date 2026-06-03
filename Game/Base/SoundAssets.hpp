@@ -9,9 +9,22 @@ namespace Game::Sounds
 {
     enum class SoundAssets
     {
-        GameplayMusic,
-        BeepSound,
+        Credit,
+        EatDot,
+        EatEnergizer,
+        EatFruit,
+        EatGhost,
+        ExtraLife,
+        Eyes,
+        EyesFirstLoop,
+        Fright,
+        FruitBounce,
+        IntermissionTune1,
+        IntermissionTune1_Bump,
+        IntermissionTune2,
+        IntermissionTune3,
         PlayerDeath,
+        StartGame,
     };
 
 
