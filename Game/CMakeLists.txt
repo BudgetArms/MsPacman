@@ -37,6 +37,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Commands/TestSoundCommand.cpp"
     "Commands/TestDamageCommand.cpp"
     "Commands/TestMousePositionCommand.cpp"
+    "Commands/TestScoreCommand.cpp"
     "Commands/ToggleMuteAllSoundsCommand.cpp"
 
     "Components/EntityManagerComponent.cpp"
@@ -48,6 +49,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Components/MsPacmanComponent.cpp"
     "Components/RotateComponent.cpp"
     "Components/ScoreComponent.cpp"
+    "Components/ScoreDisplayComponent.cpp"
 
     "States/Entities/MsPacmanDying.cpp"
     "States/Entities/MsPacmanIdle.cpp"
