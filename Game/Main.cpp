@@ -80,6 +80,8 @@ void Start();
 void LoadSounds();
 void LoadSoundCommands();
 
+void CreateAllScenes();
+
 void LoadStartMenu();
 
 void LoadEntityManager();
@@ -145,6 +147,8 @@ void Start()
     LoadSounds();
     LoadSoundCommands();
 
+    CreateAllScenes();
+
     LoadStartMenu();
     LoadEntityManager();
     LoadLevelManager();
@@ -203,19 +207,70 @@ void LoadSoundCommands()
     keyboard.AddKeyboardCommands(std::move(toggleMuteAllSoundsCommand), SDLK_F2, bae::InputManager::ButtonState::Down);
 }
 
+void CreateAllScenes()
+{
+    // in reverse order, so that the start menu scene is displayed before anything else
+    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelSceneName.data());
+    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelGameOverSceneName.data());
+    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
+    bae::SceneManager::GetInstance().CreateScene(Game::g_StartMenuSceneName.data());
+}
+
 void LoadStartMenu()
 {
+    auto* startMenuScene = bae::SceneManager::GetInstance().GetScene(Game::g_StartMenuSceneName.data());
+
+    bae::Renderer::GetInstance().SetBackgroundColor(bae::Utils::Color::Black);
+
+    const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
+
+    const auto startMenuObject = std::make_shared<bae::GameObject>("StartMenu");
+    startMenuObject->SetWorldLocation({
+        static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f
+    });
+
+    const auto singlePlayerObject = std::make_shared<bae::GameObject>("SinglePlayer");
+    const auto coOpObject         = std::make_shared<bae::GameObject>("CoOp");
+    const auto versusObject       = std::make_shared<bae::GameObject>("Versus");
+
+    constexpr float verticalPadding = 150.f;
+
+
+    singlePlayerObject->AddLocation({ 0, -verticalPadding });
+    coOpObject->AddLocation({ 0, 0 });
+    versusObject->AddLocation({ 0, verticalPadding });
+
+    // AttachChild, but don't freeze position
+    startMenuObject->AttachChild(singlePlayerObject.get(), false);
+    startMenuObject->AttachChild(coOpObject.get(), false);
+    startMenuObject->AttachChild(versusObject.get(), false);
+
+    singlePlayerObject->AddComponent<bae::TextComponent>(*singlePlayerObject, "SinglePlayer");
+    coOpObject->AddComponent<bae::TextComponent>(*coOpObject, "Co-Op");
+    versusObject->AddComponent<bae::TextComponent>(*versusObject, "Versus");
+
+    // Enable center text
+    singlePlayerObject->GetComponent<bae::TextComponent>()->m_bIsCenteredAtPosition = true;
+    coOpObject->GetComponent<bae::TextComponent>()->m_bIsCenteredAtPosition         = true;
+    versusObject->GetComponent<bae::TextComponent>()->m_bIsCenteredAtPosition       = true;
+
+    // Add Objects to Scene
+    startMenuScene->Add(startMenuObject);
+    startMenuScene->Add(singlePlayerObject);
+    startMenuScene->Add(coOpObject);
+    startMenuScene->Add(versusObject);
 }
 
 void LoadEntityManager()
 {
-    auto& managerComponentScene = bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
+    auto* managerComponentScene = bae::SceneManager::GetInstance().
+            GetScene(Game::g_LevelManagersSceneName.data());
 
 
     const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
     entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
 
-    managerComponentScene.Add(entityManager);
+    managerComponentScene->Add(entityManager);
 }
 
 void LoadLevelManager()
