@@ -49,8 +49,16 @@ namespace Game
         void SetRenderConnections(bool bRenderConnections) const;
 
 
+        [[nodiscard]] bae::Graphs::GridPosition GetGridPosition(const glm::vec2& position) const;
+
+        [[nodiscard]] glm::vec2 GetPosition(bae::Graphs::GridPosition gridPosition) const;
+
+
         [[nodiscard]] bool IsInGrid(const glm::vec2& position) const;
         [[nodiscard]] bool IsInGrid(const bae::Graphs::GridPosition& gridPosition) const;
+
+        [[nodiscard]] bool DoesConnectionExistInDirection(const bae::Graphs::GridPosition& gridPosition,
+                                                          Direction direction) const;
 
 
         [[nodiscard]] std::vector<glm::vec2> GetShortestPath(int startNodeId, int endNodeId) const;

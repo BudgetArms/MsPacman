@@ -186,6 +186,16 @@ void LevelGridComponent::SetRenderConnections(const bool bRenderConnections) con
     m_LevelGridGraph->m_bRenderConnections = bRenderConnections;
 }
 
+bae::Graphs::GridPosition LevelGridComponent::GetGridPosition(const glm::vec2& position) const
+{
+    return m_LevelGridGraph->GetGridPosition(position);
+}
+
+glm::vec2 LevelGridComponent::GetPosition(const bae::Graphs::GridPosition gridPosition) const
+{
+    return m_LevelGridGraph->GetPosition(gridPosition);
+}
+
 
 bool LevelGridComponent::IsInGrid(const glm::vec2& position) const
 {
@@ -196,6 +206,48 @@ bool LevelGridComponent::IsInGrid(const glm::vec2& position) const
 bool LevelGridComponent::IsInGrid(const bae::Graphs::GridPosition& gridPosition) const
 {
     return m_LevelGridGraph->IsWithinBounds(gridPosition);
+}
+
+bool LevelGridComponent::DoesConnectionExistInDirection(const bae::Graphs::GridPosition& gridPosition,
+                                                        const Direction direction) const
+{
+    if(!IsInGrid(gridPosition))
+    {
+        return false;
+    }
+
+    bae::Graphs::GridPosition newGridPosition = gridPosition;
+    switch(direction)
+    {
+        case Direction::Left:
+            --newGridPosition.Column;
+            break;
+        case Direction::Right:
+            ++newGridPosition.Column;
+            break;
+        case Direction::Up:
+            --newGridPosition.Row;
+            break;
+        case Direction::Down:
+            ++newGridPosition.Row;
+            break;
+    }
+
+    if(!IsInGrid(newGridPosition))
+    {
+        return false;
+    }
+
+    const int nodeId    = m_LevelGridGraph->GetNodeId(gridPosition);
+    const int newNodeId = m_LevelGridGraph->GetNodeId(newGridPosition);
+
+    const bae::Graphs::Connection* const connection = m_LevelGridGraph->FindConnection(nodeId, newNodeId);
+    if(!connection || !connection->IsValid())
+    {
+        return false;
+    }
+
+    return true;
 }
 
 
