@@ -208,9 +208,9 @@ void LoadSoundCommands()
 void CreateAllScenes()
 {
     // in reverse order, so that the start menu scene is displayed before anything else
+    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
     bae::SceneManager::GetInstance().CreateScene(Game::g_LevelSceneName.data());
     bae::SceneManager::GetInstance().CreateScene(Game::g_LevelGameOverSceneName.data());
-    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
     bae::SceneManager::GetInstance().CreateScene(Game::g_StartMenuSceneName.data());
 }
 
