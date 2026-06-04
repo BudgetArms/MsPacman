@@ -4,6 +4,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "LevelGridComponent.hpp"
 #include "Components/Component.hpp"
 #include "Core/Observer.hpp"
 #include "Core/SpriteSheet.hpp"
@@ -61,6 +62,7 @@ namespace Game
 
         int m_CurrentLevel{};
 
+        LevelGridComponent* m_LevelGridComponent{};
 
         std::unordered_map<int, LevelJson> m_LevelJson{};
 

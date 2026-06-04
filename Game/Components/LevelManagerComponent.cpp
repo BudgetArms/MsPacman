@@ -13,6 +13,7 @@
 #include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Commands/MoveCommand.hpp"
+#include "Commands/MoveOnGridCommand.hpp"
 #include "Commands/TestDamageCommand.hpp"
 #include "Commands/TestScoreCommand.hpp"
 #include "Components/HitboxComponent.hpp"
@@ -45,7 +46,6 @@ LevelManagerComponent::~LevelManagerComponent()
 void LevelManagerComponent::Render() const
 {
     m_BackgroundSpriteSheet->Render();
-    bae::Utils::FillCircle(m_BackgroundSpriteSheet->m_Position, 10, bae::Utils::Color::Green);
 }
 
 void LevelManagerComponent::LoadLevelFromFile(int levelNumber, const std::filesystem::path& jsonFile)
@@ -241,31 +241,31 @@ void LevelManagerComponent::CreateGrid()
     levelGrid->AddLocation({ static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f });
 
     levelGrid->AddComponent<LevelGridComponent>(*levelGrid, gridSize, nrColumns, nrRows);
-    [[maybe_unused]] auto const levelGridComponent = levelGrid->GetComponent<Game::LevelGridComponent>();
+    m_LevelGridComponent = levelGrid->GetComponent<LevelGridComponent>();
 
-    levelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 0 });
-    levelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 1 });
-    levelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 2 });
+    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 0 });
+    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 1 });
+    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 2 });
 
-    levelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 0 });
-    levelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 1, 0 });
-    levelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 2, 0 });
+    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 0 });
+    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 1, 0 });
+    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 2, 0 });
 
     for(const bae::Graphs::GridPosition& gridPosition : levelJson.NodesToRemove)
     {
-        levelGridComponent->RemoveNode(gridPosition);
+        m_LevelGridComponent->RemoveNode(gridPosition);
     }
 
     for(const bae::Graphs::GridPosition& gridPosition : levelJson.NodesToAddAfterRemoval)
     {
-        levelGridComponent->AddNode(gridPosition);
-        levelGridComponent->AddConnectionsToNeighbors(gridPosition);
+        m_LevelGridComponent->AddNode(gridPosition);
+        m_LevelGridComponent->AddConnectionsToNeighbors(gridPosition);
     }
 
 
-    // levelGridComponent->SetRenderCells(true);
-    // levelGridComponent->SetRenderNodes(true);
-    levelGridComponent->SetRenderConnections(true);
+    // m_LevelGridComponent->SetRenderCells(true);
+    // m_LevelGridComponent->SetRenderNodes(true);
+    m_LevelGridComponent->SetRenderConnections(true);
 
     scene->Add(levelGrid);
 }
@@ -355,6 +355,20 @@ void LevelManagerComponent::AddPlayers() const
     keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
     keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
+
+    msPacman->AddComponent<GridMovementComponent>(*msPacman, *m_LevelGridComponent);
+
+    // MoveOnGridCommand
+    auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Left);
+    auto moveOnGridRightCommand = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Right);
+    auto moveOnGridDownCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Down);
+    auto moveOnGridUpCommand    = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Up);
+
+    constexpr bae::InputManager::ButtonState moveOnGridButtonState = bae::InputManager::ButtonState::Down;
+    keyboard.AddKeyboardCommands(std::move(moveOnGridLeftCommand), SDLK_LEFT, moveOnGridButtonState);
+    keyboard.AddKeyboardCommands(std::move(moveOnGridRightCommand), SDLK_RIGHT, moveOnGridButtonState);
+    keyboard.AddKeyboardCommands(std::move(moveOnGridDownCommand), SDLK_DOWN, moveOnGridButtonState);
+    keyboard.AddKeyboardCommands(std::move(moveOnGridUpCommand), SDLK_UP, moveOnGridButtonState);
 
 
     // TODO: remove both
