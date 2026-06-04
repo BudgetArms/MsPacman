@@ -1,13 +1,18 @@
 #include "MoveOnGridCommand.hpp"
 
 #include "Base/DirectionEnum.hpp"
+#include "Core/HelperFunctions.hpp"
 
 
 Game::MoveOnGridCommand::MoveOnGridCommand(bae::GameObject& owner, const Direction direction) :
     GameActorCommand(owner),
     m_Direction{ direction }
 {
-    // Get the move command from the owner
+    m_GridMovementComponent = GetActor()->GetComponent<GridMovementComponent>();
+    if(!m_GridMovementComponent)
+    {
+        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed! No GridMovementComponent Found In Owner!"));
+    }
 }
 
 void Game::MoveOnGridCommand::Execute()
@@ -17,24 +22,5 @@ void Game::MoveOnGridCommand::Execute()
         return;
     }
 
-    // TODO: Implement logic
-    switch(m_Direction)
-    {
-        case Direction::Down:
-        {
-        }
-        break;
-        case Direction::Up:
-        {
-        }
-        break;
-        case Direction::Left:
-        {
-        }
-        break;
-        case Direction::Right:
-        {
-        }
-        break;
-    }
+    m_GridMovementComponent->Move(m_Direction);
 }

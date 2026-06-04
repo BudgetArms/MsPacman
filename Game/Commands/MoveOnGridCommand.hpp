@@ -3,6 +3,7 @@
 #include "Commands/GameActorCommand.hpp"
 
 #include "Base/DirectionEnum.hpp"
+#include "Components/GridMovementComponent.hpp"
 
 namespace Game
 {
@@ -14,7 +15,8 @@ namespace Game
         void Execute() override;
 
     private:
-        Direction m_Direction;
+        GridMovementComponent* m_GridMovementComponent;
+        Direction m_Direction{};
     };
 }
 
