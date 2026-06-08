@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Components/Component.hpp"
+#include "Core/Subject.hpp"
 #include "Core/Utils.hpp"
 
 
 namespace Game
 {
-    class HitboxComponent final : public bae::Component
+    class HitboxComponent final : public bae::Component, public bae::Subject
     {
     public:
         explicit HitboxComponent(bae::GameObject& owner, const glm::vec2& dimensions, const glm::vec2& offsetPosition);
