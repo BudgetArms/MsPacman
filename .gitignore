@@ -401,6 +401,8 @@ build_web
 imgui.ini
 /cmake-build-release/
 /cmake-build-debug/
+/cmake-build-release-event-trace/
+/cmake-build-relwithdebinfo/
 .idea/
 /out/
 
