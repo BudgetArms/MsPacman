@@ -24,7 +24,7 @@ namespace Game
 
         [[nodiscard]] States::EntityState* GetState() const;
 
-        void Notify(unsigned eventHash, bae::Subject* subject) override;
+        void Notify(unsigned eventHash, bae::Subject* subject, const std::any&) override;
 
     private:
         void UpdateToNewState(std::unique_ptr<States::EntityState> newState);

@@ -32,7 +32,7 @@ namespace Game
 
         [[nodiscard]] int GetCurrentLevel() const;
 
-        void Notify(unsigned int eventHash, bae::Subject* subject) override;
+        void Notify(unsigned int eventHash, bae::Subject* subject, const std::any&) override;
 
         void SetSpriteSheetWorldLocation(const glm::vec2& location) const;
         void SetSpriteSheetWorldRotation(float rotation) const;

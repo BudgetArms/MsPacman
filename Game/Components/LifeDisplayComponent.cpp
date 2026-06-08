@@ -32,7 +32,7 @@ void LifeDisplayComponent::Render() const
 }
 
 
-void LifeDisplayComponent::Notify(const unsigned eventHash, bae::Subject* subject)
+void LifeDisplayComponent::Notify(const unsigned eventHash, bae::Subject* subject, const std::any&)
 {
     if(GetEvent(eventHash) == Events::LivesChanged)
     {

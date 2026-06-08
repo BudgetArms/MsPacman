@@ -24,7 +24,7 @@ namespace Game
         void Render() const override;
 
 
-        void Notify(unsigned eventHash, bae::Subject* subject) override;
+        void Notify(unsigned eventHash, bae::Subject* subject, const std::any&) override;
 
 
         glm::vec2 m_Position;

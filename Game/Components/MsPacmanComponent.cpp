@@ -53,7 +53,7 @@ States::EntityState* MsPacmanComponent::GetState() const
     return m_MsPacmanState.get();
 }
 
-void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*)
+void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, const std::any&)
 {
     switch(GetEvent(eventHash))
     {

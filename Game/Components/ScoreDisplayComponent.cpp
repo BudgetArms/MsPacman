@@ -43,7 +43,7 @@ void ScoreDisplayComponent::SetPosition(const glm::vec2& position) const
     m_Text->m_Position = position;
 }
 
-void ScoreDisplayComponent::Notify(const unsigned eventHash, bae::Subject* subject)
+void ScoreDisplayComponent::Notify(const unsigned eventHash, bae::Subject* subject, const std::any&)
 {
     if(GetEvent(eventHash) == Events::ScoreChanged)
     {

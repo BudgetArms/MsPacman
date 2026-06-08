@@ -111,7 +111,7 @@ int LevelManagerComponent::GetCurrentLevel() const
     return m_CurrentLevel;
 }
 
-void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*)
+void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*, const std::any&)
 {
     switch(GetEvent(eventHash))
     {

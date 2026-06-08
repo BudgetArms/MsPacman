@@ -27,7 +27,7 @@ namespace Game
         void SetPosition(const glm::vec2& position) const;
 
 
-        void Notify(unsigned eventHash, bae::Subject* subject) override;
+        void Notify(unsigned eventHash, bae::Subject* subject, const std::any&) override;
 
     private:
         std::shared_ptr<bae::Text2D> m_Text;
