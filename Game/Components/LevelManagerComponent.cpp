@@ -24,6 +24,7 @@
 #include "Components/RenderCenterComponent.hpp"
 #include "Components/ScoreComponent.hpp"
 #include "Components/ScoreDisplayComponent.hpp"
+#include "Components/TextureComponent.hpp"
 
 
 using namespace Game;
@@ -133,6 +134,7 @@ void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*, 
         case Events::LivesChanged:
         case Events::InvincibilityChanged:
         case Events::NoEvent:
+        case Events::Collision:
             break;
     }
 }
@@ -291,6 +293,7 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
         case Events::LivesChanged:
         case Events::InvincibilityChanged:
         case Events::NoEvent:
+        case Events::Collision:
             break;
     }
 }
@@ -319,6 +322,7 @@ void LevelManagerComponent::AddPlayers() const
     const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
 
     msPacman->AddComponent<MsPacmanComponent>(*msPacman);
+    auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
 
     constexpr glm::vec2 dimensions = { 50, 50 };
     constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
@@ -326,6 +330,8 @@ void LevelManagerComponent::AddPlayers() const
     msPacman->AddComponent<HitboxComponent>(*msPacman, dimensions, offset);
     const auto hitboxComp = msPacman->GetComponent<HitboxComponent>();
     hitboxComp->SetVisibility(true);
+
+    hitboxComp->AddObserver(msPacmanComp);
 
     // Score Display
     auto text = std::make_unique<bae::Text2D>("Score: Test");
@@ -382,6 +388,18 @@ void LevelManagerComponent::AddPlayers() const
 
 
     scene->Add(msPacman);
+
+
+    // TODO: remove after testing
+    const auto enemyObject = std::make_shared<bae::GameObject>("Enemy Collision");
+    enemyObject->SetWorldLocation({ 200, 200 });
+
+    enemyObject->AddComponent<bae::TextureComponent>(*enemyObject, "Textures/Characters/Blinky.png");
+    enemyObject->AddComponent<HitboxComponent>(*enemyObject, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+    auto testingHitboxComp = enemyObject->GetComponent<HitboxComponent>();
+    testingHitboxComp->SetVisibility(true);
+
+    scene->Add(enemyObject);
 }
 
 
