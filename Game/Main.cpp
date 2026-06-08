@@ -50,6 +50,7 @@
 #include "Managers/SceneManager.hpp"
 
 #include "Wrappers/Keyboard.hpp"
+#include "Wrappers/Mouse.hpp"
 #include "Wrappers/Texture2D.hpp"
 
 
@@ -64,11 +65,14 @@
 #include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Base/SoundAssets.hpp"
+
 #include "Commands/TestMousePositionCommand.hpp"
 #include "Commands/ToggleMuteAllSoundsCommand.hpp"
+
+#include "Components/CollisionManagerComponent.hpp"
 #include "Components/EntityManagerComponent.hpp"
+#include "Components/HitboxComponent.hpp"
 #include "Components/LevelManagerComponent.hpp"
-#include "Wrappers/Mouse.hpp"
 
 
 namespace fs = std::filesystem;
@@ -82,8 +86,9 @@ void CreateAllScenes();
 
 void LoadStartMenu();
 
-void LoadEntityManager();
+void LoadCollisionManager();
 void LoadLevelManager();
+void LoadEntityManager();
 
 
 void LoadDAEBackground();
@@ -148,8 +153,10 @@ void Start()
     CreateAllScenes();
 
     LoadStartMenu();
-    LoadEntityManager();
+
+    LoadCollisionManager();
     LoadLevelManager();
+    // LoadEntityManager();
 
     LoadFpsCounterScene();
     LoadGameNameScene();
@@ -259,21 +266,22 @@ void LoadStartMenu()
     startMenuScene->Add(versusObject);
 }
 
-void LoadEntityManager()
+
+void LoadCollisionManager()
 {
-    auto* managerComponentScene = bae::SceneManager::GetInstance().
+    bae::Scene* managerComponentScene = bae::SceneManager::GetInstance().
             GetScene(Game::g_LevelManagersSceneName.data());
 
+    const auto collisionManager = std::make_shared<bae::GameObject>("CollisionManager");
+    collisionManager->AddComponent<Game::CollisionManagerComponent>(*collisionManager);
 
-    const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
-    entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
-
-    managerComponentScene->Add(entityManager);
+    managerComponentScene->Add(collisionManager);
 }
 
 void LoadLevelManager()
 {
-    auto* managerComponentScene = bae::SceneManager::GetInstance().GetScene(Game::g_LevelManagersSceneName.data());
+    bae::Scene* managerComponentScene = bae::SceneManager::GetInstance().
+            GetScene(Game::g_LevelManagersSceneName.data());
 
     const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
     levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
@@ -292,6 +300,18 @@ void LoadLevelManager()
     managerComponentScene->Add(levelManager);
 
     bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
+}
+
+void LoadEntityManager()
+{
+    auto* managerComponentScene = bae::SceneManager::GetInstance().
+            GetScene(Game::g_LevelManagersSceneName.data());
+
+
+    const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
+    entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
+
+    managerComponentScene->Add(entityManager);
 }
 
 void LoadDAEBackground()
