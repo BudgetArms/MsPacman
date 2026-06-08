@@ -14,7 +14,6 @@ namespace Game::States
 namespace Game
 {
     class MsPacmanComponent final : public bae::Component, public bae::Observer
-
     {
     public:
         explicit MsPacmanComponent(bae::GameObject& owner);
@@ -28,6 +27,8 @@ namespace Game
 
     private:
         void UpdateToNewState(std::unique_ptr<States::EntityState> newState);
+
+        void HandleCollision(const std::any& eventData);
 
         std::unique_ptr<States::EntityState> m_MsPacmanState;
     };

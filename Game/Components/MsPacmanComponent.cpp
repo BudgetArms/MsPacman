@@ -1,5 +1,6 @@
 #include "MsPacmanComponent.hpp"
 
+#include "HitboxComponent.hpp"
 #include "Base/Events.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
@@ -53,12 +54,14 @@ States::EntityState* MsPacmanComponent::GetState() const
     return m_MsPacmanState.get();
 }
 
-void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, const std::any&)
+void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, const std::any& eventData)
 {
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
         case Events::GameOver:
+        case Events::LevelWon:
+        case Events::LevelLost:
         case Events::GhostDied:
         case Events::BeginLevel:
         case Events::RestartLevel:
@@ -74,10 +77,13 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
             std::cout << FUNCTION_NAME << " Score changed: " << scoreComp->GetScore() << '\n';
         }
         break;
-        // case Events::GamePaused:
-        // case Events::GameResumed:
+        case Events::LivesChanged:
+        case Events::InvincibilityChanged:
+            break;
+        case Events::Collision:
+            HandleCollision(eventData);
+            break;
         case Events::NoEvent:
-        default:;
             break;
     }
 }
@@ -98,6 +104,23 @@ void MsPacmanComponent::UpdateToNewState(std::unique_ptr<States::EntityState> ne
     m_MsPacmanState->OnExit();
     m_MsPacmanState = std::move(newState);
     m_MsPacmanState->OnEnter();
+}
+
+void MsPacmanComponent::HandleCollision(const std::any& eventData)
+{
+    if(!eventData.has_value())
+    {
+        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed to Get EventData"));
+    }
+
+    auto otherHitbox = std::any_cast<HitboxComponent*>(eventData);
+    if(!otherHitbox)
+    {
+        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed! Invalid EventData GameObject!"));
+    }
+
+    // TODO: implement Checking for what got hit
+    std::cout << FUNCTION_NAME << " Collision detected!" << '\n';
 }
 
 
