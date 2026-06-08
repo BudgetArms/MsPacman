@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "Components/Component.hpp"
 #include "Core/Subject.hpp"
 #include "Core/Utils.hpp"
@@ -21,7 +23,11 @@ namespace Game
         void SetColor(const bae::Utils::Color& color);
         void SetVisibility(bool visibility);
 
+        void SendCollisionEventToObservers(HitboxComponent& otherHitbox);
+
     private:
+        void RegisterHitboxToCollisionManager();
+
         glm::vec2 m_Dimensions{};
         glm::vec2 m_OffsetPosition{};
         bae::Utils::Color m_Color{ bae::Utils::Color::Green };
