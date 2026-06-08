@@ -20,6 +20,7 @@ namespace Game
         ScoreChanged,
         LivesChanged,
         InvincibilityChanged,
+        Collision,
         NoEvent,
     };
 
@@ -36,6 +37,7 @@ namespace Game
         { Events::ScoreChanged, bae::HashSDBM("ScoreChanged") },
         { Events::LivesChanged, bae::HashSDBM("LivesChanged") },
         { Events::InvincibilityChanged, bae::HashSDBM("InvincibilityChanged") },
+        { Events::Collision, bae::HashSDBM("Collision") },
         { Events::NoEvent, bae::HashSDBM("NoEvent") },
     };
 
