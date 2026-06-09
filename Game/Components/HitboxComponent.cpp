@@ -22,6 +22,11 @@ HitboxComponent::HitboxComponent(bae::GameObject& owner, const glm::vec2& dimens
     RegisterHitboxToCollisionManager();
 }
 
+HitboxComponent::~HitboxComponent()
+{
+    UnRegisterHitboxToCollisionManager();
+}
+
 
 void HitboxComponent::Render() const
 {
@@ -78,7 +83,7 @@ void HitboxComponent::SendCollisionEventToObservers(HitboxComponent& otherHitbox
 
 void HitboxComponent::RegisterHitboxToCollisionManager()
 {
-    bae::Scene* scene = bae::SceneManager::GetInstance().GetInstance().GetScene(g_LevelManagersSceneName.data());
+    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelManagersSceneName.data());
     if(!scene)
     {
         throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get LevelManagers Scene"));
@@ -97,4 +102,30 @@ void HitboxComponent::RegisterHitboxToCollisionManager()
 
     const auto collisionManagerComp = (*collisionManagerObjectIt)->GetComponent<CollisionManagerComponent>();
     collisionManagerComp->RegisterHitbox(*this);
+}
+
+void HitboxComponent::UnRegisterHitboxToCollisionManager()
+{
+    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelManagersSceneName.data());
+    if(!scene)
+    {
+        std::cout << FUNCTION_NAME << " Failed To Get LevelManagers Scene" << '\n';
+        std::cout << FUNCTION_NAME << " This can be due to Program Shutdown" << '\n';
+
+        return;
+    }
+
+    auto sceneGameObjects               = scene->GetObjects();
+    const auto collisionManagerObjectIt = std::ranges::find_if(sceneGameObjects, [](auto& object)
+    {
+        return object->template HasComponent<CollisionManagerComponent>();
+    });
+
+    if(collisionManagerObjectIt == sceneGameObjects.end())
+    {
+        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get CollisionManagerComponent"));
+    }
+
+    const auto collisionManagerComp = (*collisionManagerObjectIt)->GetComponent<CollisionManagerComponent>();
+    collisionManagerComp->UnRegisterHitbox(this);
 }

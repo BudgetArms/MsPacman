@@ -13,6 +13,7 @@ namespace Game
     {
     public:
         explicit HitboxComponent(bae::GameObject& owner, const glm::vec2& dimensions, const glm::vec2& offsetPosition);
+        ~HitboxComponent() override;
 
         void Render() const override;
 
@@ -27,6 +28,7 @@ namespace Game
 
     private:
         void RegisterHitboxToCollisionManager();
+        void UnRegisterHitboxToCollisionManager();
 
         glm::vec2 m_Dimensions{};
         glm::vec2 m_OffsetPosition{};
