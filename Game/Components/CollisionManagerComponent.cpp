@@ -22,10 +22,10 @@ void CollisionManagerComponent::FixedUpdate()
     HitboxComponent* hitboxComponentA{};
     HitboxComponent* hitboxComponentB{};
 
-    for(int i = 0; i < m_Hitboxes.size(); ++i)
+    for(size_t i = 0; i < m_Hitboxes.size(); ++i)
     {
         hitboxComponentA = m_Hitboxes[i];
-        for(int j = i + 1; j < m_Hitboxes.size(); ++j)
+        for(size_t j = i + 1; j < m_Hitboxes.size(); ++j)
         {
             hitboxComponentB = m_Hitboxes[j];
 
