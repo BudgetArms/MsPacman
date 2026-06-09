@@ -1,14 +1,19 @@
 #include "MsPacmanComponent.hpp"
 
-#include "HitboxComponent.hpp"
-#include "Base/Events.hpp"
+#include "LevelManagerComponent.hpp"
+#include "Base/CommonManagerVariables.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/GameObject.hpp"
 #include "Managers/ResourceManager.hpp"
 
+#include "Base/Events.hpp"
+#include "Base/Level.hpp"
+#include "Components/HitboxComponent.hpp"
+#include "Components/ItemComponent.hpp"
 #include "Components/LifeComponent.hpp"
 #include "Components/ScoreComponent.hpp"
+#include "Core/Scene.hpp"
 #include "States/Entities/MsPacmanDying.hpp"
 #include "States/Entities/MsPacmanIdle.hpp"
 
@@ -106,7 +111,7 @@ void MsPacmanComponent::UpdateToNewState(std::unique_ptr<States::EntityState> ne
     m_MsPacmanState->OnEnter();
 }
 
-void MsPacmanComponent::HandleCollision(const std::any& eventData)
+void MsPacmanComponent::HandleCollision(const std::any& eventData) const
 {
     if(!eventData.has_value())
     {
@@ -121,6 +126,82 @@ void MsPacmanComponent::HandleCollision(const std::any& eventData)
 
     // TODO: implement Checking for what got hit
     std::cout << FUNCTION_NAME << " Collision detected!" << '\n';
+
+    bae::GameObject* otherObject = otherHitbox->GetGameObject();
+
+    if(auto itemComp = otherObject->GetComponent<ItemComponent>())
+    {
+        HandleItemCollision(*itemComp);
+    }
+    else
+    // else if(otherObject->HasComponent<EnemyComponent>())
+    {
+        HandleEnemyCollision(nullptr);
+    }
+}
+
+void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
+{
+    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelManagersSceneName.data());
+    if(!scene)
+    {
+        return;
+    }
+
+    auto sceneGameObjects           = scene->GetObjects();
+    const auto levelManagerObjectIt = std::ranges::find_if(sceneGameObjects, [](auto& object)
+    {
+        return object->template HasComponent<LevelManagerComponent>();
+    });
+
+    if(levelManagerObjectIt == sceneGameObjects.end())
+    {
+        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get levelManagerComponent"));
+    }
+
+    const auto levelManagerComponent = (*levelManagerObjectIt)->GetComponent<LevelManagerComponent>();
+    const LevelJson levelJson        = levelManagerComponent->GetCurrentLevel();
+    const auto scoreMap              = levelJson.ScoreMap;
+
+    auto getScore = [&](const ScoreTypes scoreType) -> int
+    {
+        const auto scoreIt = scoreMap.find(scoreType);
+        if(scoreIt == scoreMap.end())
+        {
+            return 0;
+        }
+
+        return scoreIt->second;
+    };
+
+    int scoreGained{};
+    switch(itemComponent.GetItemType())
+    {
+        case ItemType::PacDot:
+            scoreGained = getScore(ScoreTypes::PacDot);
+            break;
+        case ItemType::PowerPellet:
+            scoreGained = getScore(ScoreTypes::PowerPellet);
+            break;
+        case ItemType::Fruit:
+            scoreGained = getScore(ScoreTypes::BonusItem);
+            break;
+    }
+
+
+    const auto scoreComp = m_Owner->GetComponent<ScoreComponent>();
+    scoreComp->SetScore(scoreGained);
+
+    if(!scoreGained)
+    {
+        std::cout << FUNCTION_NAME << " Score gained, couldn't find score, score: " << scoreGained << '\n';
+    }
+
+    itemComponent.GetOwner()->Destroy();
+}
+
+void MsPacmanComponent::HandleEnemyCollision(bae::GameObject*) const
+{
 }
 
 
