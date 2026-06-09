@@ -119,14 +119,8 @@ void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*, 
         case Events::PlayerDied:
             break;
         case Events::GameOver:
-            ResetLevel();
-            break;
         case Events::LevelWon:
-            WonLevel();
-            break;
         case Events::LevelLost:
-            LostLevel();
-            break;
         case Events::GhostDied:
         case Events::BeginLevel:
         case Events::RestartLevel:
@@ -280,8 +274,12 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
             HandlePlayerDied();
             break;
         case Events::GameOver:
+            ClearLevel();
+            break;
         case Events::LevelWon:
+            WonLevel();
         case Events::LevelLost:
+            LostLevel();
         case Events::GhostDied:
             break;
         case Events::BeginLevel:
