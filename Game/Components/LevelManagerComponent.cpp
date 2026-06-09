@@ -107,9 +107,14 @@ void LevelManagerComponent::ResetLevel()
 }
 
 
-int LevelManagerComponent::GetCurrentLevel() const
+int LevelManagerComponent::GetCurrentLevelNumber() const
 {
     return m_CurrentLevel;
+}
+
+LevelJson LevelManagerComponent::GetCurrentLevel()
+{
+    return GetCurrentLevelJson().value();
 }
 
 void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*, const std::any&)

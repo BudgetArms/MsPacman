@@ -30,7 +30,8 @@ namespace Game
         void ResetLevel();
 
 
-        [[nodiscard]] int GetCurrentLevel() const;
+        [[nodiscard]] int GetCurrentLevelNumber() const;
+        [[nodiscard]] LevelJson GetCurrentLevel();
 
         void Notify(unsigned int eventHash, bae::Subject* subject, const std::any&) override;
 
