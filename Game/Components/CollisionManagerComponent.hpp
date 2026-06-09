@@ -17,12 +17,13 @@ namespace Game
         void FixedUpdate() override;
 
 
-        void RegisterHitbox(HitboxComponent& hitbox);
+        void RegisterHitbox(const HitboxComponent& hitbox);
+        void UnRegisterHitbox(HitboxComponent* hitbox);
 
     private:
         static void SendHitboxesNotifications(HitboxComponent* hitboxA, HitboxComponent* hitboxB);
 
 
-        std::vector<HitboxComponent*> m_Hitboxes{};
+        std::vector<bae::GameObject*> m_HitboxObjects{};
     };
 }
