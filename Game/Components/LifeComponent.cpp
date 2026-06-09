@@ -130,7 +130,7 @@ bool LifeComponent::IsAlive() const
     return m_bIsAlive;
 }
 
-void LifeComponent::SendEventToObservers(Events event)
+void LifeComponent::SendEventToObservers(const Events event)
 {
     NotifyObservers(GetEventHash(event));
 }
