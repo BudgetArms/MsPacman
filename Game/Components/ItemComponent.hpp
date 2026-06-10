@@ -12,7 +12,7 @@ namespace Game
         Fruit,
     };
 
-    class ItemComponent : public bae::Component
+    class ItemComponent final : public bae::Component
     {
     public:
         explicit ItemComponent(bae::GameObject& owner, ItemType item);

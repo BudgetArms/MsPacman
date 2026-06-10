@@ -127,9 +127,9 @@ void MsPacmanComponent::HandleCollision(const std::any& eventData) const
     // TODO: implement Checking for what got hit
     std::cout << FUNCTION_NAME << " Collision detected!" << '\n';
 
-    bae::GameObject* otherObject = otherHitbox->GetGameObject();
+    const bae::GameObject* otherObject = otherHitbox->GetGameObject();
 
-    if(auto itemComp = otherObject->GetComponent<ItemComponent>())
+    if(const auto itemComp = otherObject->GetComponent<ItemComponent>())
     {
         HandleItemCollision(*itemComp);
     }
@@ -192,7 +192,7 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
     const auto scoreComp = m_Owner->GetComponent<ScoreComponent>();
     scoreComp->SetScore(scoreGained);
 
-    if(!scoreGained)
+    if(scoreGained == 0)
     {
         std::cout << FUNCTION_NAME << " Score gained, couldn't find score, score: " << scoreGained << '\n';
     }
@@ -203,6 +203,4 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
 void MsPacmanComponent::HandleEnemyCollision(bae::GameObject*) const
 {
 }
-
-
 

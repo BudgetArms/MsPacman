@@ -15,6 +15,7 @@ namespace Game::States
         void OnResume() final;
         void OnSuspend() final;
 
+        // todo: remove this, or do something with it
         virtual void HandleInput() = 0;
 
     private:

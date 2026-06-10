@@ -33,4 +33,3 @@ ItemType ItemComponent::GetItemType() const
     return m_ItemType;
 }
 
-

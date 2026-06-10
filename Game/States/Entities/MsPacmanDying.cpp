@@ -4,13 +4,13 @@
 
 #include "Base/Events.hpp"
 #include "Components/TextComponent.hpp"
+#include "Core/EventQueue.hpp"
 #include "Core/ServiceLocator.hpp"
 #include "Singletons/GameTime.hpp"
 #include "Sounds/SoundSystem.hpp"
 
 #include "Base/SoundAssets.hpp"
 #include "Components/MsPacmanComponent.hpp"
-#include "Core/EventQueue.hpp"
 
 
 using namespace Game::States;
