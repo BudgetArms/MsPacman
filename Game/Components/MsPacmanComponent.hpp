@@ -13,6 +13,7 @@ namespace Game::States
 
 namespace Game
 {
+    class GhostKiller;
     class ItemComponent;
 
     class MsPacmanComponent final : public bae::Component, public bae::Observer
@@ -33,6 +34,9 @@ namespace Game
         void HandleCollision(const std::any& eventData) const;
         void HandleItemCollision(ItemComponent& itemComponent) const;
         void HandleEnemyCollision(bae::GameObject* gameObject) const;
+
+        [[nodiscard]] static bool IsEnemy(bae::GameObject* gameObject);
+        [[nodiscard]] static GhostKiller* GetEnemyClass(bae::GameObject* gameObject);
 
         std::unique_ptr<States::EntityState> m_MsPacmanState;
     };

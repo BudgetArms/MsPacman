@@ -1,19 +1,20 @@
 #include "MsPacmanComponent.hpp"
 
-#include "LevelManagerComponent.hpp"
-#include "Base/CommonManagerVariables.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/GameObject.hpp"
+#include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
 
+#include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
+#include "Base/GhostKiller.hpp"
 #include "Base/Level.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/ItemComponent.hpp"
+#include "Components/LevelManagerComponent.hpp"
 #include "Components/LifeComponent.hpp"
 #include "Components/ScoreComponent.hpp"
-#include "Core/Scene.hpp"
 #include "States/Entities/MsPacmanDying.hpp"
 #include "States/Entities/MsPacmanIdle.hpp"
 
@@ -33,7 +34,7 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
                                                 SDL_FRect(0, 0, 48, 64), 3, 12);
 
     m_Owner->AddComponent<ScoreComponent>(*m_Owner);
-    auto scoreComponent = m_Owner->GetComponent<ScoreComponent>();
+    const auto scoreComponent = m_Owner->GetComponent<ScoreComponent>();
     scoreComponent->SetScore(100);
 
     m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
@@ -118,25 +119,20 @@ void MsPacmanComponent::HandleCollision(const std::any& eventData) const
         throw std::runtime_error(FUNCTION_NAME + std::string(" Failed to Get EventData"));
     }
 
-    auto otherHitbox = std::any_cast<HitboxComponent*>(eventData);
+    const auto otherHitbox = std::any_cast<HitboxComponent*>(eventData);
     if(!otherHitbox)
     {
         throw std::runtime_error(FUNCTION_NAME + std::string(" Failed! Invalid EventData GameObject!"));
     }
 
-    // TODO: implement Checking for what got hit
-    std::cout << FUNCTION_NAME << " Collision detected!" << '\n';
-
-    const bae::GameObject* otherObject = otherHitbox->GetGameObject();
-
+    bae::GameObject* otherObject = otherHitbox->GetGameObject();
     if(const auto itemComp = otherObject->GetComponent<ItemComponent>())
     {
         HandleItemCollision(*itemComp);
     }
-    else
-    // else if(otherObject->HasComponent<EnemyComponent>())
+    else if(IsEnemy(otherObject))
     {
-        HandleEnemyCollision(nullptr);
+        HandleEnemyCollision(otherObject);
     }
 }
 
@@ -200,7 +196,44 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
     itemComponent.GetOwner()->Destroy();
 }
 
-void MsPacmanComponent::HandleEnemyCollision(bae::GameObject*) const
+void MsPacmanComponent::HandleEnemyCollision(bae::GameObject* gameObject) const
 {
+    const auto lifeComp = m_Owner->GetComponent<LifeComponent>();
+    if(!lifeComp)
+    {
+        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed to Get LifeComponent!"));
+    }
+
+    if(lifeComp->IsInvincible())
+    {
+        GhostKiller* ghostKiller = GetEnemyClass(gameObject);
+        ghostKiller->Kill();
+    }
+    else
+    {
+        std::cout << "Removed Life\n";
+        lifeComp->RemoveLife();
+    }
+}
+
+bool MsPacmanComponent::IsEnemy(bae::GameObject* gameObject)
+{
+    return GetEnemyClass(gameObject) != nullptr;
+}
+
+GhostKiller* MsPacmanComponent::GetEnemyClass(bae::GameObject* gameObject)
+{
+    auto& components         = gameObject->GetComponents();
+    const auto foundKillerIt = std::ranges::find_if(components, [](auto& component)
+    {
+        return dynamic_cast<GhostKiller*>(component.get());
+    });
+
+    if(foundKillerIt == components.end())
+    {
+        return nullptr;
+    }
+
+    return dynamic_cast<GhostKiller*>(foundKillerIt->get());
 }
 
