@@ -21,9 +21,9 @@ namespace Game
         void Update() override;
         void Render() const override;
 
-        bae::Text2D* GetText() const;
+        [[nodiscard]] bae::Text2D* GetText() const;
 
-        glm::vec2 GetPosition() const;
+        [[nodiscard]] glm::vec2 GetPosition() const;
         void SetPosition(const glm::vec2& position) const;
 
 
