@@ -251,14 +251,6 @@ void LevelManagerComponent::CreateGrid()
     levelGrid->AddComponent<LevelGridComponent>(*levelGrid, gridSize, nrColumns, nrRows);
     m_LevelGridComponent = levelGrid->GetComponent<LevelGridComponent>();
 
-    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 0 });
-    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 1 });
-    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 2 });
-
-    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 0, 0 });
-    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 1, 0 });
-    m_LevelGridComponent->RemoveNode(bae::Graphs::GridPosition{ 2, 0 });
-
     for(const bae::Graphs::GridPosition& gridPosition : levelJson.NodesToRemove)
     {
         m_LevelGridComponent->RemoveNode(gridPosition);
@@ -375,7 +367,7 @@ void LevelManagerComponent::AddPlayers() const
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
 
     msPacman->AddComponent<GridMovementComponent>(*msPacman, *m_LevelGridComponent);
-    msPacman->GetComponent<GridMovementComponent>()->m_Speed = 200.f;
+    msPacman->GetComponent<GridMovementComponent>()->m_Speed = 100.f;
 
     // MoveOnGridCommand
     auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Left);
