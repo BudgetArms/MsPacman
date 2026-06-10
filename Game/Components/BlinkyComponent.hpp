@@ -1,13 +1,15 @@
 #pragma once
 
+
 #include "Components/Component.hpp"
 
+#include "Base/GhostKiller.hpp"
 #include "States/Entities/GhostStates.hpp"
 
 
 namespace Game
 {
-    class BlinkyComponent : public bae::Component
+    class BlinkyComponent : public bae::Component, public GhostKiller
     {
     public:
         explicit BlinkyComponent(bae::GameObject& owner);
@@ -17,7 +19,7 @@ namespace Game
 
         [[nodiscard]] States::EntityState* GetState() const;
 
-        void Kill();
+        void Kill() override;
 
     private:
         void UpdateToNewState(std::unique_ptr<States::EntityState> newState);

@@ -8,8 +8,7 @@ using namespace Game;
 
 
 BlinkyComponent::BlinkyComponent(bae::GameObject& owner) :
-    Component(owner),
-    m_BlinkyState{}
+    Component(owner)
 {
     m_BlinkyState = std::make_unique<States::BlinkyChasing>(*m_Owner);
 }
