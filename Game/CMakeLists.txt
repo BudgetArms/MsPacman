@@ -55,6 +55,8 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Components/ScoreComponent.cpp"
     "Components/ScoreDisplayComponent.cpp"
 
+    "States/Entities/BlinkyChasing.cpp"
+    "States/Entities/BlinkyEaten.cpp"
     "States/Entities/GhostStates.cpp"
     "States/Entities/MsPacmanDying.cpp"
     "States/Entities/MsPacmanIdle.cpp"
