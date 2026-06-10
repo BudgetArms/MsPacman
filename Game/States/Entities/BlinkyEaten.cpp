@@ -104,7 +104,7 @@ void States::BlinkyEaten::SetDirectionFromPath()
         }
     }
 
-    m_GridMovementComponent->Move(direction);
+    m_GridMovementComponent->SetDirection(direction);
 
     if(glm::distance(currentPos, pathPosition) < m_MinDistanceToCell)
     {

@@ -22,5 +22,5 @@ void Game::MoveOnGridCommand::Execute()
         return;
     }
 
-    m_GridMovementComponent->Move(m_Direction);
+    m_GridMovementComponent->SetDirection(m_Direction);
 }

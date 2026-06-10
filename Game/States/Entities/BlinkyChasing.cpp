@@ -65,10 +65,10 @@ void States::BlinkyChasing::UpdateTargetPosition()
 void States::BlinkyChasing::UpdatePath()
 {
     m_ElapsedTime += bae::GameTime::GetInstance().GetDeltaTime();
-    // if(m_ElapsedTime < m_RecalculatePathCooldownTime)
-    // {
-    // return;
-    // }
+    if(m_ElapsedTime < m_RecalculatePathCooldownTime)
+    {
+        return;
+    }
 
     m_ElapsedTime = 0.0f;
 
@@ -125,7 +125,7 @@ void States::BlinkyChasing::SetDirectionFromPath()
         }
     }
 
-    m_GridMovementComponent->Move(direction);
+    m_GridMovementComponent->SetDirection(direction);
 
     if(glm::distance(currentPos, pathPosition) < m_MinDistanceToCell)
     {
