@@ -295,6 +295,8 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
         case Events::RestartLevel:
         case Events::ScoreChanged:
         case Events::LivesChanged:
+            ResetLevel();
+            break;
         case Events::InvincibilityChanged:
         case Events::NoEvent:
         case Events::Collision:
