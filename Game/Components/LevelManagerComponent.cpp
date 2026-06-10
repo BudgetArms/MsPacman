@@ -108,6 +108,11 @@ void LevelManagerComponent::ResetLevel()
     CreateLevel();
 }
 
+LevelGridComponent* LevelManagerComponent::GetLevelGridComponent() const
+{
+    return m_LevelGridComponent;
+}
+
 
 int LevelManagerComponent::GetCurrentLevelNumber() const
 {

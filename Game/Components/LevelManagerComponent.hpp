@@ -30,6 +30,8 @@ namespace Game
         void ResetLevel();
 
 
+        [[nodiscard]] LevelGridComponent* GetLevelGridComponent() const;
+
         [[nodiscard]] int GetCurrentLevelNumber() const;
         [[nodiscard]] LevelJson GetCurrentLevel();
 
