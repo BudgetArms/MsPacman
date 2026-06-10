@@ -1,5 +1,6 @@
 #include "LifeComponent.hpp"
 
+#include "Core/EventQueue.hpp"
 #include "Core/HelperFunctions.hpp"
 
 
@@ -133,5 +134,6 @@ bool LifeComponent::IsAlive() const
 void LifeComponent::SendEventToObservers(const Events event)
 {
     NotifyObservers(GetEventHash(event));
+    bae::EventQueue::GetInstance().SendEvent(GetEventHash(event));
 }
 
