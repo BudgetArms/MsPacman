@@ -4,6 +4,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "BlinkyComponent.hpp"
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
@@ -98,6 +99,7 @@ void LevelManagerComponent::CreateLevel()
     CreateGrid();
 
     AddPlayers();
+    AddGhosts();
 }
 
 void LevelManagerComponent::ResetLevel()
@@ -324,6 +326,8 @@ void LevelManagerComponent::AddPlayers() const
 
     const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
 
+    msPacman->SetWorldLocation(m_LevelGridComponent->GetPosition({ 3, 3 }));
+
     msPacman->AddComponent<MsPacmanComponent>(*msPacman);
     auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
 
@@ -355,10 +359,10 @@ void LevelManagerComponent::AddPlayers() const
     const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
 
     constexpr float msPacmanSpeed = 100.f;
-    auto moveLeftCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Left, msPacmanSpeed);
-    auto moveRightCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Right, msPacmanSpeed);
-    auto moveDownCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Down, msPacmanSpeed);
-    auto moveUpCommand = std::make_unique<Game::MoveCommand>(*msPacman, Game::Direction::Up, msPacmanSpeed);
+    auto moveLeftCommand          = std::make_unique<MoveCommand>(*msPacman, Direction::Left, msPacmanSpeed);
+    auto moveRightCommand         = std::make_unique<MoveCommand>(*msPacman, Direction::Right, msPacmanSpeed);
+    auto moveDownCommand          = std::make_unique<MoveCommand>(*msPacman, Direction::Down, msPacmanSpeed);
+    auto moveUpCommand            = std::make_unique<MoveCommand>(*msPacman, Direction::Up, msPacmanSpeed);
 
     keyboard.AddKeyboardCommands(std::move(moveLeftCommand), SDLK_A, bae::InputManager::ButtonState::Pressed);
     keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
@@ -366,6 +370,7 @@ void LevelManagerComponent::AddPlayers() const
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
 
     msPacman->AddComponent<GridMovementComponent>(*msPacman, *m_LevelGridComponent);
+    msPacman->GetComponent<GridMovementComponent>()->m_Speed = 200.f;
 
     // MoveOnGridCommand
     auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Left);
@@ -373,7 +378,7 @@ void LevelManagerComponent::AddPlayers() const
     auto moveOnGridDownCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Down);
     auto moveOnGridUpCommand    = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Up);
 
-    constexpr bae::InputManager::ButtonState moveOnGridButtonState = bae::InputManager::ButtonState::Down;
+    constexpr bae::InputManager::ButtonState moveOnGridButtonState = bae::InputManager::ButtonState::Pressed;
     keyboard.AddKeyboardCommands(std::move(moveOnGridLeftCommand), SDLK_LEFT, moveOnGridButtonState);
     keyboard.AddKeyboardCommands(std::move(moveOnGridRightCommand), SDLK_RIGHT, moveOnGridButtonState);
     keyboard.AddKeyboardCommands(std::move(moveOnGridDownCommand), SDLK_DOWN, moveOnGridButtonState);
@@ -403,6 +408,33 @@ void LevelManagerComponent::AddPlayers() const
     testingHitboxComp->SetVisibility(true);
 
     scene->Add(enemyObject);
+}
+
+void LevelManagerComponent::AddGhosts() const
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto blinky = std::make_shared<bae::GameObject>("Ghost Blinky");
+    blinky->SetWorldLocation({ 400, 210 });
+    auto pos1 = m_LevelGridComponent->GetPosition({ 8, 12 });
+    auto pos2 = m_LevelGridComponent->GetPosition({ 9, 12 });
+    auto pos3 = pos1;
+    pos3.x    = pos1.x + (pos2.x - pos1.x) / 2.f;
+    blinky->SetWorldLocation(m_LevelGridComponent->GetPosition({ 8, 12 }));
+    blinky->SetWorldLocation(pos3);
+
+    blinky->AddComponent<GridMovementComponent>(*blinky, *m_LevelGridComponent);
+
+    blinky->AddComponent<BlinkyComponent>(*blinky);
+
+    blinky->AddComponent<bae::TextureComponent>(*blinky, "Textures/Characters/Blinky.png");
+    blinky->AddComponent<HitboxComponent>(*blinky, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+
+    const auto blinkyHitboxComp = blinky->GetComponent<HitboxComponent>();
+    blinkyHitboxComp->SetVisibility(true);
+
+
+    scene->Add(blinky);
 }
 
 
