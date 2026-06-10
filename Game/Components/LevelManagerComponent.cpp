@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 
 #include "BlinkyComponent.hpp"
+#include "ItemComponent.hpp"
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
@@ -100,6 +101,7 @@ void LevelManagerComponent::CreateLevel()
 
     AddPlayers();
     AddGhosts();
+    AddItems();
 }
 
 void LevelManagerComponent::ResetLevel()
@@ -412,13 +414,7 @@ void LevelManagerComponent::AddGhosts() const
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
     const auto blinky = std::make_shared<bae::GameObject>("Ghost Blinky");
-    blinky->SetWorldLocation({ 400, 210 });
-    auto pos1 = m_LevelGridComponent->GetPosition({ 8, 12 });
-    auto pos2 = m_LevelGridComponent->GetPosition({ 9, 12 });
-    auto pos3 = pos1;
-    pos3.x    = pos1.x + (pos2.x - pos1.x) / 2.f;
-    blinky->SetWorldLocation(m_LevelGridComponent->GetPosition({ 8, 12 }));
-    blinky->SetWorldLocation(pos3);
+    blinky->SetWorldLocation(m_LevelGridComponent->GetPosition({ 13, 11 }));
 
     blinky->AddComponent<GridMovementComponent>(*blinky, *m_LevelGridComponent);
 
@@ -432,6 +428,22 @@ void LevelManagerComponent::AddGhosts() const
 
 
     scene->Add(blinky);
+}
+
+void LevelManagerComponent::AddItems() const
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto itemObject = std::make_shared<bae::GameObject>("Test Item");
+    itemObject->SetWorldLocation(m_LevelGridComponent->GetPosition({ 24, 22 }));
+
+    itemObject->AddComponent<ItemComponent>(*itemObject, ItemType::Fruit);
+    itemObject->AddComponent<HitboxComponent>(*itemObject, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+
+    const auto blinkyHitboxComp = itemObject->GetComponent<HitboxComponent>();
+    blinkyHitboxComp->SetVisibility(true);
+
+    scene->Add(itemObject);
 }
 
 

@@ -58,6 +58,7 @@ namespace Game
 
         void AddPlayers() const;
         void AddGhosts() const;
+        void AddItems() const;
 
 
         std::unique_ptr<bae::SpriteSheet> m_BackgroundSpriteSheet{};
