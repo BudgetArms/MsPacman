@@ -196,6 +196,36 @@ glm::vec2 LevelGridComponent::GetPosition(const bae::Graphs::GridPosition gridPo
     return m_LevelGridGraph->GetPosition(gridPosition);
 }
 
+bool LevelGridComponent::IsValidGridPosition(const bae::Graphs::GridPosition gridPosition) const
+{
+    if(!m_LevelGridGraph->IsWithinBounds(gridPosition))
+    {
+        return false;
+    }
+    const bae::Graphs::Node* node = m_LevelGridGraph->GetNode(gridPosition);
+    if(!node || !node->IsValid())
+    {
+        return false;
+    }
+
+    return m_LevelGridGraph->GetNodeId(gridPosition) != bae::Graphs::InvalidNodeID;
+}
+
+bae::Graphs::GridPosition LevelGridComponent::GetClosestValidNodePosition(const glm::vec2& position) const
+{
+    return m_LevelGridGraph->GetClosestValidNodePositionAtPosition(position);
+}
+
+int LevelGridComponent::GetColumns() const
+{
+    return m_LevelGridGraph->GetColumns();
+}
+
+int LevelGridComponent::GetRows() const
+{
+    return m_LevelGridGraph->GetRows();
+}
+
 
 bool LevelGridComponent::IsInGrid(const glm::vec2& position) const
 {
@@ -208,7 +238,7 @@ bool LevelGridComponent::IsInGrid(const bae::Graphs::GridPosition& gridPosition)
     return m_LevelGridGraph->IsWithinBounds(gridPosition);
 }
 
-bool LevelGridComponent::DoesConnectionExistInDirection(const bae::Graphs::GridPosition& gridPosition,
+bool LevelGridComponent::DoesConnectionExistInDirection(bae::Graphs::GridPosition gridPosition,
                                                         const Direction direction) const
 {
     if(!IsInGrid(gridPosition))
@@ -253,9 +283,22 @@ bool LevelGridComponent::DoesConnectionExistInDirection(const bae::Graphs::GridP
 
 std::vector<glm::vec2> LevelGridComponent::GetShortestPath(const int startNodeId, const int endNodeId) const
 {
-    bae::Graphs::Node* startNode     = m_LevelGridGraph->GetNode(m_LevelGridGraph->GetGridPosition(startNodeId));
-    const bae::Graphs::Node* endNode = m_LevelGridGraph->GetNode(m_LevelGridGraph->GetGridPosition(endNodeId));
+    // bae::Graphs::Node* startNode     = m_LevelGridGraph->GetNode(m_LevelGridGraph->GetGridPosition(startNodeId));
+    // const bae::Graphs::Node* endNode = m_LevelGridGraph->GetNode(m_LevelGridGraph->GetGridPosition(endNodeId));
+    //
+    // bae::Graphs::Node* startNode2 = m_LevelGridGraph->GetClosestNode(m_LevelGridGraph->GetGridPosition(startNodeId));
+    // const bae::Graphs::Node* endNode2 = m_LevelGridGraph->GetClosestNode(m_LevelGridGraph->GetGridPosition(endNodeId));
+    //
+    // if(!startNode2 || !startNode2->IsValid())
+    // {
+    //     return std::vector<glm::vec2>{};
+    // }
+    // if(!endNode2 || !endNode2->IsValid())
+    // {
+    //     return std::vector<glm::vec2>{};
+    // }
 
+    /*
     if(!startNode || !startNode->IsValid())
     {
         return std::vector<glm::vec2>{};
@@ -264,8 +307,17 @@ std::vector<glm::vec2> LevelGridComponent::GetShortestPath(const int startNodeId
     {
         return std::vector<glm::vec2>{};
     }
+    */
 
-    std::vector<bae::Graphs::Node*> pathNodes = m_AStar.FindPath(startNode, endNode);
+    const bae::Graphs::GridPosition startPos =
+            m_LevelGridGraph->GetClosestValidNodePosition(m_LevelGridGraph->GetGridPosition(startNodeId));
+    const bae::Graphs::GridPosition endPos =
+            m_LevelGridGraph->GetClosestValidNodePosition(m_LevelGridGraph->GetGridPosition(endNodeId));
+
+    // std::vector<bae::Graphs::Node*> pathNodes = m_AStar.FindPath(startNode, endNode);
+    const std::vector<bae::Graphs::Node*> pathNodes = m_AStar.FindPath(m_LevelGridGraph->GetNode(startPos),
+                                                                       m_LevelGridGraph->GetNode(endPos));
+
     return bae::Graphs::ConvertNodesToPositions(pathNodes);
 }
 

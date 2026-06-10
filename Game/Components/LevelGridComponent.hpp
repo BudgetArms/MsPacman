@@ -53,11 +53,19 @@ namespace Game
 
         [[nodiscard]] glm::vec2 GetPosition(bae::Graphs::GridPosition gridPosition) const;
 
+        [[nodiscard]] bool IsValidGridPosition(bae::Graphs::GridPosition gridPosition) const;
+
+        [[nodiscard]] bae::Graphs::GridPosition GetClosestValidNodePosition(const glm::vec2& position) const;
+
+
+        [[nodiscard]] int GetColumns() const;
+        [[nodiscard]] int GetRows() const;
+
 
         [[nodiscard]] bool IsInGrid(const glm::vec2& position) const;
         [[nodiscard]] bool IsInGrid(const bae::Graphs::GridPosition& gridPosition) const;
 
-        [[nodiscard]] bool DoesConnectionExistInDirection(const bae::Graphs::GridPosition& gridPosition,
+        [[nodiscard]] bool DoesConnectionExistInDirection(bae::Graphs::GridPosition gridPosition,
                                                           Direction direction) const;
 
 
