@@ -73,14 +73,9 @@ namespace Game
         [[nodiscard]] std::vector<glm::vec2> GetShortestPath(const glm::vec2& startPos,
                                                              const glm::vec2& endPos) const;
 
-        void UpdateShortestPath();
-
     private:
         std::unique_ptr<LevelGridGraph> m_LevelGridGraph;
         bae::Graphs::AStar m_AStar;
-
-        //
-        std::vector<glm::vec2> m_ShortestPath{};
     };
 }
 
