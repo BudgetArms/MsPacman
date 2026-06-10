@@ -14,14 +14,14 @@ ItemComponent::ItemComponent(bae::GameObject& owner, const ItemType item) :
     switch(m_ItemType)
     {
         case ItemType::PacDot:
-            texturePath = "Textures/Picksup/PacDot.png";
+            texturePath = "Textures/Pickups/PacDot.png";
             break;
         case ItemType::PowerPellet:
-            texturePath = "Textures/Picksup/PowerPellet.png";
+            texturePath = "Textures/Pickups/PowerPellet.png";
             break;
         case ItemType::Fruit:
             // TODO: randomize this to have other types of fruit textures
-            texturePath = "Textures/Picksup/Cherries.png";
+            texturePath = "Textures/Pickups/Cherries.png";
             break;
     }
 
