@@ -14,9 +14,10 @@ namespace Game
     public:
         explicit GridMovementComponent(bae::GameObject& owner, LevelGridComponent& gridComponent);
 
-        void Update() override;
+        void FixedUpdate() override;
+        void Render() const override;
 
-        void Move(Direction direction);
+        void SetDirection(Direction direction);
 
         [[nodiscard]] bool CanMoveInDirection(Direction direction) const;
 
@@ -25,10 +26,18 @@ namespace Game
         float m_Speed{ 100.f };
 
     private:
+        void ApplySpeed() const;
         void LockOnGrid() const;
+
+        [[nodiscard]] bool IsAtNodeCenter();
 
         LevelGridComponent* m_LevelGridComponent;
 
+        glm::vec2 m_NodePosTest{};
         Direction m_CurrentDirection{ Direction::Left };
+        Direction m_RequestedDirection{ Direction::Left };
+
+
+        const float m_ToleranceNodeCenter{ 5.f };
     };
 }
