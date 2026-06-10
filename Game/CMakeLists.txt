@@ -40,6 +40,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Commands/TestScoreCommand.cpp"
     "Commands/ToggleMuteAllSoundsCommand.cpp"
 
+    "Components/BlinkyComponent.cpp"
     "Components/CollisionManagerComponent.cpp"
     "Components/EntityManagerComponent.cpp"
     "Components/ItemComponent.cpp"
