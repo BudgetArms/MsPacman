@@ -19,26 +19,17 @@ void GridMovementComponent::FixedUpdate()
 {
     if(IsAtNodeCenter())
     {
-        // std::cout << "AtNodeCenter\n";
-
-        // this will lock even if impossible to go in requested pos
-        // if(m_CurrentDirection != m_RequestedDirection)
-        // this will ignore the mirror and passes past the level??
-        // this will LockOnGrid when going to change directions
         if(m_CurrentDirection != m_RequestedDirection && CanMoveInDirection(m_RequestedDirection))
         {
-            std::cout << "LockOnGrid" << '\n';
             LockOnGrid();
             m_CurrentDirection = m_RequestedDirection;
         }
 
         if(!CanMoveInDirection(m_CurrentDirection))
         {
-            std::cout << "impossible to move in this direction" << '\n';
             return;
         }
     }
-    std::cout << "\n";
 
     ApplySpeed();
 }
