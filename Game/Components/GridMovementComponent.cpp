@@ -61,6 +61,11 @@ bool GridMovementComponent::CanMoveInDirection(const Direction direction) const
     return m_LevelGridComponent->DoesConnectionExistInDirection(gridPosition, direction);
 }
 
+LevelGridComponent* GridMovementComponent::GetLevelGridComponent() const
+{
+    return m_LevelGridComponent;
+}
+
 void GridMovementComponent::LockOnGrid() const
 {
     const glm::vec2& position                    = m_Owner->GetWorldLocation();

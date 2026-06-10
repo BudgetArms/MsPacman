@@ -20,6 +20,8 @@ namespace Game
 
         [[nodiscard]] bool CanMoveInDirection(Direction direction) const;
 
+        [[nodiscard]] LevelGridComponent* GetLevelGridComponent() const;
+
         float m_Speed{ 100.f };
 
     private:
