@@ -6,6 +6,11 @@
 #include "States/Entities/EntityState.hpp"
 
 
+namespace bae
+{
+    class SpriteComponent;
+}
+
 namespace Game::States
 {
     class MsPacmanState;
@@ -13,13 +18,15 @@ namespace Game::States
 
 namespace Game
 {
+    class LevelGridComponent;
+    class GridMovementComponent;
     class GhostKiller;
     class ItemComponent;
 
     class MsPacmanComponent final : public bae::Component, public bae::Observer
     {
     public:
-        explicit MsPacmanComponent(bae::GameObject& owner);
+        explicit MsPacmanComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp);
         ~MsPacmanComponent() override = default;
 
         void Update() override;
@@ -38,6 +45,12 @@ namespace Game
         [[nodiscard]] static bool IsEnemy(bae::GameObject* gameObject);
         [[nodiscard]] static GhostKiller* GetEnemyClass(bae::GameObject* gameObject);
 
-        std::unique_ptr<States::EntityState> m_MsPacmanState;
+        std::unique_ptr<States::EntityState> m_MsPacmanState{};
+
+        bae::SpriteComponent* m_SpriteComponent{};
+        GridMovementComponent* m_GridMovementComponent{};
+
+        static constexpr int m_SpriteIndexOffset{ 1 };
+        static constexpr int m_NrColumnsSprite{ 3 };
     };
 }

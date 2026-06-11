@@ -22,20 +22,27 @@
 using namespace Game;
 
 
-MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner) :
-    Component{ owner },
-    m_MsPacmanState{ nullptr }
+MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp) :
+    Component(owner)
 {
+    // TODO: move most of this code outside mspacman component
     auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 32);
     m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Default", font, bae::Utils::Color::Gray);
-    m_Owner->AddComponent<LifeComponent>(*m_Owner, 4);
+    m_Owner->AddComponent<LifeComponent>(*m_Owner, 4, 3.f);
+
+    const auto lifeComp = m_Owner->GetComponent<LifeComponent>();
+    lifeComp->AddObserver(this);
 
     m_Owner->AddComponent<bae::SpriteComponent>(*m_Owner, "Textures/Characters/MsPacman.png",
                                                 SDL_FRect(0, 0, 48, 64), 3, 12);
+    m_SpriteComponent = m_Owner->GetComponent<bae::SpriteComponent>();
 
     m_Owner->AddComponent<ScoreComponent>(*m_Owner);
     const auto scoreComponent = m_Owner->GetComponent<ScoreComponent>();
     scoreComponent->SetScore(100);
+
+    m_Owner->AddComponent<GridMovementComponent>(*m_Owner, *levelGridComp);
+    m_GridMovementComponent = m_Owner->GetComponent<GridMovementComponent>();
 
     m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
     m_MsPacmanState->OnEnter();
@@ -66,6 +73,8 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
     {
         case Events::PlayerDied:
         case Events::PlayerChangedDirection:
+            m_SpriteComponent->m_Index = m_SpriteIndexOffset +
+                    m_NrColumnsSprite * static_cast<int>(m_GridMovementComponent->GetDirection());
             break;
         case Events::GameOver:
         case Events::LevelWon:
