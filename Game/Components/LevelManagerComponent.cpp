@@ -334,7 +334,7 @@ void LevelManagerComponent::AddPlayers() const
     msPacman->AddComponent<MsPacmanComponent>(*msPacman, m_LevelGridComponent);
     const auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
 
-    constexpr glm::vec2 dimensions = { 50, 50 };
+    constexpr glm::vec2 dimensions = { 20, 20 };
     constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
 
     msPacman->AddComponent<HitboxComponent>(*msPacman, dimensions, offset);
