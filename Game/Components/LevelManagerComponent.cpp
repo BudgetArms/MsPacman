@@ -4,8 +4,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include "BlinkyComponent.hpp"
-#include "ItemComponent.hpp"
+#include "Components/BlinkyComponent.hpp"
+#include "Components/ItemComponent.hpp"
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/ResourceManager.hpp"
@@ -26,7 +26,6 @@
 #include "Components/RenderCenterComponent.hpp"
 #include "Components/ScoreComponent.hpp"
 #include "Components/ScoreDisplayComponent.hpp"
-#include "Components/TextureComponent.hpp"
 
 
 using namespace Game;
@@ -328,7 +327,6 @@ void LevelManagerComponent::AddPlayers() const
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
     const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
-
     msPacman->SetWorldLocation(m_LevelGridComponent->GetPosition({ 3, 3 }));
 
     msPacman->AddComponent<MsPacmanComponent>(*msPacman, m_LevelGridComponent);
@@ -338,10 +336,8 @@ void LevelManagerComponent::AddPlayers() const
     constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
 
     msPacman->AddComponent<HitboxComponent>(*msPacman, dimensions, offset);
-    const auto hitboxComp = msPacman->GetComponent<HitboxComponent>();
-    hitboxComp->SetVisibility(true);
-
-    hitboxComp->AddObserver(msPacmanComp);
+    msPacman->GetComponent<HitboxComponent>()->SetVisibility(true);
+    msPacman->GetComponent<HitboxComponent>()->AddObserver(msPacmanComp);
 
     // Score Display
     auto text = std::make_unique<bae::Text2D>("Score: 0");
@@ -408,15 +404,16 @@ void LevelManagerComponent::AddGhosts() const
     blinky->SetWorldLocation(m_LevelGridComponent->GetPosition({ 13, 11 }));
 
     blinky->AddComponent<GridMovementComponent>(*blinky, *m_LevelGridComponent);
+    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent);
 
-    blinky->AddComponent<BlinkyComponent>(*blinky);
+    const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
+    blinky->GetComponent<GridMovementComponent>()->AddObserver(blinkyComp);
 
-    blinky->AddComponent<bae::TextureComponent>(*blinky, "Textures/Characters/Blinky.png");
-    blinky->AddComponent<HitboxComponent>(*blinky, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+    constexpr glm::vec2 dimensions = { 20, 20 };
+    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
 
-    const auto blinkyHitboxComp = blinky->GetComponent<HitboxComponent>();
-    blinkyHitboxComp->SetVisibility(true);
-
+    blinky->AddComponent<HitboxComponent>(*blinky, dimensions, offset);
+    blinky->GetComponent<HitboxComponent>()->SetVisibility(true);
 
     scene->Add(blinky);
 }
