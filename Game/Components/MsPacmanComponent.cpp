@@ -1,5 +1,6 @@
 #include "MsPacmanComponent.hpp"
 
+#include "GridMovementComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/GameObject.hpp"
@@ -190,8 +191,12 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
             scoreGained = getScore(ScoreTypes::PacDot);
             break;
         case ItemType::PowerPellet:
-            scoreGained = getScore(ScoreTypes::PowerPellet);
-            break;
+        {
+            scoreGained              = getScore(ScoreTypes::PowerPellet);
+            const auto lifeComponent = m_Owner->GetComponent<LifeComponent>();
+            lifeComponent->SetInvincibility(true);
+        }
+        break;
         case ItemType::Fruit:
             scoreGained = getScore(ScoreTypes::BonusItem);
             break;
@@ -199,7 +204,7 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
 
 
     const auto scoreComp = m_Owner->GetComponent<ScoreComponent>();
-    scoreComp->SetScore(scoreGained);
+    scoreComp->AddScore(scoreGained);
 
     if(scoreGained == 0)
     {
