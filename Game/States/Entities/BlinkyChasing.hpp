@@ -1,6 +1,8 @@
 #pragma once
-#include "GhostStates.hpp"
-#include "MsPacmanStates.hpp"
+
+#include "States/Entities/GhostStates.hpp"
+
+#include "Base/GhostMovement.hpp"
 
 
 namespace Game::States
@@ -16,17 +18,8 @@ namespace Game::States
 
     private:
         void UpdateTargetPosition();
-        void UpdatePath();
-
-        void SetDirectionFromPath();
-
         static std::vector<bae::GameObject*> GetPlayersGameObjects();
 
-
-        std::vector<glm::vec2> m_PathToTarget{};
-
-        const float m_MinDistanceToCell{ 5.f };
-        const float m_RecalculatePathCooldownTime{ 0.5f };
-        float m_ElapsedTime{};
+        GhostMovement m_Movement;
     };
 }

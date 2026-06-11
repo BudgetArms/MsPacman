@@ -14,7 +14,8 @@ using namespace Game;
 
 
 States::BlinkyChasing::BlinkyChasing(bae::GameObject& gameObject) :
-    GhostStates(gameObject)
+    GhostStates(gameObject),
+    m_Movement{ gameObject, *m_GridMovementComponent, 50.f }
 {
 }
 
@@ -31,8 +32,9 @@ void States::BlinkyChasing::OnExit()
 std::unique_ptr<States::EntityState> States::BlinkyChasing::Update()
 {
     UpdateTargetPosition();
-    UpdatePath();
-    SetDirectionFromPath();
+
+    m_Movement.SetTargetPosition(m_TargetPosition);
+    m_Movement.FixedUpdate();
 
     return nullptr;
 }
@@ -58,82 +60,6 @@ void States::BlinkyChasing::UpdateTargetPosition()
             closestDistance  = newDistance;
             m_TargetPosition = playerPosition;
         }
-    }
-}
-
-void States::BlinkyChasing::UpdatePath()
-{
-    m_ElapsedTime += bae::GameTime::GetInstance().GetDeltaTime();
-    if(m_ElapsedTime < m_RecalculatePathCooldownTime)
-    {
-        return;
-    }
-
-    m_ElapsedTime = 0.0f;
-
-    const glm::vec2 currentPos = m_GameObject->GetWorldLocation();
-    const auto levelGridComp   = m_GridMovementComponent->GetLevelGridComponent();
-    m_PathToTarget             = levelGridComp->GetShortestPath(currentPos, m_TargetPosition);
-    if(m_PathToTarget.empty())
-    {
-        return;
-    }
-
-
-    if(m_PathToTarget.empty())
-    {
-        return;
-    }
-
-    if(glm::distance(currentPos, m_PathToTarget.front()) < m_MinDistanceToCell)
-    {
-        m_PathToTarget.erase(m_PathToTarget.begin());
-    }
-}
-
-void States::BlinkyChasing::SetDirectionFromPath()
-{
-    if(m_PathToTarget.empty())
-    {
-        return;
-    }
-
-    const glm::vec2 currentPos   = m_GameObject->GetWorldLocation();
-    const glm::vec2 pathPosition = m_PathToTarget.front();
-
-    const glm::vec2 directionToPathPos = pathPosition - currentPos;
-
-    Direction direction{};
-    if(std::abs(directionToPathPos.x) > std::abs(directionToPathPos.y))
-    {
-        // Left or Right
-        if(directionToPathPos.x < 0)
-        {
-            direction = Direction::Left;
-        }
-        else
-        {
-            direction = Direction::Right;
-        }
-    }
-    else
-    {
-        // Down or Up
-        if(directionToPathPos.y < 0)
-        {
-            direction = Direction::Up;
-        }
-        else
-        {
-            direction = Direction::Down;
-        }
-    }
-
-    m_GridMovementComponent->SetDirection(direction);
-
-    if(glm::distance(currentPos, pathPosition) < m_MinDistanceToCell)
-    {
-        m_PathToTarget.erase(m_PathToTarget.begin());
     }
 }
 
