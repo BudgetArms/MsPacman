@@ -30,8 +30,7 @@ void States::BlinkyChasing::OnExit()
 
 std::unique_ptr<States::EntityState> States::BlinkyChasing::Update()
 {
-    // UpdateTargetPosition();
-    m_TargetPosition = { 305, 102 };
+    UpdateTargetPosition();
     UpdatePath();
     SetDirectionFromPath();
 
