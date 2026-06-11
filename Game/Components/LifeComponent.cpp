@@ -2,16 +2,18 @@
 
 #include "Core/EventQueue.hpp"
 #include "Core/HelperFunctions.hpp"
+#include "Singletons/GameTime.hpp"
 
 
 using namespace Game;
 
 
-LifeComponent::LifeComponent(bae::GameObject& owner, const int maxLives) :
+LifeComponent::LifeComponent(bae::GameObject& owner, const int maxLives, const float invincibilityDuration) :
     Component(owner),
     Subject(owner),
     m_Lives{ maxLives },
-    m_MaxLives{ maxLives }
+    m_MaxLives{ maxLives },
+    m_InvincibilityDuration{ invincibilityDuration }
 {
     if(m_MaxLives <= 0)
     {
@@ -20,6 +22,20 @@ LifeComponent::LifeComponent(bae::GameObject& owner, const int maxLives) :
         m_Lives    = 0;
         m_MaxLives = 0;
         m_bIsAlive = false;
+    }
+}
+
+void LifeComponent::Update()
+{
+    if(!m_bIsInvincible)
+    {
+        return;
+    }
+
+    m_ElapsedInvincibilityTime += bae::GameTime::GetInstance().GetDeltaTime();
+    if(m_ElapsedInvincibilityTime >= m_InvincibilityDuration)
+    {
+        SetInvincibility(false);
     }
 }
 
@@ -121,7 +137,8 @@ void LifeComponent::SetInvincibility(const bool isInvincible)
         return;
     }
 
-    m_bIsInvincible = isInvincible;
+    m_bIsInvincible            = isInvincible;
+    m_ElapsedInvincibilityTime = 0;
 
     SendEventToObservers(Events::InvincibilityChanged);
 }

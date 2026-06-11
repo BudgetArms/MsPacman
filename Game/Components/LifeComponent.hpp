@@ -11,7 +11,9 @@ namespace Game
     class LifeComponent : public bae::Component, public bae::Subject
     {
     public:
-        explicit LifeComponent(bae::GameObject& owner, int maxLives);
+        explicit LifeComponent(bae::GameObject& owner, int maxLives, float invincibilityDuration);
+
+        void Update() override;
 
 
         // Respects invincibility
@@ -39,6 +41,10 @@ namespace Game
 
         int m_Lives;
         int m_MaxLives;
+
+        const float m_InvincibilityDuration;
+        float m_ElapsedInvincibilityTime{};
+
 
         bool m_bIsInvincible{ false };
         bool m_bIsAlive{ true };
