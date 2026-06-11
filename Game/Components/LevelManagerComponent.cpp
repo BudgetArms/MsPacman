@@ -331,8 +331,8 @@ void LevelManagerComponent::AddPlayers() const
 
     msPacman->SetWorldLocation(m_LevelGridComponent->GetPosition({ 3, 3 }));
 
-    msPacman->AddComponent<MsPacmanComponent>(*msPacman);
-    auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
+    msPacman->AddComponent<MsPacmanComponent>(*msPacman, m_LevelGridComponent);
+    const auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
 
     constexpr glm::vec2 dimensions = { 50, 50 };
     constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
@@ -372,8 +372,8 @@ void LevelManagerComponent::AddPlayers() const
     keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
     keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
 
-    msPacman->AddComponent<GridMovementComponent>(*msPacman, *m_LevelGridComponent);
     msPacman->GetComponent<GridMovementComponent>()->m_Speed = 100.f;
+    msPacman->GetComponent<GridMovementComponent>()->AddObserver(msPacmanComp);
 
     // MoveOnGridCommand
     auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Left);
