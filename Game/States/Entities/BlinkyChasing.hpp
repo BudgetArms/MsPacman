@@ -25,8 +25,7 @@ namespace Game::States
 
         std::vector<glm::vec2> m_PathToTarget{};
 
-        const float m_MinDistanceToCell{ 1.f };
-        const float m_RecalculatePathCooldownTime{ 1.f };
+        const float m_MinDistanceToCell{ 5.f };
         const float m_RecalculatePathCooldownTime{ 0.5f };
         float m_ElapsedTime{};
     };
