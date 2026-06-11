@@ -397,20 +397,7 @@ void LevelManagerComponent::AddPlayers() const
     auto scoreCommand = std::make_unique<TestScoreCommand>(*msPacman);
     keyboard.AddKeyboardCommands(std::move(scoreCommand), SDLK_B, bae::InputManager::ButtonState::Down);
 
-
     scene->Add(msPacman);
-
-
-    // TODO: remove after testing
-    const auto enemyObject = std::make_shared<bae::GameObject>("Enemy Collision");
-    enemyObject->SetWorldLocation({ 200, 200 });
-
-    enemyObject->AddComponent<bae::TextureComponent>(*enemyObject, "Textures/Characters/Blinky.png");
-    enemyObject->AddComponent<HitboxComponent>(*enemyObject, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
-    auto testingHitboxComp = enemyObject->GetComponent<HitboxComponent>();
-    testingHitboxComp->SetVisibility(true);
-
-    scene->Add(enemyObject);
 }
 
 void LevelManagerComponent::AddGhosts() const
