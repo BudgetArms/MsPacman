@@ -18,11 +18,36 @@ GhostMovement::GhostMovement(bae::GameObject& ghostObject, GridMovementComponent
 
 GhostMovement::~GhostMovement() = default;
 
-void GhostMovement::Update()
-{
-    UpdatePath();
 void GhostMovement::FixedUpdate()
 {
+    // todo: fix the testing
+    if(m_bDirtyTargetPosition)
+    {
+    }
+    if(m_PathToTarget.empty())
+    {
+        if(IsNearIntersection() && m_bDirtyTargetPosition)
+        {
+            std::cout << "YESSS: " << IsNearIntersection() << std::endl;
+            m_TargetPosition = m_RequestedTargetPosition;
+        }
+    }
+    else
+    {
+        if(IsCloseToNode(m_GhostObject->GetWorldLocation()) &&
+            IsNearIntersection() &&
+            m_bDirtyTargetPosition)
+        {
+            m_TargetPosition = m_RequestedTargetPosition;
+            std::cout << "IsNearIntersection: " << IsNearIntersection() << std::endl;
+        }
+    }
+
+    if(IsNearIntersection())
+    {
+        UpdatePath();
+    }
+
     SetDirectionFromPath();
 }
 
@@ -57,12 +82,6 @@ void GhostMovement::UpdatePath()
         return;
     }
 
-
-    if(m_PathToTarget.empty())
-    {
-        return;
-    }
-
     if(glm::distance(currentPos, m_PathToTarget.front()) < m_MinDistanceToCell)
     {
         m_PathToTarget.erase(m_PathToTarget.begin());
@@ -72,6 +91,11 @@ void GhostMovement::UpdatePath()
 void GhostMovement::SetDirectionFromPath()
 {
     if(m_PathToTarget.empty())
+    {
+        return;
+    }
+
+    if(!IsNearIntersection())
     {
         return;
     }
@@ -109,9 +133,77 @@ void GhostMovement::SetDirectionFromPath()
 
     m_GridMovementComponent->SetDirection(direction);
 
-    if(glm::distance(currentPos, pathPosition) < m_MinDistanceToCell)
+    if(IsCloseToNode(currentPos))
     {
         m_PathToTarget.erase(m_PathToTarget.begin());
     }
 }
 
+bool GhostMovement::IsCloseToNode(const glm::vec2& position) const
+{
+    const auto* levelGrid = m_GridMovementComponent->GetLevelGridComponent();
+    const auto gridPos    = levelGrid->GetClosestValidNodePosition(position);
+
+    if(!levelGrid->IsInGrid(gridPos))
+    {
+        return false;
+    }
+
+    const glm::vec2 nodePosition = levelGrid->GetPosition(gridPos);
+
+    return glm::distance(position, nodePosition) < m_MinDistanceToCell;
+}
+
+bool GhostMovement::IsNearIntersection() const
+{
+    if(!IsCloseToNode(m_GhostObject->GetWorldLocation()))
+    {
+        return false;
+    }
+
+    int nrMoveableDirections{};
+
+    const auto levelGridComp = m_GridMovementComponent->GetLevelGridComponent();
+    const auto gridPos       = levelGridComp->GetGridPosition(m_GhostObject->GetWorldLocation());
+
+    constexpr int amountOfDirections{ 4 };
+    for(int i{}; i < amountOfDirections; ++i)
+    {
+        if(levelGridComp->DoesConnectionExistInDirection(gridPos, static_cast<Direction>(i)))
+        {
+            ++nrMoveableDirections;
+        }
+    }
+
+    return nrMoveableDirections > 2;
+}
+
+bool GhostMovement::IsNearTJunction() const
+{
+    if(!IsCloseToNode(m_GhostObject->GetWorldLocation()))
+    {
+        return false;
+    }
+
+    const Direction currentDirection = m_GridMovementComponent->GetDirection();
+    int nrMoveableDirections{};
+
+    const auto levelGridComp = m_GridMovementComponent->GetLevelGridComponent();
+    const auto gridPos       = levelGridComp->GetGridPosition(m_GhostObject->GetWorldLocation());
+
+    if(levelGridComp->DoesConnectionExistInDirection(gridPos, currentDirection))
+    {
+        return false;
+    }
+
+    constexpr int amountOfDirections{ 4 };
+    for(int i{}; i < amountOfDirections; ++i)
+    {
+        if(levelGridComp->DoesConnectionExistInDirection(gridPos, static_cast<Direction>(i)))
+        {
+            ++nrMoveableDirections;
+        }
+    }
+
+    return nrMoveableDirections == 3;
+}

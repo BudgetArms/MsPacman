@@ -29,6 +29,11 @@ namespace Game
         void UpdatePath();
         void SetDirectionFromPath();
 
+        [[nodiscard]] bool IsCloseToNode(const glm::vec2& position) const;
+        [[nodiscard]] bool IsNearIntersection() const;
+        [[nodiscard]] bool IsNearTJunction() const;
+        [[nodiscard]] bool CanChangeDirection() const;
+
 
         bae::GameObject* m_GhostObject{};
         GridMovementComponent* m_GridMovementComponent{};
