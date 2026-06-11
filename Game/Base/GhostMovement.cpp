@@ -10,9 +10,9 @@ using namespace Game;
 
 
 GhostMovement::GhostMovement(bae::GameObject& ghostObject, GridMovementComponent& gridMovementComponent, float speed) :
+    m_Speed{ speed },
     m_GhostObject{ &ghostObject },
-    m_GridMovementComponent{ &gridMovementComponent },
-    m_Speed{ speed }
+    m_GridMovementComponent{ &gridMovementComponent }
 {
 }
 

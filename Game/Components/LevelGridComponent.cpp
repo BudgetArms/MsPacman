@@ -17,7 +17,8 @@ LevelGridComponent::LevelGridComponent(bae::GameObject& owner, int columns, int 
 LevelGridComponent::LevelGridComponent(bae::GameObject& owner, const glm::vec2& gridSize, const int columns,
                                        const int rows) :
     LevelGridComponent(owner, columns, rows,
-                       glm::ivec2(static_cast<float>(gridSize.x) / columns, static_cast<float>(gridSize.y) / rows))
+                       glm::ivec2(static_cast<float>(gridSize.x) / static_cast<float>(columns),
+                                  static_cast<float>(gridSize.y) / static_cast<float>(rows)))
 {
 }
 
@@ -92,16 +93,16 @@ void LevelGridComponent::AddConnection(const int nodeId, const Direction directi
     switch(direction)
     {
         case Direction::Left:
-            directions.push_back({ -1, 0 });
+            directions.emplace_back(-1, 0);
             break;
         case Direction::Right:
-            directions.push_back({ 1, 0 });
+            directions.emplace_back(1, 0);
             break;
         case Direction::Up:
-            directions.push_back({ 0, -1 });
+            directions.emplace_back(0, -1);
             break;
         case Direction::Down:
-            directions.push_back({ 0, 1 });
+            directions.emplace_back(0, 1);
             break;
     }
 
@@ -122,16 +123,16 @@ void LevelGridComponent::RemoveConnection(const int nodeId, const Direction dire
     switch(direction)
     {
         case Direction::Left:
-            directions.push_back({ -1, 0 });
+            directions.emplace_back(-1, 0);
             break;
         case Direction::Right:
-            directions.push_back({ 1, 0 });
+            directions.emplace_back(1, 0);
             break;
         case Direction::Up:
-            directions.push_back({ 0, -1 });
+            directions.emplace_back(0, -1);
             break;
         case Direction::Down:
-            directions.push_back({ 0, 1 });
+            directions.emplace_back(0, 1);
             break;
     }
 
@@ -144,7 +145,7 @@ void LevelGridComponent::RemoveConnection(const glm::vec2& positionNode, const D
     RemoveConnection(nodeId, direction);
 }
 
-void LevelGridComponent::AddConnectionsToNeighbors(bae::Graphs::GridPosition position) const
+void LevelGridComponent::AddConnectionsToNeighbors(const bae::Graphs::GridPosition position) const
 {
     m_LevelGridGraph->AddConnectionsToAdjacentCells(position);
 }
@@ -231,7 +232,7 @@ bool LevelGridComponent::IsInGrid(const bae::Graphs::GridPosition& gridPosition)
     return m_LevelGridGraph->IsWithinBounds(gridPosition);
 }
 
-bool LevelGridComponent::DoesConnectionExistInDirection(bae::Graphs::GridPosition gridPosition,
+bool LevelGridComponent::DoesConnectionExistInDirection(const bae::Graphs::GridPosition gridPosition,
                                                         const Direction direction) const
 {
     if(!IsInGrid(gridPosition))
