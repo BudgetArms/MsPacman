@@ -1,5 +1,10 @@
 #include "BlinkyComponent.hpp"
 
+#include "Components/SpriteComponent.hpp"
+
+#include "Base/Events.hpp"
+#include "Components/GridMovementComponent.hpp"
+#include "Components/LevelGridComponent.hpp"
 #include "States/Entities/BlinkyChasing.hpp"
 #include "States/Entities/GhostStates.hpp"
 
@@ -7,15 +12,21 @@
 using namespace Game;
 
 
-BlinkyComponent::BlinkyComponent(bae::GameObject& owner) :
+BlinkyComponent::BlinkyComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp) :
     Component(owner)
 {
+    m_Owner->AddComponent<bae::SpriteComponent>(*m_Owner, "Textures/Characters/Blinky.png",
+                                                SDL_FRect(0, 0, 32, 64), 2, 8);
+    m_SpriteComponent = m_Owner->GetComponent<bae::SpriteComponent>();
+
+    m_Owner->AddComponent<GridMovementComponent>(*m_Owner, *levelGridComp);
+    m_GridMovementComponent = m_Owner->GetComponent<GridMovementComponent>();
+
     m_BlinkyState = std::make_unique<States::BlinkyChasing>(*m_Owner);
+    m_BlinkyState->OnEnter();
 }
 
-BlinkyComponent::~BlinkyComponent()
-{
-}
+BlinkyComponent::~BlinkyComponent() = default;
 
 void BlinkyComponent::Update()
 {
@@ -25,6 +36,30 @@ void BlinkyComponent::Update()
 States::EntityState* BlinkyComponent::GetState() const
 {
     return m_BlinkyState.get();
+}
+
+void BlinkyComponent::Notify(unsigned eventHash, bae::Subject*, const std::any&)
+{
+    switch(GetEvent(eventHash))
+    {
+        case Events::PlayerDied:
+        case Events::PlayerChangedDirection:
+            m_SpriteComponent->m_Index = m_SpriteIndexOffset +
+                    m_NrColumnsSprite * static_cast<int>(m_GridMovementComponent->GetDirection());
+            break;
+        case Events::GameOver:
+        case Events::LevelWon:
+        case Events::LevelLost:
+        case Events::GhostDied:
+        case Events::BeginLevel:
+        case Events::RestartLevel:
+        case Events::ScoreChanged:
+        case Events::LivesChanged:
+        case Events::InvincibilityChanged:
+        case Events::Collision:
+        case Events::NoEvent:
+            break;
+    }
 }
 
 void BlinkyComponent::Kill()
