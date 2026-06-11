@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Components/Component.hpp"
+#include "Core/Subject.hpp"
 
 #include "Base/DirectionEnum.hpp"
 
@@ -9,7 +10,7 @@ namespace Game
 {
     class LevelGridComponent;
 
-    class GridMovementComponent : public bae::Component
+    class GridMovementComponent : public bae::Component, public bae::Subject
     {
     public:
         explicit GridMovementComponent(bae::GameObject& owner, LevelGridComponent& gridComponent);
@@ -17,6 +18,7 @@ namespace Game
         void FixedUpdate() override;
         void Render() const override;
 
+        [[nodiscard]] Direction GetDirection() const;
         void SetDirection(Direction direction);
 
         [[nodiscard]] bool CanMoveInDirection(Direction direction) const;

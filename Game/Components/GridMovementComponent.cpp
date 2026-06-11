@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+#include "Base/Events.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "Singletons/GameTime.hpp"
 
@@ -11,6 +12,7 @@ using namespace Game;
 
 GridMovementComponent::GridMovementComponent(bae::GameObject& owner, LevelGridComponent& gridComponent) :
     Component(owner),
+    Subject(owner),
     m_LevelGridComponent{ &gridComponent }
 {
 }
@@ -23,6 +25,7 @@ void GridMovementComponent::FixedUpdate()
         {
             LockOnGrid();
             m_CurrentDirection = m_RequestedDirection;
+            NotifyObservers(GetEventHash(Events::PlayerChangedDirection));
         }
 
         if(!CanMoveInDirection(m_CurrentDirection))
@@ -37,6 +40,11 @@ void GridMovementComponent::FixedUpdate()
 void GridMovementComponent::Render() const
 {
     bae::Utils::DrawCircle(m_NodePosTest, 10, bae::Utils::Color::Green);
+}
+
+Direction GridMovementComponent::GetDirection() const
+{
+    return m_CurrentDirection;
 }
 
 void GridMovementComponent::SetDirection(const Direction direction)
