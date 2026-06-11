@@ -23,6 +23,7 @@ void EntityManagerComponent::HandleEvent(const unsigned eventHash)
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
+        case Events::PlayerChangedDirection:
         case Events::GameOver:
         case Events::LevelWon:
         case Events::LevelLost:

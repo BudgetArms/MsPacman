@@ -11,6 +11,7 @@ namespace Game
     enum class Events
     {
         PlayerDied,
+        PlayerChangedDirection,
         GameOver,
         LevelWon,
         LevelLost,
@@ -28,6 +29,7 @@ namespace Game
     inline const std::vector<std::pair<Events, unsigned int>> g_EventsMap
     {
         { Events::PlayerDied, bae::HashSDBM("PlayerDied") },
+        { Events::PlayerChangedDirection, bae::HashSDBM("PlayerChangedDirection") },
         { Events::GameOver, bae::HashSDBM("GameOver") },
         { Events::LevelWon, bae::HashSDBM("LevelWon") },
         { Events::LevelLost, bae::HashSDBM("LevelLost") },

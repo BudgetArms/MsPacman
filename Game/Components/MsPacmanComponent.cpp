@@ -65,6 +65,8 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
+        case Events::PlayerChangedDirection:
+            break;
         case Events::GameOver:
         case Events::LevelWon:
         case Events::LevelLost:
@@ -84,7 +86,9 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
         }
         break;
         case Events::LivesChanged:
+            break;
         case Events::InvincibilityChanged:
+            std::cout << "Invinciblity Changed\n\n\n";
             break;
         case Events::Collision:
             HandleCollision(eventData);
