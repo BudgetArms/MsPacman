@@ -18,7 +18,7 @@ namespace Game
         explicit GhostMovement(bae::GameObject& ghostObject, GridMovementComponent& gridMovementComponent, float speed);
         virtual ~GhostMovement();
 
-        void Update();
+        void FixedUpdate();
 
         void SetTargetPosition(const glm::vec2& targetPosition);
 

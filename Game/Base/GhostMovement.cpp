@@ -21,6 +21,8 @@ GhostMovement::~GhostMovement() = default;
 void GhostMovement::Update()
 {
     UpdatePath();
+void GhostMovement::FixedUpdate()
+{
     SetDirectionFromPath();
 }
 
