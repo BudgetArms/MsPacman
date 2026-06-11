@@ -28,7 +28,7 @@ BlinkyComponent::BlinkyComponent(bae::GameObject& owner, LevelGridComponent* lev
 
 BlinkyComponent::~BlinkyComponent() = default;
 
-void BlinkyComponent::Update()
+void BlinkyComponent::FixedUpdate()
 {
     UpdateToNewState(m_BlinkyState->Update());
 }

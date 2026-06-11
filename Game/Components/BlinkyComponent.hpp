@@ -23,7 +23,7 @@ namespace Game
         explicit BlinkyComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp);
         ~BlinkyComponent() override;
 
-        void Update() override;
+        void FixedUpdate() override;
 
         [[nodiscard]] States::EntityState* GetState() const;
 
