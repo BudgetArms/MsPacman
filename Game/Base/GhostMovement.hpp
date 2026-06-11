@@ -1,6 +1,11 @@
 #pragma once
+
+#include <set>
+#include <vector>
+
 #include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
+
+#include "Base/DirectionEnum.hpp"
 
 
 namespace bae
@@ -29,24 +34,29 @@ namespace Game
         void UpdatePath();
         void SetDirectionFromPath();
 
-        [[nodiscard]] bool IsCloseToNode(const glm::vec2& position) const;
-        [[nodiscard]] bool IsNearIntersection() const;
-        [[nodiscard]] bool IsNearTJunction() const;
-        [[nodiscard]] bool CanChangeDirection() const;
+
+        [[nodiscard]] Direction GetCurrentDirection() const;
+        void SetDirection(Direction direction) const;
+
+        [[nodiscard]] Direction GetOppositeDirection() const;
+
+        std::set<Direction> GetPossibleMoveDirections() const;
+
+        [[nodiscard]] bool IsCloseToNode() const;
+        [[nodiscard]] bool IsCloseToNodeAtPosition(const glm::vec2& position) const;
+
+        [[nodiscard]] bool IsOnSingleRoadNode() const;
+        [[nodiscard]] bool IsOnStraightRoadNode() const;
+        [[nodiscard]] bool IsOnDeadEndNode() const;
+        [[nodiscard]] bool IsOnIntersectionNode() const;
 
 
         bae::GameObject* m_GhostObject{};
         GridMovementComponent* m_GridMovementComponent{};
 
         glm::vec2 m_TargetPosition{};
-        glm::vec2 m_RequestedTargetPosition{};
-
         std::vector<glm::vec2> m_PathToTarget{};
 
         const float m_MinDistanceToCell{ 5.f };
-        const float m_RecalculatePathCooldownTime{ 0.5f };
-        float m_ElapsedTime{};
-
-        bool m_bDirtyTargetPosition{};
     };
 }

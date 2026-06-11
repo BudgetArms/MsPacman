@@ -1,6 +1,6 @@
 #include "GhostMovement.hpp"
 
-#include "Singletons/GameTime.hpp"
+#include "Core/HelperFunctions.hpp"
 
 #include "Components/GridMovementComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
@@ -20,69 +20,41 @@ GhostMovement::~GhostMovement() = default;
 
 void GhostMovement::FixedUpdate()
 {
-    // todo: fix the testing
-    if(m_bDirtyTargetPosition)
+    if(IsOnSingleRoadNode() && !IsOnSingleRoadNode())
     {
-    }
-    if(m_PathToTarget.empty())
-    {
-        if(IsNearIntersection() && m_bDirtyTargetPosition)
-        {
-            std::cout << "YESSS: " << IsNearIntersection() << std::endl;
-            m_TargetPosition = m_RequestedTargetPosition;
-        }
-    }
-    else
-    {
-        if(IsCloseToNode(m_GhostObject->GetWorldLocation()) &&
-            IsNearIntersection() &&
-            m_bDirtyTargetPosition)
-        {
-            m_TargetPosition = m_RequestedTargetPosition;
-            std::cout << "IsNearIntersection: " << IsNearIntersection() << std::endl;
-        }
+        std::cout << "SingleRoad Node" << '\n';
+        std::set<Direction> possibleMoveDirections = GetPossibleMoveDirections();
+        possibleMoveDirections.erase(GetOppositeDirection());
+
+        // Since single road, it will only return two directions
+        // If I remove the back direction, it will go to the other possible direction
+        SetDirection(*possibleMoveDirections.begin());
+        return;
     }
 
-    if(IsNearIntersection())
-    {
-        UpdatePath();
-    }
 
+    UpdatePath();
     SetDirectionFromPath();
 }
 
 void GhostMovement::SetTargetPosition(const glm::vec2& targetPosition)
 {
-    if(m_TargetPosition == targetPosition)
-    {
-        m_bDirtyTargetPosition = false;
-        return;
-    }
-
-    m_bDirtyTargetPosition    = true;
-    m_RequestedTargetPosition = targetPosition;
+    m_TargetPosition = targetPosition;
 }
 
 
 void GhostMovement::UpdatePath()
 {
-    m_ElapsedTime += bae::GameTime::GetInstance().GetDeltaTime();
-    if(m_ElapsedTime < m_RecalculatePathCooldownTime)
-    {
-        return;
-    }
-
-    m_ElapsedTime = 0.0f;
-
     const glm::vec2 currentPos = m_GhostObject->GetWorldLocation();
     const auto levelGridComp   = m_GridMovementComponent->GetLevelGridComponent();
-    m_PathToTarget             = levelGridComp->GetShortestPath(currentPos, m_TargetPosition);
+
+    m_PathToTarget = levelGridComp->GetShortestPath(currentPos, m_TargetPosition);
     if(m_PathToTarget.empty())
     {
         return;
     }
 
-    if(glm::distance(currentPos, m_PathToTarget.front()) < m_MinDistanceToCell)
+    if(IsCloseToNode())
     {
         m_PathToTarget.erase(m_PathToTarget.begin());
     }
@@ -95,14 +67,15 @@ void GhostMovement::SetDirectionFromPath()
         return;
     }
 
-    if(!IsNearIntersection())
+    if(!IsCloseToNode())
     {
         return;
     }
 
-    const glm::vec2 currentPos   = m_GhostObject->GetWorldLocation();
+
     const glm::vec2 pathPosition = m_PathToTarget.front();
 
+    const glm::vec2 currentPos         = m_GhostObject->GetWorldLocation();
     const glm::vec2 directionToPathPos = pathPosition - currentPos;
 
     Direction direction{};
@@ -131,15 +104,67 @@ void GhostMovement::SetDirectionFromPath()
         }
     }
 
-    m_GridMovementComponent->SetDirection(direction);
-
-    if(IsCloseToNode(currentPos))
-    {
-        m_PathToTarget.erase(m_PathToTarget.begin());
-    }
+    SetDirection(direction);
 }
 
-bool GhostMovement::IsCloseToNode(const glm::vec2& position) const
+Direction GhostMovement::GetCurrentDirection() const
+{
+    return m_GridMovementComponent->GetDirection();
+}
+
+void GhostMovement::SetDirection(Direction direction) const
+{
+    m_GridMovementComponent->SetDirection(direction);
+}
+
+Direction GhostMovement::GetOppositeDirection() const
+{
+    switch(GetCurrentDirection())
+    {
+        case Direction::Right:
+            return Direction::Left;
+        case Direction::Left:
+            return Direction::Right;
+        case Direction::Up:
+            return Direction::Down;
+        case Direction::Down:
+            return Direction::Up;
+    }
+
+    throw std::runtime_error(FUNCTION_NAME + std::string(" Failed! You shouldn't be able to get here!"));
+}
+
+std::set<Direction> GhostMovement::GetPossibleMoveDirections() const
+{
+    if(!IsCloseToNode())
+    {
+        return std::set<Direction>{};
+    }
+
+    const auto levelGridComp = m_GridMovementComponent->GetLevelGridComponent();
+    const auto gridPos       = levelGridComp->GetGridPosition(m_GhostObject->GetWorldLocation());
+
+    std::set<Direction> possibleDirections{};
+
+    constexpr int amountOfDirections{ 4 };
+    for(int i{}; i < amountOfDirections; ++i)
+    {
+        if(levelGridComp->DoesConnectionExistInDirection(gridPos, static_cast<Direction>(i)))
+        {
+            possibleDirections.insert(static_cast<Direction>(i));
+        }
+    }
+
+    return possibleDirections;
+}
+
+bool GhostMovement::IsCloseToNode() const
+{
+    const glm::vec2 currentPos = m_GhostObject->GetWorldLocation();
+    return IsCloseToNodeAtPosition(currentPos);
+}
+
+bool GhostMovement::IsCloseToNodeAtPosition(const glm::vec2& position) const
 {
     const auto* levelGrid = m_GridMovementComponent->GetLevelGridComponent();
     const auto gridPos    = levelGrid->GetClosestValidNodePosition(position);
@@ -154,56 +179,31 @@ bool GhostMovement::IsCloseToNode(const glm::vec2& position) const
     return glm::distance(position, nodePosition) < m_MinDistanceToCell;
 }
 
-bool GhostMovement::IsNearIntersection() const
+bool GhostMovement::IsOnSingleRoadNode() const
 {
-    if(!IsCloseToNode(m_GhostObject->GetWorldLocation()))
-    {
-        return false;
-    }
-
-    int nrMoveableDirections{};
-
-    const auto levelGridComp = m_GridMovementComponent->GetLevelGridComponent();
-    const auto gridPos       = levelGridComp->GetGridPosition(m_GhostObject->GetWorldLocation());
-
-    constexpr int amountOfDirections{ 4 };
-    for(int i{}; i < amountOfDirections; ++i)
-    {
-        if(levelGridComp->DoesConnectionExistInDirection(gridPos, static_cast<Direction>(i)))
-        {
-            ++nrMoveableDirections;
-        }
-    }
-
-    return nrMoveableDirections > 2;
+    return GetPossibleMoveDirections().size() == 2;
 }
 
-bool GhostMovement::IsNearTJunction() const
+bool GhostMovement::IsOnStraightRoadNode() const
 {
-    if(!IsCloseToNode(m_GhostObject->GetWorldLocation()))
+    if(!IsOnSingleRoadNode())
     {
         return false;
     }
 
-    const Direction currentDirection = m_GridMovementComponent->GetDirection();
-    int nrMoveableDirections{};
+    auto possibleDirections = GetPossibleMoveDirections();
+    possibleDirections.erase(GetCurrentDirection());
+    possibleDirections.erase(GetOppositeDirection());
 
-    const auto levelGridComp = m_GridMovementComponent->GetLevelGridComponent();
-    const auto gridPos       = levelGridComp->GetGridPosition(m_GhostObject->GetWorldLocation());
+    return possibleDirections.empty();
+}
 
-    if(levelGridComp->DoesConnectionExistInDirection(gridPos, currentDirection))
-    {
-        return false;
-    }
+bool GhostMovement::IsOnDeadEndNode() const
+{
+    return GetPossibleMoveDirections().size() == 1;
+}
 
-    constexpr int amountOfDirections{ 4 };
-    for(int i{}; i < amountOfDirections; ++i)
-    {
-        if(levelGridComp->DoesConnectionExistInDirection(gridPos, static_cast<Direction>(i)))
-        {
-            ++nrMoveableDirections;
-        }
-    }
-
-    return nrMoveableDirections == 3;
+bool GhostMovement::IsOnIntersectionNode() const
+{
+    return GetPossibleMoveDirections().size() > 2;
 }
