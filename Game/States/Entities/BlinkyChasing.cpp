@@ -31,7 +31,7 @@ void States::BlinkyChasing::OnExit()
 std::unique_ptr<States::EntityState> States::BlinkyChasing::Update()
 {
     // UpdateTargetPosition();
-    m_TargetPosition = { 344, 128 };
+    m_TargetPosition = { 305, 102 };
     UpdatePath();
     SetDirectionFromPath();
 
@@ -75,6 +75,11 @@ void States::BlinkyChasing::UpdatePath()
     const glm::vec2 currentPos = m_GameObject->GetWorldLocation();
     const auto levelGridComp   = m_GridMovementComponent->GetLevelGridComponent();
     m_PathToTarget             = levelGridComp->GetShortestPath(currentPos, m_TargetPosition);
+    if(m_PathToTarget.empty())
+    {
+        return;
+    }
+
 
     if(m_PathToTarget.empty())
     {
