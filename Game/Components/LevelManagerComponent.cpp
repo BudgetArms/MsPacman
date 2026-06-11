@@ -344,8 +344,8 @@ void LevelManagerComponent::AddPlayers() const
     hitboxComp->AddObserver(msPacmanComp);
 
     // Score Display
-    auto text = std::make_unique<bae::Text2D>("Score: Test");
-    msPacman->AddComponent<ScoreDisplayComponent>(*msPacman, glm::vec2{ 100, 550 }, std::move(text));
+    auto text = std::make_unique<bae::Text2D>("Score: 0");
+    msPacman->AddComponent<ScoreDisplayComponent>(*msPacman, glm::vec2{ 5, 540 }, std::move(text));
 
     const auto scoreDisplayComp = msPacman->GetComponent<ScoreDisplayComponent>();
     msPacman->GetComponent<ScoreComponent>()->AddObserver(scoreDisplayComp);
