@@ -152,7 +152,7 @@ void Start()
 
     CreateAllScenes();
 
-    LoadStartMenu();
+    // LoadStartMenu();
 
     LoadCollisionManager();
     LoadLevelManager();
