@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Base/Events.cpp"
     "Base/GameMode.hpp"
     "Base/GhostKiller.hpp"
+    "Base/GhostMovement.cpp"
     "Base/Level.cpp"
     "Base/LevelGraphNode.cpp"
     "Base/LevelGridGraph.cpp"
