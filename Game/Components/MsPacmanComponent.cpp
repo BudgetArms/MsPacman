@@ -89,7 +89,7 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
         case Events::LivesChanged:
             break;
         case Events::InvincibilityChanged:
-            std::cout << "Invinciblity Changed\n\n\n";
+            std::cout << "Invincibility Changed\n\n\n";
             break;
         case Events::Collision:
             HandleCollision(eventData);
@@ -243,5 +243,27 @@ GhostKiller* MsPacmanComponent::GetEnemyClass(bae::GameObject* gameObject)
     }
 
     return dynamic_cast<GhostKiller*>(foundKillerIt->get());
+}
+
+std::set<bae::GameObject*> MsPacmanComponent::GetEnemies()
+{
+    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+    if(!scene)
+    {
+        return std::set<bae::GameObject*>{};
+    }
+
+    std::set<bae::GameObject*> enemies;
+
+    auto objects = scene->GetObjects();
+    std::ranges::for_each(objects, [&](const auto& obj)
+    {
+        if(IsEnemy(obj.get()))
+        {
+            enemies.insert(obj.get());
+        }
+    });
+
+    return enemies;
 }
 

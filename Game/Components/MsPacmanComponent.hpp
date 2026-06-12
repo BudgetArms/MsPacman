@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "Components/Component.hpp"
 #include "Core/Observer.hpp"
 
@@ -44,6 +46,8 @@ namespace Game
 
         [[nodiscard]] static bool IsEnemy(bae::GameObject* gameObject);
         [[nodiscard]] static GhostKiller* GetEnemyClass(bae::GameObject* gameObject);
+
+        [[nodiscard]] static std::set<bae::GameObject*> GetEnemies();
 
         std::unique_ptr<States::EntityState> m_MsPacmanState{};
 
