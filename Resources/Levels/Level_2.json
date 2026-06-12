@@ -1,0 +1,92 @@
+﻿{
+  "Name": "Level 1 :D",
+  "Grid": {
+    "Columns": 28,
+    "Rows": 31,
+    "Dimensions": {
+      "Width": 448,
+      "Height": 496
+    }
+  },
+  "PlayerStart": {
+    "Column": 7,
+    "Row": 9
+  },
+  "MirrorAreas": [
+    {
+      "Column": 0,
+      "Row": 10
+    },
+    {
+      "Column": 27,
+      "Row": 10
+    },
+    {
+      "Column": 0,
+      "Row": 20
+    },
+    {
+      "Column": 27,
+      "Row": 20
+    }
+  ],
+  "AmountOfDotsCollectedForBonusItem": 100,
+  "ScoreMap": {
+    "PacDot": 10,
+    "PowerPellet": 50,
+    "GhostOneInSuccession": 200,
+    "GhostTwoInSuccession": 400,
+    "GhostThreeInSuccession": 800,
+    "GhostFourInSuccession": 1600,
+    "BonusItem": 300
+  },
+  "NodeColumnsToRemove": [
+    0
+  ],
+  "NodeRowsToRemove": [
+    0,
+    30
+  ],
+  "NodesToRemove": [
+    {
+      "Column": 0,
+      "Row": 2,
+      "Width": 6,
+      "Height": 2
+    },
+    {
+      "Column": 7,
+      "Row": 1,
+      "Width": 3,
+      "Height": 3
+    },
+    {
+      "Column": 19,
+      "Row": 1,
+      "Width": 3,
+      "Height": 3
+    },
+    {
+      "Column": 23,
+      "Row": 2,
+      "Width": 5,
+      "Height": 2
+    },
+    {
+      "Column": 11,
+      "Row": 2,
+      "Width": 7,
+      "Height": 2
+    },
+    {
+      "Column": 2,
+      "Row": 5,
+      "Width": 7,
+      "Height": 2
+    }
+  ],
+  "NodesToAddAfterRemoval": [
+  ]
+}
+
+
