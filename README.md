@@ -2,7 +2,7 @@
 
 Creating a MsPacman (1982) clone, which is a sequel to Pacman (1980). <br>
 
-MsPacman uses [BudgetArmsEngine]("https://github.com/BudgetArms/BudgetArmsEngine") as 2D game engine. <br>
+[MsPacman](https://github.com/BudgetArms/MsPacman/) uses [BudgetArmsEngine](https://github.com/BudgetArms/BudgetArmsEngine) as 2D game engine. <br>
 It's expanded from the [Minigin]("https://github.com/avadae/minigin/") template. <br>
 
 The design patterns I used, will be mentioned in the game engine repository as well. <br>
