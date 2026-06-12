@@ -46,8 +46,8 @@ void BlinkyComponent::Notify(unsigned eventHash, bae::Subject*, const std::any&)
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
-        case Events::PlayerChangedDirection:
             m_SpriteComponent->m_Index = m_SpriteIndexOffset +
+        case Events::DirectionChanged:
                     m_NrColumnsSprite * static_cast<int>(m_GridMovementComponent->GetDirection());
             break;
         case Events::GameOver:

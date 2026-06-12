@@ -25,7 +25,7 @@ void GridMovementComponent::FixedUpdate()
         {
             LockOnGrid();
             m_CurrentDirection = m_RequestedDirection;
-            NotifyObservers(GetEventHash(Events::ChangedDirection));
+            NotifyObservers(GetEventHash(Events::DirectionChanged));
         }
 
         if(!CanMoveInDirection(m_CurrentDirection))
