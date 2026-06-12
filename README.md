@@ -1,5 +1,9 @@
 # MsPacman
 
+[![Build Status](https://github.com/BudgetArms/MsPacman/actions/workflows/cmake.yml/badge.svg)](https://github.com/BudgetArms/cmake/actions)
+[![Build Status](https://github.com/BudgetArms/MsPacman/actions/workflows/emscripten.yml/badge.svg)](https://github.com/BudgetArms/emscripten/actions)
+
+
 Creating a MsPacman (1982) clone, which is a sequel to Pacman (1980). <br>
 
 [MsPacman](https://github.com/BudgetArms/MsPacman/) uses [BudgetArmsEngine](https://github.com/BudgetArms/BudgetArmsEngine) as 2D game engine. <br>
