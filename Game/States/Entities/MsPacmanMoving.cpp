@@ -16,14 +16,6 @@ using namespace Game::States;
 void MsPacmanMoving::OnEnter()
 {
     std::cout << FUNCTION_NAME << '\n';
-
-    const auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
-    if(!textComponent)
-    {
-        return;
-    }
-    textComponent->SetColor(bae::Utils::Color::Green);
-    textComponent->SetText(FUNCTION_NAME);
 }
 
 void MsPacmanMoving::OnExit()

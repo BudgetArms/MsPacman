@@ -26,15 +26,6 @@ void MsPacmanDying::OnEnter()
     const bae::ActiveSoundID playingSoundID = soundSystem.Play(startSoundID);
     soundSystem.SetVolume(playingSoundID, 1.f);
 
-
-    const auto textComponent = m_GameObject->GetComponent<bae::TextComponent>();
-    if(!textComponent)
-    {
-        return;
-    }
-    textComponent->SetColor(bae::Utils::Color::Red);
-    textComponent->SetText(FUNCTION_NAME);
-
     bae::EventQueue::GetInstance().SendEvent(GetEventHash(Events::PlayerDied));
 }
 

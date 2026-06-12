@@ -28,7 +28,6 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner, LevelGridComponent*
 {
     // TODO: move most of this code outside mspacman component
     auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 32);
-    m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Default", font, bae::Utils::Color::Gray);
     m_Owner->AddComponent<LifeComponent>(*m_Owner, 4, 3.f);
     m_Owner->GetComponent<LifeComponent>()->AddObserver(this);
 
