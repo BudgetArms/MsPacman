@@ -65,6 +65,7 @@
 #include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Base/SoundAssets.hpp"
+#include "Commands/SkipLevelCommand.hpp"
 
 #include "Commands/TestMousePositionCommand.hpp"
 #include "Commands/ToggleMuteAllSoundsCommand.hpp"
@@ -284,7 +285,8 @@ void LoadLevelManager()
             GetScene(Game::g_LevelManagersSceneName.data());
 
     const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
-    levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
+    // levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
+    levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::CoOp);
 
     const auto levelManagerComponent =
             levelManager->GetComponent<Game::LevelManagerComponent>();
@@ -296,6 +298,13 @@ void LoadLevelManager()
     levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
 
     levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
+    levelManagerComponent->LoadLevelFromFile(1, "Levels/Level_2.json");
+
+    auto skipLevelCommand = std::make_unique<Game::SkipLevelCommand>(*levelManager);
+
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+    keyboard.AddKeyboardCommands(std::move(skipLevelCommand), SDLK_F1, bae::InputManager::ButtonState::Down);
+
 
     managerComponentScene->Add(levelManager);
 
