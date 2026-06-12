@@ -400,11 +400,13 @@ void LevelManagerComponent::AddGhosts() const
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
+    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 13, 11 });
+
     const auto blinky = std::make_shared<bae::GameObject>("Ghost Blinky");
-    blinky->SetWorldLocation(m_LevelGridComponent->GetPosition({ 13, 11 }));
+    blinky->SetWorldLocation(spawnPosition);
 
     blinky->AddComponent<GridMovementComponent>(*blinky, *m_LevelGridComponent);
-    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent);
+    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent, spawnPosition);
 
     const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
     blinky->GetComponent<GridMovementComponent>()->AddObserver(blinkyComp);
