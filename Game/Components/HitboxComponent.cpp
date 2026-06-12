@@ -76,7 +76,7 @@ void HitboxComponent::SetVisibility(const bool visibility)
 
 void HitboxComponent::SendCollisionEventToObservers(HitboxComponent& otherHitbox)
 {
-    if(!m_bAreCollisionsEnabled)
+    if(!m_bAreCollisionsEnabled || !otherHitbox.m_bAreCollisionsEnabled)
     {
         return;
     }

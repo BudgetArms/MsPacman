@@ -42,7 +42,7 @@ void CollisionManagerComponent::FixedUpdate()
         {
             if(!m_HitboxObjects[j] || m_HitboxObjects[j]->IsMarkedForDeletion() ||
                 !m_HitboxObjects[j]->HasComponent<HitboxComponent>() ||
-                !m_HitboxObjects[i]->GetComponent<HitboxComponent>()->m_bAreCollisionsEnabled
+                !m_HitboxObjects[j]->GetComponent<HitboxComponent>()->m_bAreCollisionsEnabled
             )
             {
                 continue;
