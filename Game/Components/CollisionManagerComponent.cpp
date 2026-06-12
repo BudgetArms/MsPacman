@@ -59,6 +59,7 @@ void CollisionManagerComponent::FixedUpdate()
             if(SDL_HasRectIntersectionFloat(&hitboxA, &hitboxB))
             {
                 SendHitboxesNotifications(hitboxComponentA, hitboxComponentB);
+                return;
             }
         }
     }
