@@ -16,7 +16,7 @@
 
 namespace Game
 {
-    class LevelManagerComponent : public bae::Component, public bae::Observer, public bae::EventListener
+    class LevelManagerComponent : public bae::Component, public bae::EventListener
     {
     public:
         LevelManagerComponent(bae::GameObject& owner, GameMode gameMode);
@@ -35,7 +35,6 @@ namespace Game
         [[nodiscard]] int GetCurrentLevelNumber() const;
         [[nodiscard]] LevelJson GetCurrentLevel();
 
-        void Notify(unsigned int eventHash, bae::Subject* subject, const std::any&) override;
 
         void SetSpriteSheetWorldLocation(const glm::vec2& location) const;
         void SetSpriteSheetWorldRotation(float rotation) const;
@@ -61,8 +60,13 @@ namespace Game
         void AddItems() const;
 
 
+        static std::shared_ptr<bae::GameObject> GetGhostBase(const std::string& gameObjectName,
+                                                             const glm::vec2& spawnPosition);
+
         std::shared_ptr<bae::GameObject> GetMsPacmanBase(const std::string& gameObjectName,
                                                          const glm::vec2& spawnPosition) const;
+
+        void SpawnBlinky() const;
 
         void SpawnMsPacman() const;
         void SpawnMrPacman() const;
@@ -80,6 +84,8 @@ namespace Game
         LevelGridComponent* m_LevelGridComponent{};
 
         std::unordered_map<int, LevelJson> m_LevelJson{};
+
+        // static constexpr glm::vec2 test{ 20, 20 };
 
         const std::filesystem::path m_BackgroundTexturePath{ "Textures/Level/Levels.png" };
         static constexpr int m_LevelRepeatTimes{ 2 };

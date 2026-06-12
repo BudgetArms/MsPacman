@@ -130,27 +130,6 @@ LevelJson LevelManagerComponent::GetCurrentLevel()
     return GetCurrentLevelJson().value();
 }
 
-void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*, const std::any&)
-{
-    switch(GetEvent(eventHash))
-    {
-        case Events::PlayerDied:
-        case Events::DirectionChanged:
-        case Events::GameOver:
-        case Events::LevelWon:
-        case Events::LevelLost:
-        case Events::GhostDied:
-        case Events::BeginLevel:
-        case Events::RestartLevel:
-        case Events::ScoreChanged:
-        case Events::LivesChanged:
-        case Events::InvincibilityChanged:
-        case Events::NoEvent:
-        case Events::Collision:
-            break;
-    }
-}
-
 void LevelManagerComponent::SetSpriteSheetWorldLocation(const glm::vec2& location) const
 {
     m_BackgroundSpriteSheet->m_Position = location;
@@ -345,25 +324,7 @@ void LevelManagerComponent::AddPlayers() const
 
 void LevelManagerComponent::AddGhosts() const
 {
-    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
-
-    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 13, 11 });
-
-    const auto blinky = std::make_shared<bae::GameObject>("Ghost Blinky");
-    blinky->SetWorldLocation(spawnPosition);
-
-    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent, spawnPosition);
-
-    const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
-    blinky->GetComponent<GridMovementComponent>()->AddObserver(blinkyComp);
-
-    constexpr glm::vec2 dimensions = { 20, 20 };
-    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
-
-    blinky->AddComponent<HitboxComponent>(*blinky, dimensions, offset);
-    blinky->GetComponent<HitboxComponent>()->SetVisibility(true);
-
-    scene->Add(blinky);
+    SpawnBlinky();
 }
 
 void LevelManagerComponent::AddItems() const
@@ -401,6 +362,42 @@ void LevelManagerComponent::AddItems() const
     powerPellet->GetComponent<HitboxComponent>()->SetVisibility(true);
 
     */
+}
+
+std::shared_ptr<bae::GameObject> LevelManagerComponent::GetGhostBase(const std::string& gameObjectName,
+                                                                     const glm::vec2& spawnPosition)
+{
+    const auto ghost = std::make_shared<bae::GameObject>(gameObjectName);
+    ghost->SetWorldLocation(spawnPosition);
+
+    constexpr glm::vec2 dimensions = { 20, 20 };
+    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
+
+    ghost->AddComponent<HitboxComponent>(*ghost, dimensions, offset);
+    ghost->GetComponent<HitboxComponent>()->SetVisibility(true);
+
+    return ghost;
+}
+
+void LevelManagerComponent::SpawnBlinky() const
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 13, 11 });
+
+    const auto blinky = GetGhostBase("Ghost Blinky", spawnPosition);
+
+    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent, spawnPosition);
+
+    const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
+    blinky->GetComponent<GridMovementComponent>()->AddObserver(blinkyComp);
+
+    if(m_GameMode == GameMode::Versus)
+    {
+        AddControls(*blinky.get(), false);
+    }
+
+    scene->Add(blinky);
 }
 
 std::shared_ptr<bae::GameObject> LevelManagerComponent::GetMsPacmanBase(const std::string& gameObjectName,
