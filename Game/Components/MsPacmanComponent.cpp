@@ -37,8 +37,6 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner, LevelGridComponent*
     m_SpriteComponent = m_Owner->GetComponent<bae::SpriteComponent>();
 
     m_Owner->AddComponent<ScoreComponent>(*m_Owner);
-    const auto scoreComponent = m_Owner->GetComponent<ScoreComponent>();
-    scoreComponent->SetScore(100);
     m_Owner->GetComponent<ScoreComponent>()->AddObserver(this);
 
     m_Owner->AddComponent<GridMovementComponent>(*m_Owner, *levelGridComp);
