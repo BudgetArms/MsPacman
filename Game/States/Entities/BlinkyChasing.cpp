@@ -132,32 +132,27 @@ glm::vec2 States::BlinkyChasing::GetRandomCornerPosition() const
         return n % 2 == 0;
     };
 
+
     if(isEvenFunc(bae::GetRandomNumber()))
     {
         // Left Corner
         if(isEvenFunc(bae::GetRandomNumber()))
         {
             // Left Up Corner
-            return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 0, 0 });
+            return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 1, 1 });
         }
-        else
-        {
-            // Left Down Corner
-            return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 0, 35 });
-        }
+
+        // Left Down Corner
+        return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 1, 28 });
     }
-    else
+
+    // Right Corner
+    if(isEvenFunc(bae::GetRandomNumber()))
     {
-        // Right Corner
-        if(isEvenFunc(bae::GetRandomNumber()))
-        {
-            // Right Up Corner
-            return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 32, 0 });
-        }
-        else
-        {
-            // Right Down Corner
-            return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 32, 35 });
-        }
+        // Right Up Corner
+        return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 25, 1 });
     }
+
+    // Right Down Corner
+    return m_GridMovementComponent->GetLevelGridComponent()->GetPosition({ 25, 28 });
 }
