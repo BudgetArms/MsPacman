@@ -8,6 +8,7 @@
 #include "Components/LevelGridComponent.hpp"
 #include "States/Entities/BlinkyChasing.hpp"
 #include "States/Entities/BlinkyEaten.hpp"
+#include "States/Entities/BlinkyFrightened.hpp"
 #include "States/Entities/GhostStates.hpp"
 
 
@@ -48,6 +49,11 @@ void BlinkyComponent::Notify(const unsigned eventHash, bae::Subject*, const std:
     {
         case Events::PlayerDied:
         case Events::DirectionChanged:
+            if(dynamic_cast<States::BlinkyFrightened*>(m_BlinkyState.get()))
+            {
+                m_SpriteComponent->m_Index = 1;
+                return;
+            }
             m_SpriteComponent->m_Index = m_BlinkySpriteIndexOffset +
                     m_NrColumnsSprite * static_cast<int>(m_GridMovementComponent->GetDirection());
             break;
