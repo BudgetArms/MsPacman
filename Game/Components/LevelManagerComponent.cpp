@@ -1,5 +1,10 @@
 #include "LevelManagerComponent.hpp"
 
+#if WIN32
+#include <Windows.h>
+#include <XInput.h>
+#endif
+
 #include <fstream>
 
 #include <nlohmann/json.hpp>
@@ -16,8 +21,6 @@
 #include "Base/Events.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
-#include "Commands/TestDamageCommand.hpp"
-#include "Commands/TestScoreCommand.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "Components/LifeComponent.hpp"
@@ -26,6 +29,7 @@
 #include "Components/RenderCenterComponent.hpp"
 #include "Components/ScoreComponent.hpp"
 #include "Components/ScoreDisplayComponent.hpp"
+#include "Wrappers/Controller.hpp"
 
 
 using namespace Game;
@@ -352,46 +356,12 @@ void LevelManagerComponent::AddPlayers() const
 
     const auto lifeDisplayComp = msPacman->GetComponent<LifeDisplayComponent>();
     msPacman->GetComponent<LifeComponent>()->AddObserver(lifeDisplayComp);
-
-
-    // // Controls
-    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
-
-    constexpr float msPacmanSpeed = 100.f;
-    auto moveLeftCommand          = std::make_unique<MoveCommand>(*msPacman, Direction::Left, msPacmanSpeed);
-    auto moveRightCommand         = std::make_unique<MoveCommand>(*msPacman, Direction::Right, msPacmanSpeed);
-    auto moveDownCommand          = std::make_unique<MoveCommand>(*msPacman, Direction::Down, msPacmanSpeed);
-    auto moveUpCommand            = std::make_unique<MoveCommand>(*msPacman, Direction::Up, msPacmanSpeed);
-
-    keyboard.AddKeyboardCommands(std::move(moveLeftCommand), SDLK_A, bae::InputManager::ButtonState::Pressed);
-    keyboard.AddKeyboardCommands(std::move(moveRightCommand), SDLK_D, bae::InputManager::ButtonState::Pressed);
-    keyboard.AddKeyboardCommands(std::move(moveDownCommand), SDLK_S, bae::InputManager::ButtonState::Pressed);
-    keyboard.AddKeyboardCommands(std::move(moveUpCommand), SDLK_W, bae::InputManager::ButtonState::Pressed);
-
     msPacman->GetComponent<GridMovementComponent>()->m_Speed = 100.f;
     msPacman->GetComponent<GridMovementComponent>()->AddObserver(msPacmanComp);
 
-    // MoveOnGridCommand
-    auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Left);
-    auto moveOnGridRightCommand = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Right);
-    auto moveOnGridDownCommand  = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Down);
-    auto moveOnGridUpCommand    = std::make_unique<MoveOnGridCommand>(*msPacman, Direction::Up);
 
-    constexpr bae::InputManager::ButtonState moveOnGridButtonState = bae::InputManager::ButtonState::Pressed;
-    keyboard.AddKeyboardCommands(std::move(moveOnGridLeftCommand), SDLK_LEFT, moveOnGridButtonState);
-    keyboard.AddKeyboardCommands(std::move(moveOnGridRightCommand), SDLK_RIGHT, moveOnGridButtonState);
-    keyboard.AddKeyboardCommands(std::move(moveOnGridDownCommand), SDLK_DOWN, moveOnGridButtonState);
-    keyboard.AddKeyboardCommands(std::move(moveOnGridUpCommand), SDLK_UP, moveOnGridButtonState);
-
-
-    // TODO: remove both
-    // Test Damage Command (will be removed after testing)
-    auto damageCommand = std::make_unique<TestDamageCommand>(*msPacman);
-    keyboard.AddKeyboardCommands(std::move(damageCommand), SDLK_V, bae::InputManager::ButtonState::Down);
-
-    // Test Score Command (will be removed after testing)
-    auto scoreCommand = std::make_unique<TestScoreCommand>(*msPacman);
-    keyboard.AddKeyboardCommands(std::move(scoreCommand), SDLK_B, bae::InputManager::ButtonState::Down);
+    // Controls
+    AddControls(*msPacman, true);
 
     scene->Add(msPacman);
 }
@@ -443,6 +413,75 @@ void LevelManagerComponent::AddItems() const
     powerPellet->GetComponent<HitboxComponent>()->SetVisibility(true);
 
     scene->Add(powerPellet);
+
+
+    /*
+    const auto powerPellet2 = std::make_shared<bae::GameObject>("PowerPellet Item");
+    powerPellet->SetWorldLocation(m_LevelGridComponent->GetPosition({ 5, 26 }));
+
+    powerPellet->AddComponent<ItemComponent>(*powerPellet, ItemType::PowerPellet);
+    powerPellet->AddComponent<HitboxComponent>(*powerPellet, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+    powerPellet->GetComponent<HitboxComponent>()->SetVisibility(true);
+
+    */
+}
+
+void LevelManagerComponent::AddControls(bae::GameObject& gameObject, const bool firstPlayer)
+{
+    const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
+
+    constexpr auto moveOnGridButtonState = bae::InputManager::ButtonState::Pressed;
+
+    if(firstPlayer)
+    {
+        auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Left);
+        auto moveOnGridRightCommand = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Right);
+        auto moveOnGridDownCommand  = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Down);
+        auto moveOnGridUpCommand    = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Up);
+
+        keyboard.AddKeyboardCommands(std::move(moveOnGridLeftCommand), SDLK_A, moveOnGridButtonState);
+        keyboard.AddKeyboardCommands(std::move(moveOnGridRightCommand), SDLK_D, moveOnGridButtonState);
+        keyboard.AddKeyboardCommands(std::move(moveOnGridDownCommand), SDLK_S, moveOnGridButtonState);
+        keyboard.AddKeyboardCommands(std::move(moveOnGridUpCommand), SDLK_W, moveOnGridButtonState);
+    }
+
+    if(!firstPlayer)
+    {
+        auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Left);
+        auto moveOnGridRightCommand = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Right);
+        auto moveOnGridDownCommand  = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Down);
+        auto moveOnGridUpCommand    = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Up);
+
+        keyboard.AddKeyboardCommands(std::move(moveOnGridLeftCommand), SDLK_LEFT, moveOnGridButtonState);
+        keyboard.AddKeyboardCommands(std::move(moveOnGridRightCommand), SDLK_RIGHT, moveOnGridButtonState);
+        keyboard.AddKeyboardCommands(std::move(moveOnGridDownCommand), SDLK_DOWN, moveOnGridButtonState);
+        keyboard.AddKeyboardCommands(std::move(moveOnGridUpCommand), SDLK_UP, moveOnGridButtonState);
+    }
+
+
+    //*
+    const bae::Controller* controller = bae::InputManager::GetInstance().GetController(firstPlayer);
+
+    if(!controller)
+    {
+        std::cout << FUNCTION_NAME << " Failed to Get controller, is first player: " << firstPlayer << '\n';
+        return;
+    }
+
+    auto moveOnGridLeftCommand  = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Left);
+    auto moveOnGridRightCommand = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Right);
+    auto moveOnGridDownCommand  = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Down);
+    auto moveOnGridUpCommand    = std::make_unique<MoveOnGridCommand>(gameObject, Direction::Up);
+
+    controller->AddControllerCommands(std::move(moveOnGridLeftCommand), XINPUT_GAMEPAD_DPAD_LEFT,
+                                      moveOnGridButtonState);
+    controller->AddControllerCommands(std::move(moveOnGridRightCommand), XINPUT_GAMEPAD_DPAD_RIGHT,
+                                      moveOnGridButtonState);
+    controller->AddControllerCommands(std::move(moveOnGridDownCommand), XINPUT_GAMEPAD_DPAD_DOWN,
+                                      moveOnGridButtonState);
+    controller->AddControllerCommands(std::move(moveOnGridUpCommand), XINPUT_GAMEPAD_DPAD_UP, moveOnGridButtonState);
+
+    //*/
 }
 
 
