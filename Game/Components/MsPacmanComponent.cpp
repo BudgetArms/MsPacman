@@ -73,7 +73,7 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
-        case Events::PlayerChangedDirection:
+        case Events::ChangedDirection:
             m_SpriteComponent->m_Index = m_SpriteIndexOffset +
                     m_NrColumnsSprite * static_cast<int>(m_GridMovementComponent->GetDirection());
             break;

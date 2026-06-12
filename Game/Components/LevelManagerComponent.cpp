@@ -130,7 +130,7 @@ void LevelManagerComponent::Notify(const unsigned int eventHash, bae::Subject*, 
     switch(GetEvent(eventHash))
     {
         case Events::PlayerDied:
-        case Events::PlayerChangedDirection:
+        case Events::ChangedDirection:
         case Events::GameOver:
         case Events::LevelWon:
         case Events::LevelLost:
@@ -278,7 +278,7 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
         case Events::PlayerDied:
             HandlePlayerDied();
             break;
-        case Events::PlayerChangedDirection:
+        case Events::ChangedDirection:
             break;
         case Events::GameOver:
             ClearLevel();
