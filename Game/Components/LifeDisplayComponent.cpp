@@ -24,10 +24,10 @@ void LifeDisplayComponent::Render() const
 {
     for(int i{}; i < m_Lives - 1; ++i)
     {
-        const glm::vec2 imageSize   = m_LifeTexture->GetSize();
+        const glm::vec2 imageSize   = m_Scale * m_LifeTexture->GetSize();
         const glm::vec2 newPosition = m_Position + glm::vec2(i, i) * (m_Margin + glm::vec2{ imageSize.x, 0 });
 
-        bae::Renderer::GetInstance().RenderTexture(*m_LifeTexture.get(), false, newPosition, 0.f);
+        bae::Renderer::GetInstance().RenderTexture(*m_LifeTexture.get(), false, newPosition, 0.f, m_Scale);
     }
 }
 
@@ -39,4 +39,9 @@ void LifeDisplayComponent::Notify(const unsigned eventHash, bae::Subject* subjec
         const LifeComponent* lifeComponent = subject->GetGameObject()->GetComponent<LifeComponent>();
         m_Lives                            = lifeComponent->GetLives();
     }
+}
+
+void LifeDisplayComponent::SetTexture(const std::shared_ptr<bae::Texture2D>& lifeTexture)
+{
+    m_LifeTexture = lifeTexture;
 }

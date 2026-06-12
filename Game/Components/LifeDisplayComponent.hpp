@@ -26,9 +26,12 @@ namespace Game
 
         void Notify(unsigned eventHash, bae::Subject* subject, const std::any&) override;
 
+        void SetTexture(const std::shared_ptr<bae::Texture2D>& lifeTexture);
+
 
         glm::vec2 m_Position;
         glm::vec2 m_Margin{};
+        glm::vec2 m_Scale{ 1.f, 1.f };
 
     private:
         std::shared_ptr<bae::Texture2D> m_LifeTexture;
