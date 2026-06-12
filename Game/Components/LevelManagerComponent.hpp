@@ -60,6 +60,10 @@ namespace Game
         void AddGhosts() const;
         void AddItems() const;
 
+
+        std::shared_ptr<bae::GameObject> GetMsPacmanBase(const std::string& gameObjectName,
+                                                         const glm::vec2& spawnPosition) const;
+
         void SpawnMsPacman() const;
         void SpawnMrPacman() const;
 
