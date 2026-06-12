@@ -1,5 +1,8 @@
 #pragma once
-#include "GhostStates.hpp"
+
+#include "States/Entities/GhostStates.hpp"
+
+#include "Base/GhostMovement.hpp"
 
 
 namespace Game::States
@@ -7,7 +10,7 @@ namespace Game::States
     class BlinkyEaten : public GhostStates
     {
     public:
-        explicit BlinkyEaten(bae::GameObject& gameObject);
+        explicit BlinkyEaten(bae::GameObject& gameObject, const glm::vec2& spawnPosition);
 
         void OnEnter() override;
         void OnExit() override;
@@ -15,18 +18,9 @@ namespace Game::States
         std::unique_ptr<EntityState> Update() override;
 
     private:
-        void UpdatePath();
-
-        void SetDirectionFromPath();
-
-        std::vector<glm::vec2> m_PathToTarget{};
-
-        const float m_MinDistanceToCell{ 1.f };
+        GhostMovement m_Movement;
 
         const float m_TimeDeathCooldownTime{ 6.f };
         float m_TimeDeathElapsed{};
-
-        const float m_RecalculatePathCooldownTime{ 0.5f };
-        float m_PathUpdatedElapsedTime{};
     };
 }
