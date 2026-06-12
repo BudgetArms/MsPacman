@@ -4,6 +4,7 @@
 #include "Singletons/GameTime.hpp"
 
 #include "Components/HitboxComponent.hpp"
+#include "Components/SpriteComponent.hpp"
 #include "States/Entities/BlinkyChasing.hpp"
 
 
@@ -23,6 +24,16 @@ void States::BlinkyEaten::OnEnter()
     m_GameObject->GetComponent<HitboxComponent>()->m_bAreCollisionsEnabled = false;
 
     m_Movement.SetTargetPosition(m_TargetPosition);
+
+
+    auto spriteComponent = m_GameObject->GetComponent<bae::SpriteComponent>();
+
+    spriteComponent->SetTexture(m_GhostEatenSpritePath.data());
+    spriteComponent->SetSrcRect(m_GhostEatenSrcRect);
+    spriteComponent->SetColumns(m_NrColumnsSprite);
+    spriteComponent->SetSprites(m_GhostEatenNrSprites);
+
+    spriteComponent->m_Index = 2 * static_cast<int>(m_GridMovementComponent->GetDirection());
 }
 
 void States::BlinkyEaten::OnExit()

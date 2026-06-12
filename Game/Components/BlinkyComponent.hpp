@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL3/SDL.h>
 
 #include "Components/Component.hpp"
 
@@ -44,7 +45,8 @@ namespace Game
 
         glm::vec2 m_SpawnPosition;
 
-        static constexpr int m_SpriteIndexOffset{ 1 };
+        static constexpr std::string_view m_BlinkySpritePath = "Textures/Characters/Blinky.png";
+        static constexpr int m_BlinkySpriteIndexOffset{ 1 };
         static constexpr int m_NrColumnsSprite{ 2 };
 
         bool m_bPendingKilled{};

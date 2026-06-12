@@ -1,5 +1,6 @@
 #include "BlinkyChasing.hpp"
 
+#include "Components/SpriteComponent.hpp"
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
 #include "Managers/SceneManager.hpp"
@@ -22,6 +23,16 @@ States::BlinkyChasing::BlinkyChasing(bae::GameObject& gameObject) :
 void States::BlinkyChasing::OnEnter()
 {
     std::cout << FUNCTION_NAME << '\n';
+
+    auto spriteComponent = m_GameObject->GetComponent<bae::SpriteComponent>();
+
+    spriteComponent->SetTexture(m_BlinkySpritePath.data());
+    spriteComponent->SetSrcRect(m_BlinkySrcRect);
+    spriteComponent->SetColumns(m_NrColumnsSprite);
+    spriteComponent->SetSprites(m_BlinkyNrSprites);
+
+    spriteComponent->m_Index = m_BlinkySpriteIndexOffset +
+            m_NrColumnsSprite * static_cast<int>(m_GridMovementComponent->GetDirection());
 }
 
 void States::BlinkyChasing::OnExit()
@@ -38,6 +49,7 @@ std::unique_ptr<States::EntityState> States::BlinkyChasing::Update()
 
     return nullptr;
 }
+
 
 void States::BlinkyChasing::UpdateTargetPosition()
 {
