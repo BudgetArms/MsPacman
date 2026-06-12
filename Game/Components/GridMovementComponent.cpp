@@ -37,11 +37,6 @@ void GridMovementComponent::FixedUpdate()
     ApplySpeed();
 }
 
-void GridMovementComponent::Render() const
-{
-    bae::Utils::DrawCircle(m_NodePosTest, 10, bae::Utils::Color::Green);
-}
-
 Direction GridMovementComponent::GetDirection() const
 {
     return m_CurrentDirection;
@@ -123,9 +118,6 @@ bool GridMovementComponent::IsAtNodeCenter()
         return false;
     }
 
-    m_NodePosTest = position;
-
     const glm::vec2 nodePosition = m_LevelGridComponent->GetPosition(gridPosition);
-
     return glm::distance(position, nodePosition) <= m_ToleranceNodeCenter;
 }

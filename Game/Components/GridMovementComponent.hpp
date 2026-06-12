@@ -16,7 +16,7 @@ namespace Game
         explicit GridMovementComponent(bae::GameObject& owner, LevelGridComponent& gridComponent);
 
         void FixedUpdate() override;
-        void Render() const override;
+
 
         [[nodiscard]] Direction GetDirection() const;
         void SetDirection(Direction direction);
@@ -35,7 +35,6 @@ namespace Game
 
         LevelGridComponent* m_LevelGridComponent;
 
-        glm::vec2 m_NodePosTest{};
         Direction m_CurrentDirection{ Direction::Left };
         Direction m_RequestedDirection{ Direction::Left };
 

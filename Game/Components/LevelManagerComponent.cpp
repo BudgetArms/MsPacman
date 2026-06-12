@@ -405,7 +405,6 @@ void LevelManagerComponent::AddGhosts() const
     const auto blinky = std::make_shared<bae::GameObject>("Ghost Blinky");
     blinky->SetWorldLocation(spawnPosition);
 
-    blinky->AddComponent<GridMovementComponent>(*blinky, *m_LevelGridComponent);
     blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent, spawnPosition);
 
     const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
