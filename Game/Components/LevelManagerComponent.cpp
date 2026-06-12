@@ -117,6 +117,11 @@ void LevelManagerComponent::ResetLevel()
     CreateLevel();
 }
 
+void LevelManagerComponent::SkipLevel()
+{
+    WonLevel();
+}
+
 LevelGridComponent* LevelManagerComponent::GetLevelGridComponent() const
 {
     return m_LevelGridComponent;

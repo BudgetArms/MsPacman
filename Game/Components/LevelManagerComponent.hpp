@@ -5,7 +5,6 @@
 #include <nlohmann/json.hpp>
 
 #include "Components/Component.hpp"
-#include "Core/Observer.hpp"
 #include "Core/SpriteSheet.hpp"
 
 #include "Base/GameMode.hpp"
@@ -28,6 +27,8 @@ namespace Game
 
         void CreateLevel();
         void ResetLevel();
+
+        void SkipLevel();
 
 
         [[nodiscard]] LevelGridComponent* GetLevelGridComponent() const;
