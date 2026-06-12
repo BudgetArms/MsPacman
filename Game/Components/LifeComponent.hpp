@@ -22,7 +22,7 @@ namespace Game
         // Respects invincibility
         void RemoveLife();
 
-        // Doesn't care about invincibility
+        // Doesn't care about invincibility or damage cooldown
         void RemoveAllLives();
 
         [[nodiscard]] int GetLives() const;
@@ -39,12 +39,17 @@ namespace Game
     private:
         void SendEventToObservers(Events event);
 
+        [[nodiscard]] bool IsOnDamageCooldown() const;
+
         int m_Lives;
         int m_MaxLives;
 
+
+        const float m_DamageCooldownDuration{ 1.f };
+        float m_ElapsedDamageCooldownTime{ m_DamageCooldownDuration };
+
         const float m_InvincibilityDuration;
         float m_ElapsedInvincibilityTime{};
-
 
         bool m_bIsInvincible{ false };
         bool m_bIsAlive{ true };

@@ -27,6 +27,12 @@ LifeComponent::LifeComponent(bae::GameObject& owner, const int maxLives, const f
 
 void LifeComponent::Update()
 {
+    if(IsOnDamageCooldown())
+    {
+        m_ElapsedDamageCooldownTime += bae::GameTime::GetInstance().GetDeltaTime();
+    }
+
+
     if(!m_bIsInvincible)
     {
         return;
@@ -52,12 +58,13 @@ void LifeComponent::AddLife()
 
 void LifeComponent::RemoveLife()
 {
-    if(!IsAlive() || IsInvincible())
+    if(!IsAlive() || IsInvincible() || IsOnDamageCooldown())
     {
         return;
     }
 
     --m_Lives;
+    m_ElapsedDamageCooldownTime = 0.0f;
 
     if(m_Lives > 0)
     {
@@ -152,5 +159,10 @@ void LifeComponent::SendEventToObservers(const Events event)
 {
     NotifyObservers(GetEventHash(event));
     bae::EventQueue::GetInstance().SendEvent(GetEventHash(event));
+}
+
+bool LifeComponent::IsOnDamageCooldown() const
+{
+    return m_ElapsedDamageCooldownTime < m_DamageCooldownDuration;
 }
 
