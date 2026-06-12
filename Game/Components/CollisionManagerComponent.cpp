@@ -24,8 +24,10 @@ void CollisionManagerComponent::FixedUpdate()
 
     for(size_t i = 0; i < m_HitboxObjects.size(); ++i)
     {
-        if(!m_HitboxObjects[i] || m_HitboxObjects[i]->IsMarkedForDeletion() || !m_HitboxObjects[i]->HasComponent<
-            HitboxComponent>())
+        if(!m_HitboxObjects[i] || m_HitboxObjects[i]->IsMarkedForDeletion() ||
+            !m_HitboxObjects[i]->HasComponent<HitboxComponent>() ||
+            !m_HitboxObjects[i]->GetComponent<HitboxComponent>()->m_bAreCollisionsEnabled
+        )
         {
             continue;
         }
@@ -39,7 +41,9 @@ void CollisionManagerComponent::FixedUpdate()
         for(size_t j = i + 1; j < m_HitboxObjects.size(); ++j)
         {
             if(!m_HitboxObjects[j] || m_HitboxObjects[j]->IsMarkedForDeletion() ||
-                !m_HitboxObjects[j]->HasComponent<HitboxComponent>())
+                !m_HitboxObjects[j]->HasComponent<HitboxComponent>() ||
+                !m_HitboxObjects[i]->GetComponent<HitboxComponent>()->m_bAreCollisionsEnabled
+            )
             {
                 continue;
             }
