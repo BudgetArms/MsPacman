@@ -5,6 +5,7 @@
 #include "Components/Component.hpp"
 
 #include "Base/GhostKiller.hpp"
+#include "Core/EventListener.hpp"
 #include "States/Entities/GhostStates.hpp"
 
 

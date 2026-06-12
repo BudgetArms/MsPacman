@@ -42,7 +42,7 @@ States::EntityState* BlinkyComponent::GetState() const
     return m_BlinkyState.get();
 }
 
-void BlinkyComponent::Notify(unsigned eventHash, bae::Subject*, const std::any&)
+void BlinkyComponent::Notify(const unsigned eventHash, bae::Subject*, const std::any&)
 {
     switch(GetEvent(eventHash))
     {
@@ -91,5 +91,3 @@ void BlinkyComponent::UpdateToNewState(std::unique_ptr<States::EntityState> newS
     m_BlinkyState = std::move(newState);
     m_BlinkyState->OnEnter();
 }
-
-

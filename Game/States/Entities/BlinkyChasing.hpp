@@ -2,14 +2,15 @@
 
 #include <SDL3/SDL.h>
 
-#include "States/Entities/GhostStates.hpp"
+#include "Core/EventListener.hpp"
 
 #include "Base/GhostMovement.hpp"
+#include "States/Entities/GhostStates.hpp"
 
 
 namespace Game::States
 {
-    class BlinkyChasing : public GhostStates
+    class BlinkyChasing : public GhostStates, public bae::EventListener
     {
     public:
         explicit BlinkyChasing(bae::GameObject& gameObject);
@@ -23,6 +24,10 @@ namespace Game::States
         void UpdateTargetPosition();
         static std::vector<bae::GameObject*> GetPlayersGameObjects();
 
+        void HandleEvent(unsigned eventHash) override;
+
+        [[nodiscard]] glm::vec2 GetRandomCornerPosition() const;
+
         GhostMovement m_Movement;
 
         static constexpr std::string_view m_BlinkySpritePath = "Textures/Characters/Blinky.png";
@@ -31,5 +36,7 @@ namespace Game::States
 
         static constexpr int m_BlinkySpriteIndexOffset{ 1 };
         static constexpr int m_NrColumnsSprite{ 2 };
+
+        bool m_bIsFrightened{};
     };
 }
