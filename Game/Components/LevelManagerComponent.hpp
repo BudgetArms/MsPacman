@@ -44,7 +44,7 @@ namespace Game
         void WonLevel();
         void LostLevel();
 
-        void LoadBackground(int levelIndex) const;
+        void LoadBackground() const;
 
         void ClearLevel() const;
 
@@ -79,7 +79,7 @@ namespace Game
         GameMode m_GameMode;
 
 
-        int m_CurrentLevel{};
+        int m_CurrentLevel{ 0 };
 
         LevelGridComponent* m_LevelGridComponent{};
 
@@ -88,7 +88,7 @@ namespace Game
         // static constexpr glm::vec2 test{ 20, 20 };
 
         const std::filesystem::path m_BackgroundTexturePath{ "Textures/Level/Levels.png" };
-        static constexpr int m_LevelRepeatTimes{ 2 };
+        static constexpr int m_LevelRepeatTimes{ 1 };
         static constexpr int m_LevelTextures{ 4 };
     };
 }

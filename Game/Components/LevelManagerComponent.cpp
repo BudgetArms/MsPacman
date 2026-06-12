@@ -43,6 +43,8 @@ LevelManagerComponent::LevelManagerComponent(bae::GameObject& owner, const GameM
     // Create Background
     m_BackgroundSpriteSheet = std::make_unique<bae::SpriteSheet>(m_BackgroundTexturePath,
                                                                  SDL_FRect(0, 0, 224, 1488), 1, 6);
+
+    m_BackgroundSpriteSheet->m_Index = 0;
 }
 
 LevelManagerComponent::~LevelManagerComponent()
@@ -101,6 +103,7 @@ void LevelManagerComponent::CreateLevel()
         return;
     }
 
+    LoadBackground();
     CreateGrid();
 
     AddPlayers();
@@ -159,15 +162,18 @@ void LevelManagerComponent::LostLevel()
     ResetLevel();
 }
 
-void LevelManagerComponent::LoadBackground(const int levelIndex) const
+void LevelManagerComponent::LoadBackground() const
 {
-    if(m_LevelJson.contains(levelIndex))
+    const int currentLevelIndex = static_cast<int>(static_cast<float>(m_CurrentLevel)
+        / m_LevelRepeatTimes) % static_cast<int>(m_LevelJson.size());
+
+    if(!m_LevelJson.contains(currentLevelIndex))
     {
         throw std::runtime_error(
-            FUNCTION_NAME + std::string(" Failed! LevelJson Not Found! Index: " + std::to_string(levelIndex)));
+            FUNCTION_NAME + std::string(" Failed! LevelJson Not Found! Index: " + std::to_string(currentLevelIndex)));
     }
 
-    m_BackgroundSpriteSheet->m_Index = levelIndex;
+    m_BackgroundSpriteSheet->m_Index = currentLevelIndex;
 }
 
 void LevelManagerComponent::ClearLevel() const
@@ -236,6 +242,7 @@ void LevelManagerComponent::CreateGrid()
     levelGrid->AddComponent<LevelGridComponent>(*levelGrid, gridSize, nrColumns, nrRows);
     m_LevelGridComponent = levelGrid->GetComponent<LevelGridComponent>();
 
+    //*
     for(const bae::Graphs::GridPosition& gridPosition : levelJson.NodesToRemove)
     {
         m_LevelGridComponent->RemoveNode(gridPosition);
@@ -246,6 +253,7 @@ void LevelManagerComponent::CreateGrid()
         m_LevelGridComponent->AddNode(gridPosition);
         m_LevelGridComponent->AddConnectionsToNeighbors(gridPosition);
     }
+    //*/
 
 
     // m_LevelGridComponent->SetRenderCells(true);
@@ -441,7 +449,7 @@ void LevelManagerComponent::SpawnMsPacman() const
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
-    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 3, 3 });
+    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 12, 23 });
 
     const auto msPacman = GetMsPacmanBase("MsPacman", spawnPosition);
 
@@ -461,7 +469,7 @@ void LevelManagerComponent::SpawnMrPacman() const
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
-    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 25, 1 });
+    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 14, 23 });
 
     const auto mrPacman = GetMsPacmanBase("MsPacman", spawnPosition);
 
