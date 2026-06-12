@@ -76,8 +76,12 @@ void HitboxComponent::SetVisibility(const bool visibility)
 
 void HitboxComponent::SendCollisionEventToObservers(HitboxComponent& otherHitbox)
 {
-    const unsigned int eventHash = GetEventHash(Events::Collision);
+    if(!m_bAreCollisionsEnabled)
+    {
+        return;
+    }
 
+    const unsigned int eventHash = GetEventHash(Events::Collision);
     NotifyObservers(eventHash, &otherHitbox);
 }
 

@@ -26,6 +26,8 @@ namespace Game
 
         void SendCollisionEventToObservers(HitboxComponent& otherHitbox);
 
+        bool m_bAreCollisionsEnabled{ true };
+
     private:
         void RegisterHitboxToCollisionManager();
         void UnRegisterHitboxToCollisionManager();
