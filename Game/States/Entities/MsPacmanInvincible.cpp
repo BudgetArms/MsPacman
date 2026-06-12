@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include "MsPacmanIdle.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/ServiceLocator.hpp"
 #include "Singletons/GameTime.hpp"
@@ -10,6 +9,7 @@
 
 #include "Base/SoundAssets.hpp"
 #include "Components/MsPacmanComponent.hpp"
+#include "States/Entities/MsPacmanMoving.hpp"
 
 
 using namespace Game::States;
@@ -53,7 +53,7 @@ std::unique_ptr<EntityState> MsPacmanInvincible::Update()
     {
         if(m_GameObject->HasComponent<MsPacmanComponent>())
         {
-            return std::make_unique<MsPacmanIdle>(*m_GameObject);
+            return std::make_unique<MsPacmanMoving>(*m_GameObject);
         }
     }
 

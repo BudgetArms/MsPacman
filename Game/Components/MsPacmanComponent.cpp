@@ -1,6 +1,5 @@
 #include "MsPacmanComponent.hpp"
 
-#include "GridMovementComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
 #include "Core/GameObject.hpp"
@@ -11,13 +10,14 @@
 #include "Base/Events.hpp"
 #include "Base/GhostKiller.hpp"
 #include "Base/Level.hpp"
+#include "Components/GridMovementComponent.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/ItemComponent.hpp"
 #include "Components/LevelManagerComponent.hpp"
 #include "Components/LifeComponent.hpp"
 #include "Components/ScoreComponent.hpp"
 #include "States/Entities/MsPacmanDying.hpp"
-#include "States/Entities/MsPacmanIdle.hpp"
+#include "States/Entities/MsPacmanMoving.hpp"
 
 
 using namespace Game;
@@ -44,7 +44,7 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner, LevelGridComponent*
     m_Owner->AddComponent<GridMovementComponent>(*m_Owner, *levelGridComp);
     m_GridMovementComponent = m_Owner->GetComponent<GridMovementComponent>();
 
-    m_MsPacmanState = std::make_unique<States::MsPacmanIdle>(*m_Owner);
+    m_MsPacmanState = std::make_unique<States::MsPacmanMoving>(*m_Owner);
     m_MsPacmanState->OnEnter();
 }
 

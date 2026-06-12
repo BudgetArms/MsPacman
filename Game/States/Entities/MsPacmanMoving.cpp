@@ -2,13 +2,12 @@
 
 #include <iostream>
 
-#include "MsPacmanDying.hpp"
-#include "MsPacmanIdle.hpp"
-#include "Components/LifeComponent.hpp"
+#include "Components/SpriteComponent.hpp"
 #include "Components/TextComponent.hpp"
-#include "Singletons/GameTime.hpp"
 
+#include "Components/LifeComponent.hpp"
 #include "Components/MsPacmanComponent.hpp"
+#include "States/Entities/MsPacmanDying.hpp"
 
 
 using namespace Game::States;
@@ -34,20 +33,6 @@ void MsPacmanMoving::OnExit()
 
 std::unique_ptr<EntityState> MsPacmanMoving::Update()
 {
-    if(m_AccumulatedTime == 0.0f)
-    {
-        std::cout << FUNCTION_NAME << '\n';
-    }
-
-    m_AccumulatedTime += bae::GameTime::GetInstance().GetDeltaTime();
-    if(m_AccumulatedTime >= m_TimeSwitch)
-    {
-        if(m_GameObject->HasComponent<MsPacmanComponent>())
-        {
-            return std::make_unique<MsPacmanIdle>(*m_GameObject);
-        }
-    }
-
     return nullptr;
 }
 

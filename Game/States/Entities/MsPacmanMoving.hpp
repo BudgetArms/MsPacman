@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Core/EventListener.hpp"
 #include "Sounds/SoundStructs.hpp"
 
-#include "EntityState.hpp"
-#include "MsPacmanStates.hpp"
+#include "States/Entities/EntityState.hpp"
+#include "States/Entities/MsPacmanStates.hpp"
+
 
 namespace Game::States
 {
@@ -18,13 +20,6 @@ namespace Game::States
 
         std::unique_ptr<EntityState> Update() override;
         void HandleInput() override;
-
-    private:
-        bae::ActiveSoundID m_PlayingActiveSoundId{ -1 };
-
-        // TODO: remove this code afterwards
-        float m_AccumulatedTime{};
-        static constexpr float m_TimeSwitch{ 3.f };
     };
 }
 

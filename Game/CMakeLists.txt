@@ -63,7 +63,6 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "States/Entities/BlinkyFrightened.cpp"
     "States/Entities/GhostStates.cpp"
     "States/Entities/MsPacmanDying.cpp"
-    "States/Entities/MsPacmanIdle.cpp"
     "States/Entities/MsPacmanInvincible.cpp"
     "States/Entities/MsPacmanMoving.cpp"
     "States/Entities/MsPacmanStates.cpp"
