@@ -20,7 +20,8 @@ namespace Game
     class BlinkyComponent : public bae::Component, public bae::Observer, public GhostKiller
     {
     public:
-        explicit BlinkyComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp);
+        explicit BlinkyComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp,
+                                 const glm::vec2& spawnPosition);
         ~BlinkyComponent() override;
 
         void FixedUpdate() override;
@@ -35,11 +36,13 @@ namespace Game
     private:
         void UpdateToNewState(std::unique_ptr<States::EntityState> newState);
 
-    private:
+
         std::unique_ptr<States::EntityState> m_BlinkyState;
 
         bae::SpriteComponent* m_SpriteComponent{};
         GridMovementComponent* m_GridMovementComponent{};
+
+        glm::vec2 m_SpawnPosition;
 
         static constexpr int m_SpriteIndexOffset{ 1 };
         static constexpr int m_NrColumnsSprite{ 2 };

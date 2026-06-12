@@ -6,14 +6,17 @@
 #include "Components/GridMovementComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "States/Entities/BlinkyChasing.hpp"
+#include "States/Entities/BlinkyEaten.hpp"
 #include "States/Entities/GhostStates.hpp"
 
 
 using namespace Game;
 
 
-BlinkyComponent::BlinkyComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp) :
-    Component(owner)
+BlinkyComponent::BlinkyComponent(bae::GameObject& owner, LevelGridComponent* levelGridComp,
+                                 const glm::vec2& spawnPosition) :
+    Component(owner),
+    m_SpawnPosition{ spawnPosition }
 {
     m_Owner->AddComponent<bae::SpriteComponent>(*m_Owner, "Textures/Characters/Blinky.png",
                                                 SDL_FRect(0, 0, 32, 64), 2, 8);
@@ -79,7 +82,7 @@ void BlinkyComponent::UpdateToNewState(std::unique_ptr<States::EntityState> newS
     if(m_bPendingKilled)
     {
         m_bPendingKilled = false;
-        newState         = std::make_unique<States::BlinkyChasing>(*m_Owner);
+        newState         = std::make_unique<States::BlinkyEaten>(*m_Owner, m_SpawnPosition);
     }
 
     m_BlinkyState = std::move(newState);
