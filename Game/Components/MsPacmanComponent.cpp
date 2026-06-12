@@ -30,9 +30,7 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner, LevelGridComponent*
     auto font = bae::ResourceManager::GetInstance().LoadFont("Fonts/Lingua.otf", 32);
     m_Owner->AddComponent<bae::TextComponent>(*m_Owner, "Default", font, bae::Utils::Color::Gray);
     m_Owner->AddComponent<LifeComponent>(*m_Owner, 4, 3.f);
-
-    const auto lifeComp = m_Owner->GetComponent<LifeComponent>();
-    lifeComp->AddObserver(this);
+    m_Owner->GetComponent<LifeComponent>()->AddObserver(this);
 
     m_Owner->AddComponent<bae::SpriteComponent>(*m_Owner, "Textures/Characters/MsPacman.png",
                                                 SDL_FRect(0, 0, 48, 64), 3, 12);
@@ -41,6 +39,7 @@ MsPacmanComponent::MsPacmanComponent(bae::GameObject& owner, LevelGridComponent*
     m_Owner->AddComponent<ScoreComponent>(*m_Owner);
     const auto scoreComponent = m_Owner->GetComponent<ScoreComponent>();
     scoreComponent->SetScore(100);
+    m_Owner->GetComponent<ScoreComponent>()->AddObserver(this);
 
     m_Owner->AddComponent<GridMovementComponent>(*m_Owner, *levelGridComp);
     m_GridMovementComponent = m_Owner->GetComponent<GridMovementComponent>();
@@ -85,16 +84,8 @@ void MsPacmanComponent::Notify(const unsigned int eventHash, bae::Subject*, cons
         case Events::RestartLevel:
             break;
         case Events::ScoreChanged:
-        {
-            const auto scoreComp = m_Owner->GetComponent<ScoreComponent>();
-            if(!scoreComp)
-            {
-                return;
-            }
-
-            std::cout << FUNCTION_NAME << " Score changed: " << scoreComp->GetScore() << '\n';
-        }
-        break;
+            std::cout << "Score Changed\n\n\n";
+            break;
         case Events::LivesChanged:
             break;
         case Events::InvincibilityChanged:
@@ -192,9 +183,8 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
             break;
         case ItemType::PowerPellet:
         {
-            scoreGained              = getScore(ScoreTypes::PowerPellet);
-            const auto lifeComponent = m_Owner->GetComponent<LifeComponent>();
-            lifeComponent->SetInvincibility(true);
+            scoreGained = getScore(ScoreTypes::PowerPellet);
+            m_Owner->GetComponent<LifeComponent>()->SetInvincibility(true);
         }
         break;
         case ItemType::Fruit:
