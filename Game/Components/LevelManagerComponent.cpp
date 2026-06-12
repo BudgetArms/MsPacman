@@ -327,43 +327,19 @@ void LevelManagerComponent::HandlePlayerDied() const
 
 void LevelManagerComponent::AddPlayers() const
 {
-    // Player One & Controls
-    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
-
-    const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
-    msPacman->SetWorldLocation(m_LevelGridComponent->GetPosition({ 3, 3 }));
-
-    msPacman->AddComponent<MsPacmanComponent>(*msPacman, m_LevelGridComponent);
-    const auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
-
-    constexpr glm::vec2 dimensions = { 20, 20 };
-    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
-
-    msPacman->AddComponent<HitboxComponent>(*msPacman, dimensions, offset);
-    msPacman->GetComponent<HitboxComponent>()->SetVisibility(true);
-    msPacman->GetComponent<HitboxComponent>()->AddObserver(msPacmanComp);
-
-    // Score Display
-    auto text = std::make_unique<bae::Text2D>("Score: 0");
-    msPacman->AddComponent<ScoreDisplayComponent>(*msPacman, glm::vec2{ 5, 540 }, std::move(text));
-
-    const auto scoreDisplayComp = msPacman->GetComponent<ScoreDisplayComponent>();
-    msPacman->GetComponent<ScoreComponent>()->AddObserver(scoreDisplayComp);
-
-    // Life Display
-    auto lifeTexture = bae::ResourceManager::GetInstance().LoadTexture("Textures/Popup/MsPacmanLife.png");
-    msPacman->AddComponent<LifeDisplayComponent>(*msPacman, glm::vec2{ 100, 400 }, lifeTexture);
-
-    const auto lifeDisplayComp = msPacman->GetComponent<LifeDisplayComponent>();
-    msPacman->GetComponent<LifeComponent>()->AddObserver(lifeDisplayComp);
-    msPacman->GetComponent<GridMovementComponent>()->m_Speed = 100.f;
-    msPacman->GetComponent<GridMovementComponent>()->AddObserver(msPacmanComp);
-
-
-    // Controls
-    AddControls(*msPacman, true);
-
-    scene->Add(msPacman);
+    switch(m_GameMode)
+    {
+        case GameMode::Singleplayer:
+            SpawnMsPacman();
+            break;
+        case GameMode::CoOp:
+            SpawnMsPacman();
+            SpawnMrPacman();
+            break;
+        case GameMode::Versus:
+            SpawnMsPacman();
+            break;
+    }
 }
 
 void LevelManagerComponent::AddGhosts() const
@@ -426,6 +402,86 @@ void LevelManagerComponent::AddItems() const
     */
 }
 
+void LevelManagerComponent::SpawnMsPacman() const
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto msPacman = std::make_shared<bae::GameObject>("MsPacman");
+    msPacman->SetWorldLocation(m_LevelGridComponent->GetPosition({ 3, 3 }));
+
+    msPacman->AddComponent<MsPacmanComponent>(*msPacman, m_LevelGridComponent);
+    const auto msPacmanComp = msPacman->GetComponent<MsPacmanComponent>();
+
+    constexpr glm::vec2 dimensions = { 20, 20 };
+    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
+
+    msPacman->AddComponent<HitboxComponent>(*msPacman, dimensions, offset);
+    msPacman->GetComponent<HitboxComponent>()->SetVisibility(true);
+    msPacman->GetComponent<HitboxComponent>()->AddObserver(msPacmanComp);
+
+    // Score Display
+    auto text = std::make_unique<bae::Text2D>("Score: 0");
+    msPacman->AddComponent<ScoreDisplayComponent>(*msPacman, glm::vec2{ 5, 540 }, std::move(text));
+
+    const auto scoreDisplayComp = msPacman->GetComponent<ScoreDisplayComponent>();
+    msPacman->GetComponent<ScoreComponent>()->AddObserver(scoreDisplayComp);
+
+    // Life Display
+    auto lifeTexture = bae::ResourceManager::GetInstance().LoadTexture("Textures/Popup/MsPacmanLife.png");
+    msPacman->AddComponent<LifeDisplayComponent>(*msPacman, glm::vec2{ 100, 400 }, lifeTexture);
+
+    const auto lifeDisplayComp = msPacman->GetComponent<LifeDisplayComponent>();
+    msPacman->GetComponent<LifeComponent>()->AddObserver(lifeDisplayComp);
+    msPacman->GetComponent<GridMovementComponent>()->m_Speed = 100.f;
+    msPacman->GetComponent<GridMovementComponent>()->AddObserver(msPacmanComp);
+
+
+    // Controls
+    AddControls(*msPacman, true);
+
+    scene->Add(msPacman);
+}
+
+void LevelManagerComponent::SpawnMrPacman() const
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto mrPacman = std::make_shared<bae::GameObject>("Pacman");
+    mrPacman->SetWorldLocation(m_LevelGridComponent->GetPosition({ 3, 1 }));
+
+    mrPacman->AddComponent<MsPacmanComponent>(*mrPacman, m_LevelGridComponent);
+    const auto msPacmanComp = mrPacman->GetComponent<MsPacmanComponent>();
+
+    constexpr glm::vec2 dimensions = { 20, 20 };
+    constexpr glm::vec2 offset     = { -dimensions.x / 2.f, -dimensions.y / 2.f };
+
+    mrPacman->AddComponent<HitboxComponent>(*mrPacman, dimensions, offset);
+    mrPacman->GetComponent<HitboxComponent>()->SetVisibility(true);
+    mrPacman->GetComponent<HitboxComponent>()->AddObserver(msPacmanComp);
+
+    // Score Display
+    auto text = std::make_unique<bae::Text2D>("Score: 0");
+    mrPacman->AddComponent<ScoreDisplayComponent>(*mrPacman, glm::vec2{ 400, 540 }, std::move(text));
+
+    const auto scoreDisplayComp = mrPacman->GetComponent<ScoreDisplayComponent>();
+    mrPacman->GetComponent<ScoreComponent>()->AddObserver(scoreDisplayComp);
+
+    // Life Display
+    auto lifeTexture = bae::ResourceManager::GetInstance().LoadTexture("Textures/Popup/MsPacmanLife.png");
+    mrPacman->AddComponent<LifeDisplayComponent>(*mrPacman, glm::vec2{ 400, 400 }, lifeTexture);
+
+    const auto lifeDisplayComp = mrPacman->GetComponent<LifeDisplayComponent>();
+    mrPacman->GetComponent<LifeComponent>()->AddObserver(lifeDisplayComp);
+    mrPacman->GetComponent<GridMovementComponent>()->m_Speed = 100.f;
+    mrPacman->GetComponent<GridMovementComponent>()->AddObserver(msPacmanComp);
+
+
+    // Controls
+    AddControls(*mrPacman, false);
+
+    scene->Add(mrPacman);
+}
+
 void LevelManagerComponent::AddControls(bae::GameObject& gameObject, const bool firstPlayer)
 {
     const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
@@ -459,8 +515,7 @@ void LevelManagerComponent::AddControls(bae::GameObject& gameObject, const bool 
     }
 
 
-    //*
-    const bae::Controller* controller = bae::InputManager::GetInstance().GetController(firstPlayer);
+    const bae::Controller* controller = bae::InputManager::GetInstance().GetController(!firstPlayer);
 
     if(!controller)
     {
@@ -480,8 +535,6 @@ void LevelManagerComponent::AddControls(bae::GameObject& gameObject, const bool 
     controller->AddControllerCommands(std::move(moveOnGridDownCommand), XINPUT_GAMEPAD_DPAD_DOWN,
                                       moveOnGridButtonState);
     controller->AddControllerCommands(std::move(moveOnGridUpCommand), XINPUT_GAMEPAD_DPAD_UP, moveOnGridButtonState);
-
-    //*/
 }
 
 

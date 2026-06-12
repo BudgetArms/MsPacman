@@ -60,6 +60,9 @@ namespace Game
         void AddGhosts() const;
         void AddItems() const;
 
+        void SpawnMsPacman() const;
+        void SpawnMrPacman() const;
+
         static void AddControls(bae::GameObject& gameObject, bool firstPlayer);
 
 
