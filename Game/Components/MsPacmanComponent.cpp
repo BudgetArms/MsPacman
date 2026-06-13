@@ -10,12 +10,14 @@
 #include "Base/Events.hpp"
 #include "Base/GhostKiller.hpp"
 #include "Base/Level.hpp"
+#include "Base/SoundAssets.hpp"
 #include "Components/GridMovementComponent.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/ItemComponent.hpp"
 #include "Components/LevelManagerComponent.hpp"
 #include "Components/LifeComponent.hpp"
 #include "Components/ScoreComponent.hpp"
+#include "Core/ServiceLocator.hpp"
 #include "States/Entities/MsPacmanDying.hpp"
 #include "States/Entities/MsPacmanMoving.hpp"
 
@@ -177,15 +179,28 @@ void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
     {
         case ItemType::PacDot:
             scoreGained = getScore(ScoreTypes::PacDot);
+            {
+                scoreGained = getScore(ScoreTypes::PacDot);
+                m_Owner->GetComponent<LifeComponent>()->SetInvincibility(true);
+
+                bae::SoundID soundId         = Sounds::g_sSoundEvents.at(Sounds::SoundAssets::EatDot);
+                [[maybe_unused]] auto playId = bae::ServiceLocator::GetSoundSystem().Play(soundId);
+            }
             break;
         case ItemType::PowerPellet:
         {
             scoreGained = getScore(ScoreTypes::PowerPellet);
             m_Owner->GetComponent<LifeComponent>()->SetInvincibility(true);
+
+            bae::SoundID soundId         = Sounds::g_sSoundEvents.at(Sounds::SoundAssets::EatEnergizer);
+            [[maybe_unused]] auto playId = bae::ServiceLocator::GetSoundSystem().Play(soundId);
         }
         break;
         case ItemType::Fruit:
             scoreGained = getScore(ScoreTypes::BonusItem);
+
+            bae::SoundID soundId         = Sounds::g_sSoundEvents.at(Sounds::SoundAssets::EatFruit);
+            [[maybe_unused]] auto playId = bae::ServiceLocator::GetSoundSystem().Play(soundId);
             break;
     }
 

@@ -178,8 +178,8 @@ void LoadSounds()
     #else
 
     bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        // std::make_unique<bae::MixerSoundSystem>()));
-        std::make_unique<bae::NullSoundSystem>()));
+        std::make_unique<bae::MixerSoundSystem>()));
+    // std::make_unique<bae::NullSoundSystem>()));
 
     #endif
 

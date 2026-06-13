@@ -72,6 +72,10 @@ namespace Game
         void SpawnMsPacman() const;
         void SpawnMrPacman() const;
 
+        static void SpawnFruit(const glm::vec2& position);
+        static void SpawnDot(const glm::vec2& position);
+        static void SpawnPellet(const glm::vec2& position);
+
         static void AddControls(bae::GameObject& gameObject, bool firstPlayer);
 
 

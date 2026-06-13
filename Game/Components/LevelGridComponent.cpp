@@ -274,6 +274,13 @@ bool LevelGridComponent::DoesConnectionExistInDirection(const bae::Graphs::GridP
     return true;
 }
 
+std::vector<glm::vec2> LevelGridComponent::GetALlConnections() const
+{
+    auto nodes = m_LevelGridGraph->GetActiveNodes();
+
+    return bae::Graphs::ConvertNodesToPositions(nodes);
+}
+
 
 std::vector<glm::vec2> LevelGridComponent::GetShortestPath(const int startNodeId, const int endNodeId) const
 {

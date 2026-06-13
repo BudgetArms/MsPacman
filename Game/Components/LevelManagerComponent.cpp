@@ -342,29 +342,22 @@ void LevelManagerComponent::AddGhosts() const
 
 void LevelManagerComponent::AddItems() const
 {
-    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+    if(!m_LevelGridComponent)
+    {
+        return;
+    }
+
+    SpawnFruit(m_LevelGridComponent->GetPosition({ 2, 3 }));
+    //
+    for(auto positionNode : m_LevelGridComponent->GetALlConnections())
+    {
+        SpawnDot(positionNode);
+    }
 
 
-    const auto fruitObject = std::make_shared<bae::GameObject>("Fruit Item");
-    fruitObject->SetWorldLocation(m_LevelGridComponent->GetPosition({ 24, 22 }));
-
-    fruitObject->AddComponent<ItemComponent>(*fruitObject, ItemType::Fruit);
-    fruitObject->AddComponent<HitboxComponent>(*fruitObject, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
-
-    fruitObject->GetComponent<HitboxComponent>()->SetVisibility(true);
-
-    scene->Add(fruitObject);
-
-
-    const auto powerPellet = std::make_shared<bae::GameObject>("PowerPellet Item");
-    powerPellet->SetWorldLocation(m_LevelGridComponent->GetPosition({ 20, 26 }));
-
-    powerPellet->AddComponent<ItemComponent>(*powerPellet, ItemType::PowerPellet);
-    powerPellet->AddComponent<HitboxComponent>(*powerPellet, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
-    powerPellet->GetComponent<HitboxComponent>()->SetVisibility(true);
-
-    scene->Add(powerPellet);
-
+    //
+    SpawnPellet(m_LevelGridComponent->GetPosition({ 5, 26 }));
+    SpawnPellet(m_LevelGridComponent->GetPosition({ 5, 26 }));
 
     /*
     const auto powerPellet2 = std::make_shared<bae::GameObject>("PowerPellet Item");
@@ -493,6 +486,49 @@ void LevelManagerComponent::SpawnMrPacman() const
     AddControls(*mrPacman, false);
 
     scene->Add(mrPacman);
+}
+
+void LevelManagerComponent::SpawnFruit(const glm::vec2& position)
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto fruitObject = std::make_shared<bae::GameObject>("Fruit");
+    fruitObject->SetWorldLocation(position);
+
+    fruitObject->AddComponent<ItemComponent>(*fruitObject, ItemType::Fruit);
+    fruitObject->AddComponent<HitboxComponent>(*fruitObject, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+
+    fruitObject->GetComponent<HitboxComponent>()->SetVisibility(true);
+
+    scene->Add(fruitObject);
+}
+
+void LevelManagerComponent::SpawnDot(const glm::vec2& position)
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto PacDot = std::make_shared<bae::GameObject>("PacDot");
+    PacDot->SetWorldLocation(position);
+
+    PacDot->AddComponent<ItemComponent>(*PacDot, ItemType::PacDot);
+    PacDot->AddComponent<HitboxComponent>(*PacDot, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+    // PacDot->GetComponent<HitboxComponent>()->SetVisibility(true);
+
+    scene->Add(PacDot);
+}
+
+void LevelManagerComponent::SpawnPellet(const glm::vec2& position)
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
+
+    const auto powerPellet = std::make_shared<bae::GameObject>("PowerPellet");
+    powerPellet->SetWorldLocation(position);
+
+    powerPellet->AddComponent<ItemComponent>(*powerPellet, ItemType::PowerPellet);
+    powerPellet->AddComponent<HitboxComponent>(*powerPellet, glm::vec2{ 20, 20 }, glm::vec2{ 0, 0 });
+    // powerPellet->GetComponent<HitboxComponent>()->SetVisibility(true);
+
+    scene->Add(powerPellet);
 }
 
 void LevelManagerComponent::AddControls(bae::GameObject& gameObject, const bool firstPlayer)

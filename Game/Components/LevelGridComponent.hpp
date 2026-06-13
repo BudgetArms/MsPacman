@@ -68,6 +68,8 @@ namespace Game
         [[nodiscard]] bool DoesConnectionExistInDirection(bae::Graphs::GridPosition gridPosition,
                                                           Direction direction) const;
 
+        [[nodiscard]] std::vector<glm::vec2> GetALlConnections() const;
+
 
         [[nodiscard]] std::vector<glm::vec2> GetShortestPath(int startNodeId, int endNodeId) const;
         [[nodiscard]] std::vector<glm::vec2> GetShortestPath(const glm::vec2& startPos,
