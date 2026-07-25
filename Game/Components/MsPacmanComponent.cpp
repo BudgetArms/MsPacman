@@ -14,10 +14,10 @@
 #include "Components/GridMovementComponent.hpp"
 #include "Components/HitboxComponent.hpp"
 #include "Components/ItemComponent.hpp"
-#include "Components/LevelManagerComponent.hpp"
 #include "Components/LifeComponent.hpp"
 #include "Components/ScoreComponent.hpp"
 #include "Core/ServiceLocator.hpp"
+#include "Managers/LevelManager.hpp"
 #include "States/Entities/MsPacmanDying.hpp"
 #include "States/Entities/MsPacmanMoving.hpp"
 
@@ -142,26 +142,8 @@ void MsPacmanComponent::HandleCollision(const std::any& eventData) const
 
 void MsPacmanComponent::HandleItemCollision(ItemComponent& itemComponent) const
 {
-    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelManagersSceneName.data());
-    if(!scene)
-    {
-        return;
-    }
-
-    auto sceneGameObjects           = scene->GetObjects();
-    const auto levelManagerObjectIt = std::ranges::find_if(sceneGameObjects, [](auto& object)
-    {
-        return object->template HasComponent<LevelManagerComponent>();
-    });
-
-    if(levelManagerObjectIt == sceneGameObjects.end())
-    {
-        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get levelManagerComponent"));
-    }
-
-    const auto levelManagerComponent = (*levelManagerObjectIt)->GetComponent<LevelManagerComponent>();
-    const LevelJson levelJson        = levelManagerComponent->GetCurrentLevel();
-    const auto scoreMap              = levelJson.ScoreMap;
+    const LevelJson levelJson = LevelManager::GetInstance().GetCurrentLevel();
+    const auto scoreMap       = levelJson.ScoreMap;
 
     auto getScore = [&](const ScoreTypes scoreType) -> int
     {

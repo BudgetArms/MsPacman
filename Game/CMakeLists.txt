@@ -44,13 +44,11 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Commands/ToggleMuteAllSoundsCommand.cpp"
 
     "Components/BlinkyComponent.cpp"
-    "Components/CollisionManagerComponent.cpp"
     "Components/EntityManagerComponent.cpp"
     "Components/ItemComponent.cpp"
     "Components/LifeComponent.cpp"
     "Components/LifeDisplayComponent.cpp"
     "Components/LevelGridComponent.cpp"
-    "Components/LevelManagerComponent.cpp"
     "Components/GridMovementComponent.cpp"
     "Components/HitboxComponent.cpp"
     "Components/MsPacmanComponent.cpp"
@@ -58,6 +56,10 @@ add_executable(${PROJECT_NAME} ${TARGET_PARAM}
     "Components/RotateComponent.cpp"
     "Components/ScoreComponent.cpp"
     "Components/ScoreDisplayComponent.cpp"
+
+    "Managers/ManagersComponent.cpp"
+    "Managers/CollisionManager.cpp"
+    "Managers/LevelManager.cpp"
 
     "States/Entities/BlinkyChasing.cpp"
     "States/Entities/BlinkyEaten.cpp"

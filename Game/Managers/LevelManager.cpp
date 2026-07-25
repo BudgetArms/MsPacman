@@ -1,4 +1,4 @@
-#include "LevelManagerComponent.hpp"
+#include "LevelManager.hpp"
 
 #if WIN32
 #include <Windows.h>
@@ -7,22 +7,25 @@
 
 #include <fstream>
 
+
+#include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 
+
+#include "Components/SpriteComponent.hpp"
 #include "Core/HelperFunctions.hpp"
 #include "Core/Scene.hpp"
-#include "Components/SpriteComponent.hpp"
 #include "Managers/ResourceManager.hpp"
 #include "Managers/SceneManager.hpp"
 #include "Wrappers/Keyboard.hpp"
 
-#include "Components/BlinkyComponent.hpp"
-#include "Components/ItemComponent.hpp"
 #include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Commands/MoveCommand.hpp"
 #include "Commands/MoveOnGridCommand.hpp"
+#include "Components/BlinkyComponent.hpp"
 #include "Components/HitboxComponent.hpp"
+#include "Components/ItemComponent.hpp"
 #include "Components/LevelGridComponent.hpp"
 #include "Components/LifeComponent.hpp"
 #include "Components/LifeDisplayComponent.hpp"
@@ -36,9 +39,7 @@
 using namespace Game;
 
 
-LevelManagerComponent::LevelManagerComponent(bae::GameObject& owner, const GameMode gameMode) :
-    Component(owner),
-    m_GameMode{ gameMode }
+LevelManager::LevelManager()
 {
     // Create Background
     m_BackgroundSpriteSheet = std::make_unique<bae::SpriteSheet>(m_BackgroundTexturePath,
@@ -47,17 +48,17 @@ LevelManagerComponent::LevelManagerComponent(bae::GameObject& owner, const GameM
     m_BackgroundSpriteSheet->m_Index = 0;
 }
 
-LevelManagerComponent::~LevelManagerComponent()
+LevelManager::~LevelManager()
 {
     ClearLevel();
 }
 
-void LevelManagerComponent::Render() const
+void LevelManager::RenderBackground() const
 {
     m_BackgroundSpriteSheet->Render();
 }
 
-void LevelManagerComponent::LoadLevelFromFile(int levelNumber, const std::filesystem::path& jsonFile)
+void LevelManager::LoadLevelFromFile(int levelNumber, const std::filesystem::path& jsonFile)
 {
     if(levelNumber < 0)
     {
@@ -95,7 +96,7 @@ void LevelManagerComponent::LoadLevelFromFile(int levelNumber, const std::filesy
     m_LevelJson.insert({ levelNumber, levelJson });
 }
 
-void LevelManagerComponent::CreateLevel()
+void LevelManager::CreateLevel()
 {
     const std::optional<LevelJson> currentLevelJson = GetCurrentLevelJson();
     if(!currentLevelJson.has_value())
@@ -111,63 +112,68 @@ void LevelManagerComponent::CreateLevel()
     AddItems();
 }
 
-void LevelManagerComponent::ResetLevel()
+void LevelManager::ResetLevel()
 {
     ClearLevel();
     CreateLevel();
 }
 
-void LevelManagerComponent::SkipLevel()
+void LevelManager::SkipLevel()
 {
     WonLevel();
 }
 
-LevelGridComponent* LevelManagerComponent::GetLevelGridComponent() const
+LevelGridComponent* LevelManager::GetLevelGridComponent() const
 {
     return m_LevelGridComponent;
 }
 
 
-int LevelManagerComponent::GetCurrentLevelNumber() const
+int LevelManager::GetCurrentLevelNumber() const
 {
     return m_CurrentLevel;
 }
 
-LevelJson LevelManagerComponent::GetCurrentLevel()
+LevelJson LevelManager::GetCurrentLevel()
 {
     return GetCurrentLevelJson().value();
 }
 
-void LevelManagerComponent::SetSpriteSheetWorldLocation(const glm::vec2& location) const
+void LevelManager::SetGameMode(const GameMode gameMode)
+{
+    m_GameMode = gameMode;
+}
+
+void LevelManager::SetSpriteSheetWorldLocation(const glm::vec2& location) const
 {
     m_BackgroundSpriteSheet->m_Position = location;
 }
 
-void LevelManagerComponent::SetSpriteSheetWorldRotation(const float rotation) const
+void LevelManager::SetSpriteSheetWorldRotation(const float rotation) const
 {
     m_BackgroundSpriteSheet->m_Rotation = rotation;
 }
 
 
-void LevelManagerComponent::SetSpriteSheetWorldScale(const glm::vec2& scale) const
+void LevelManager::SetSpriteSheetWorldScale(const glm::vec2& scale) const
 {
     m_BackgroundSpriteSheet->m_Scale = scale;
 }
 
 
-void LevelManagerComponent::WonLevel()
+void LevelManager::WonLevel()
 {
     ++m_CurrentLevel;
     ClearLevel();
     CreateLevel();
 }
 
-void LevelManagerComponent::LostLevel()
+void LevelManager::LostLevel()
 {
     ResetLevel();
 }
 
-void LevelManagerComponent::LoadBackground() const
+void LevelManager::LoadBackground() const
 {
     const int currentLevelIndex = static_cast<int>(static_cast<float>(m_CurrentLevel)
         / m_LevelRepeatTimes) % static_cast<int>(m_LevelJson.size());
@@ -181,14 +187,9 @@ void LevelManagerComponent::LoadBackground() const
     m_BackgroundSpriteSheet->m_Index = currentLevelIndex;
 }
 
-void LevelManagerComponent::ClearLevel() const
+void LevelManager::ClearLevel() const
 {
     // To avoid a deletion of objects if the scene is already getting deleted
-    if(m_Owner->IsMarkedForDeletion())
-    {
-        return;
-    }
-
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
     if(scene)
     {
@@ -196,7 +197,7 @@ void LevelManagerComponent::ClearLevel() const
     }
 }
 
-std::optional<LevelJson> LevelManagerComponent::GetCurrentLevelJson()
+std::optional<LevelJson> LevelManager::GetCurrentLevelJson()
 {
     if(m_LevelJson.empty())
     {
@@ -215,7 +216,7 @@ std::optional<LevelJson> LevelManagerComponent::GetCurrentLevelJson()
     return levelJsonIt->second;
 }
 
-void LevelManagerComponent::CreateGrid()
+void LevelManager::CreateGrid()
 {
     const std::optional<LevelJson> currentLevelJson = GetCurrentLevelJson();
     if(!currentLevelJson.has_value())
@@ -268,7 +269,7 @@ void LevelManagerComponent::CreateGrid()
     scene->Add(levelGrid);
 }
 
-void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
+void LevelManager::HandleEvent(const unsigned int eventHash)
 {
     switch(GetEvent(eventHash))
     {
@@ -302,7 +303,7 @@ void LevelManagerComponent::HandleEvent(const unsigned int eventHash)
     }
 }
 
-void LevelManagerComponent::HandlePlayerDied() const
+void LevelManager::HandlePlayerDied() const
 {
     switch(m_GameMode)
     {
@@ -318,7 +319,7 @@ void LevelManagerComponent::HandlePlayerDied() const
     }
 }
 
-void LevelManagerComponent::AddPlayers() const
+void LevelManager::AddPlayers() const
 {
     switch(m_GameMode)
     {
@@ -335,12 +336,12 @@ void LevelManagerComponent::AddPlayers() const
     }
 }
 
-void LevelManagerComponent::AddGhosts() const
+void LevelManager::AddGhosts() const
 {
     SpawnBlinky();
 }
 
-void LevelManagerComponent::AddItems() const
+void LevelManager::AddItems() const
 {
     if(!m_LevelGridComponent)
     {
@@ -370,8 +371,8 @@ void LevelManagerComponent::AddItems() const
     */
 }
 
-std::shared_ptr<bae::GameObject> LevelManagerComponent::GetGhostBase(const std::string& gameObjectName,
-                                                                     const glm::vec2& spawnPosition)
+std::shared_ptr<bae::GameObject> LevelManager::GetGhostBase(const std::string& gameObjectName,
+                                                            const glm::vec2& spawnPosition)
 {
     const auto ghost = std::make_shared<bae::GameObject>(gameObjectName);
     ghost->SetWorldLocation(spawnPosition);
@@ -385,29 +386,8 @@ std::shared_ptr<bae::GameObject> LevelManagerComponent::GetGhostBase(const std::
     return ghost;
 }
 
-void LevelManagerComponent::SpawnBlinky() const
-{
-    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
-
-    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 13, 11 });
-
-    const auto blinky = GetGhostBase("Ghost Blinky", spawnPosition);
-
-    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent, spawnPosition);
-
-    const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
-    blinky->GetComponent<GridMovementComponent>()->AddObserver(blinkyComp);
-
-    if(m_GameMode == GameMode::Versus)
-    {
-        AddControls(*blinky.get(), false);
-    }
-
-    scene->Add(blinky);
-}
-
-std::shared_ptr<bae::GameObject> LevelManagerComponent::GetMsPacmanBase(const std::string& gameObjectName,
-                                                                        const glm::vec2& spawnPosition) const
+std::shared_ptr<bae::GameObject> LevelManager::GetMsPacmanBase(const std::string& gameObjectName,
+                                                               const glm::vec2& spawnPosition) const
 {
     const auto msPacman = std::make_shared<bae::GameObject>(gameObjectName);
     msPacman->SetWorldLocation(spawnPosition);
@@ -442,8 +422,29 @@ std::shared_ptr<bae::GameObject> LevelManagerComponent::GetMsPacmanBase(const st
     return msPacman;
 }
 
+void LevelManager::SpawnBlinky() const
+{
+    bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
-void LevelManagerComponent::SpawnMsPacman() const
+    const glm::vec2 spawnPosition = m_LevelGridComponent->GetPosition({ 13, 11 });
+
+    const auto blinky = GetGhostBase("Ghost Blinky", spawnPosition);
+
+    blinky->AddComponent<BlinkyComponent>(*blinky, m_LevelGridComponent, spawnPosition);
+
+    const auto blinkyComp = blinky->GetComponent<BlinkyComponent>();
+    blinky->GetComponent<GridMovementComponent>()->AddObserver(blinkyComp);
+
+    if(m_GameMode == GameMode::Versus)
+    {
+        AddControls(*blinky.get(), false);
+    }
+
+    scene->Add(blinky);
+}
+
+
+void LevelManager::SpawnMsPacman() const
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
@@ -463,7 +464,7 @@ void LevelManagerComponent::SpawnMsPacman() const
     scene->Add(msPacman);
 }
 
-void LevelManagerComponent::SpawnMrPacman() const
+void LevelManager::SpawnMrPacman() const
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
@@ -488,7 +489,7 @@ void LevelManagerComponent::SpawnMrPacman() const
     scene->Add(mrPacman);
 }
 
-void LevelManagerComponent::SpawnFruit(const glm::vec2& position)
+void LevelManager::SpawnFruit(const glm::vec2& position)
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
@@ -503,7 +504,7 @@ void LevelManagerComponent::SpawnFruit(const glm::vec2& position)
     scene->Add(fruitObject);
 }
 
-void LevelManagerComponent::SpawnDot(const glm::vec2& position)
+void LevelManager::SpawnDot(const glm::vec2& position)
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
@@ -517,7 +518,7 @@ void LevelManagerComponent::SpawnDot(const glm::vec2& position)
     scene->Add(PacDot);
 }
 
-void LevelManagerComponent::SpawnPellet(const glm::vec2& position)
+void LevelManager::SpawnPellet(const glm::vec2& position)
 {
     bae::Scene* const scene = bae::SceneManager::GetInstance().GetScene(g_LevelSceneName.data());
 
@@ -531,7 +532,7 @@ void LevelManagerComponent::SpawnPellet(const glm::vec2& position)
     scene->Add(powerPellet);
 }
 
-void LevelManagerComponent::AddControls(bae::GameObject& gameObject, const bool firstPlayer)
+void LevelManager::AddControls(bae::GameObject& gameObject, const bool firstPlayer)
 {
     const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
 

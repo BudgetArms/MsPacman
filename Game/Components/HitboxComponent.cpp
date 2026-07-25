@@ -1,11 +1,9 @@
 #include "HitboxComponent.hpp"
 
-#include "CollisionManagerComponent.hpp"
+#include "Managers/CollisionManager.hpp"
 #include "Core/GameObject.hpp"
-#include "Core/Scene.hpp"
 #include "Core/Utils.hpp"
 
-#include "Base/CommonManagerVariables.hpp"
 #include "Base/Events.hpp"
 #include "Managers/SceneManager.hpp"
 
@@ -85,51 +83,12 @@ void HitboxComponent::SendCollisionEventToObservers(HitboxComponent& otherHitbox
     NotifyObservers(eventHash, &otherHitbox);
 }
 
-void HitboxComponent::RegisterHitboxToCollisionManager()
+void HitboxComponent::RegisterHitboxToCollisionManager() const
 {
-    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelManagersSceneName.data());
-    if(!scene)
-    {
-        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get LevelManagers Scene"));
-    }
-
-    auto sceneGameObjects               = scene->GetObjects();
-    const auto collisionManagerObjectIt = std::ranges::find_if(sceneGameObjects, [](auto& object)
-    {
-        return object->template HasComponent<CollisionManagerComponent>();
-    });
-
-    if(collisionManagerObjectIt == sceneGameObjects.end())
-    {
-        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get CollisionManagerComponent"));
-    }
-
-    const auto collisionManagerComp = (*collisionManagerObjectIt)->GetComponent<CollisionManagerComponent>();
-    collisionManagerComp->RegisterHitbox(*this);
+    CollisionManager::GetInstance().RegisterHitbox(*this);
 }
 
 void HitboxComponent::UnRegisterHitboxToCollisionManager()
 {
-    bae::Scene* scene = bae::SceneManager::GetInstance().GetScene(g_LevelManagersSceneName.data());
-    if(!scene)
-    {
-        std::cout << FUNCTION_NAME << " Failed To Get LevelManagers Scene" << '\n';
-        std::cout << FUNCTION_NAME << " This can be due to Program Shutdown" << '\n';
-
-        return;
-    }
-
-    auto sceneGameObjects               = scene->GetObjects();
-    const auto collisionManagerObjectIt = std::ranges::find_if(sceneGameObjects, [](auto& object)
-    {
-        return object->template HasComponent<CollisionManagerComponent>();
-    });
-
-    if(collisionManagerObjectIt == sceneGameObjects.end())
-    {
-        throw std::runtime_error(FUNCTION_NAME + std::string(" Failed To Get CollisionManagerComponent"));
-    }
-
-    const auto collisionManagerComp = (*collisionManagerObjectIt)->GetComponent<CollisionManagerComponent>();
-    collisionManagerComp->UnRegisterHitbox(this);
+    CollisionManager::GetInstance().UnRegisterHitbox(this);
 }

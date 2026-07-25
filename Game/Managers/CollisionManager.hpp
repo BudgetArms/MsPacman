@@ -3,19 +3,17 @@
 #include <vector>
 
 #include "Components/Component.hpp"
+#include "Singletons/Singleton.hpp"
 
 
 namespace Game
 {
     class HitboxComponent;
 
-    class CollisionManagerComponent : public bae::Component
+    class CollisionManager : public bae::Singleton<CollisionManager>
     {
     public:
-        explicit CollisionManagerComponent(bae::GameObject& owner);
-
-        void FixedUpdate() override;
-
+        void HandleCollisions() const;
 
         void RegisterHitbox(const HitboxComponent& hitbox);
         void UnRegisterHitbox(HitboxComponent* hitbox);

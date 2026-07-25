@@ -1,4 +1,5 @@
 ﻿// VLD include
+#include <SDL3/SDL_keycode.h>
 #if _DEBUG && __has_include(<vld.h>)
 #include <vld.h>
 #endif
@@ -70,10 +71,8 @@
 #include "Commands/TestMousePositionCommand.hpp"
 #include "Commands/ToggleMuteAllSoundsCommand.hpp"
 
-#include "Components/CollisionManagerComponent.hpp"
-#include "Components/EntityManagerComponent.hpp"
-#include "Components/HitboxComponent.hpp"
-#include "Components/LevelManagerComponent.hpp"
+#include "Managers/LevelManager.hpp"
+#include "Managers/ManagersComponent.hpp"
 
 
 namespace fs = std::filesystem;
@@ -87,10 +86,7 @@ void CreateAllScenes();
 
 void LoadStartMenu();
 
-void LoadCollisionManager();
-void LoadLevelManager();
-void LoadEntityManager();
-
+void LoadManagers();
 
 void LoadDAEBackground();
 void LoadFpsCounterScene();
@@ -155,9 +151,7 @@ void Start()
 
     // LoadStartMenu();
 
-    LoadCollisionManager();
-    LoadLevelManager();
-    // LoadEntityManager();
+    LoadManagers();
 
     LoadFpsCounterScene();
     LoadGameNameScene();
@@ -177,9 +171,9 @@ void LoadSounds()
 
     #else
 
-    bae::ServiceLocator::RegisterSoundSystem(std::make_unique<bae::LoggingSoundSystem>(
-        std::make_unique<bae::MixerSoundSystem>()));
-    // std::make_unique<bae::NullSoundSystem>()));
+    bae::ServiceLocator::RegisterSoundSystem(
+        // std::make_unique<bae::LoggingSoundSystem>(std::make_unique<bae::MixerSoundSystem>()));
+        std::make_unique<bae::MixerSoundSystem>());
 
     #endif
 
@@ -216,7 +210,7 @@ void LoadSoundCommands()
 void CreateAllScenes()
 {
     // in reverse order, so that the start menu scene is displayed before anything else
-    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelManagersSceneName.data());
+    bae::SceneManager::GetInstance().CreateScene(Game::g_LevelBackgroundName.data());
     bae::SceneManager::GetInstance().CreateScene(Game::g_LevelSceneName.data());
     bae::SceneManager::GetInstance().CreateScene(Game::g_LevelGameOverSceneName.data());
     bae::SceneManager::GetInstance().CreateScene(Game::g_StartMenuSceneName.data());
@@ -268,59 +262,33 @@ void LoadStartMenu()
 }
 
 
-void LoadCollisionManager()
+void LoadManagers()
 {
-    bae::Scene* managerComponentScene = bae::SceneManager::GetInstance().
-            GetScene(Game::g_LevelManagersSceneName.data());
-
-    const auto collisionManager = std::make_shared<bae::GameObject>("CollisionManager");
-    collisionManager->AddComponent<Game::CollisionManagerComponent>(*collisionManager);
-
-    managerComponentScene->Add(collisionManager);
-}
-
-void LoadLevelManager()
-{
-    bae::Scene* managerComponentScene = bae::SceneManager::GetInstance().
-            GetScene(Game::g_LevelManagersSceneName.data());
-
-    const auto levelManager = std::make_shared<bae::GameObject>("LevelManager");
-    // levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::Singleplayer);
-    levelManager->AddComponent<Game::LevelManagerComponent>(*levelManager, Game::GameMode::CoOp);
-
-    const auto levelManagerComponent =
-            levelManager->GetComponent<Game::LevelManagerComponent>();
+    // Setting up level manager data
+    Game::LevelManager& levelManager = Game::LevelManager::GetInstance();
 
     const bae::WindowSize windowSize = bae::Renderer::GetInstance().GetSDLWindowSize();
-    levelManagerComponent->SetSpriteSheetWorldLocation({
+    levelManager.SetSpriteSheetWorldLocation({
         static_cast<float>(windowSize.Width) / 2.f, static_cast<float>(windowSize.Height) / 2.f
     });
-    levelManagerComponent->SetSpriteSheetWorldScale({ 2.f, 2.f });
+    levelManager.SetSpriteSheetWorldScale({ 2.f, 2.f });
 
-    levelManagerComponent->LoadLevelFromFile(0, "Levels/Level_1.json");
-    levelManagerComponent->LoadLevelFromFile(1, "Levels/Level_2.json");
+    levelManager.LoadLevelFromFile(0, "Levels/Level_1.json");
+    levelManager.LoadLevelFromFile(1, "Levels/Level_2.json");
 
-    auto skipLevelCommand = std::make_unique<Game::SkipLevelCommand>(*levelManager);
+    auto skipLevelCommand = std::make_unique<Game::SkipLevelCommand>();
 
     const bae::Keyboard& keyboard = bae::InputManager::GetInstance().GetKeyboard();
     keyboard.AddKeyboardCommands(std::move(skipLevelCommand), SDLK_F1, bae::InputManager::ButtonState::Down);
 
-
-    managerComponentScene->Add(levelManager);
-
     bae::EventQueue::GetInstance().SendEvent(Game::GetEventHash(Game::Events::BeginLevel));
-}
 
-void LoadEntityManager()
-{
-    auto* managerComponentScene = bae::SceneManager::GetInstance().
-            GetScene(Game::g_LevelManagersSceneName.data());
+    auto* backgroundScene = bae::SceneManager::GetInstance().GetScene(Game::g_LevelBackgroundName.data());
 
+    const auto managersObject = std::make_shared<bae::GameObject>("ManagersObject");
+    managersObject->AddComponent<Game::ManagersComponent>(*managersObject);
 
-    const auto entityManager = std::make_shared<bae::GameObject>("EntityManager");
-    entityManager->AddComponent<Game::EntityManagerComponent>(*entityManager);
-
-    managerComponentScene->Add(entityManager);
+    backgroundScene->Add(managersObject);
 }
 
 void LoadDAEBackground()

@@ -29,7 +29,7 @@ namespace Game
         bool m_bAreCollisionsEnabled{ true };
 
     private:
-        void RegisterHitboxToCollisionManager();
+        void RegisterHitboxToCollisionManager() const;
         void UnRegisterHitboxToCollisionManager();
 
         glm::vec2 m_Dimensions{};

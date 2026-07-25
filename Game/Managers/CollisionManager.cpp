@@ -1,4 +1,4 @@
-#include "CollisionManagerComponent.hpp"
+#include "CollisionManager.hpp"
 
 
 #include "Components/HitboxComponent.hpp"
@@ -7,12 +7,7 @@
 using namespace Game;
 
 
-CollisionManagerComponent::CollisionManagerComponent(bae::GameObject& owner) :
-    Component(owner)
-{
-}
-
-void CollisionManagerComponent::FixedUpdate()
+void CollisionManager::HandleCollisions() const
 {
     if(m_HitboxObjects.size() < 2)
     {
@@ -65,7 +60,7 @@ void CollisionManagerComponent::FixedUpdate()
     }
 }
 
-void CollisionManagerComponent::RegisterHitbox(const HitboxComponent& hitbox)
+void CollisionManager::RegisterHitbox(const HitboxComponent& hitbox)
 {
     bae::GameObject* hitboxObject = hitbox.GetGameObject();
     if(!hitboxObject)
@@ -86,7 +81,7 @@ void CollisionManagerComponent::RegisterHitbox(const HitboxComponent& hitbox)
     m_HitboxObjects.push_back(hitboxObject);
 }
 
-void CollisionManagerComponent::UnRegisterHitbox(HitboxComponent* hitbox)
+void CollisionManager::UnRegisterHitbox(HitboxComponent* hitbox)
 {
     bae::GameObject* hitboxObject = hitbox->GetGameObject();
     if(!hitboxObject)
@@ -108,7 +103,7 @@ void CollisionManagerComponent::UnRegisterHitbox(HitboxComponent* hitbox)
 }
 
 
-void CollisionManagerComponent::SendHitboxesNotifications(HitboxComponent* hitboxA, HitboxComponent* hitboxB)
+void CollisionManager::SendHitboxesNotifications(HitboxComponent* hitboxA, HitboxComponent* hitboxB)
 {
     hitboxA->SendCollisionEventToObservers(*hitboxB);
     hitboxB->SendCollisionEventToObservers(*hitboxA);

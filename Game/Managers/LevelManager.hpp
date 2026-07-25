@@ -15,13 +15,13 @@
 
 namespace Game
 {
-    class LevelManagerComponent : public bae::Component, public bae::EventListener
+    class LevelManager : public bae::Singleton<LevelManager>, public bae::EventListener
     {
     public:
-        LevelManagerComponent(bae::GameObject& owner, GameMode gameMode);
-        ~LevelManagerComponent() override;
+        explicit LevelManager();
+        ~LevelManager() override;
 
-        void Render() const override;
+        void RenderBackground() const;
 
         void LoadLevelFromFile(int levelNumber, const std::filesystem::path& jsonFile);
 
@@ -36,6 +36,7 @@ namespace Game
         [[nodiscard]] int GetCurrentLevelNumber() const;
         [[nodiscard]] LevelJson GetCurrentLevel();
 
+        void SetGameMode(GameMode gameMode);
 
         void SetSpriteSheetWorldLocation(const glm::vec2& location) const;
         void SetSpriteSheetWorldRotation(float rotation) const;
@@ -81,7 +82,7 @@ namespace Game
 
         std::unique_ptr<bae::SpriteSheet> m_BackgroundSpriteSheet{};
 
-        GameMode m_GameMode;
+        GameMode m_GameMode{ GameMode::Singleplayer };
 
 
         int m_CurrentLevel{ 0 };

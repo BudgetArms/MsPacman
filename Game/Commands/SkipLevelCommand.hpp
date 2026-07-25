@@ -2,22 +2,13 @@
 
 #include "Commands/GameActorCommand.hpp"
 
-#include "Components/LevelManagerComponent.hpp"
-
 
 namespace Game
 {
-    class LevelManagerComponent;
-
-    class SkipLevelCommand final : public bae::GameActorCommand
+    class SkipLevelCommand final : public bae::Command
     {
     public:
-        explicit SkipLevelCommand(bae::GameObject& owner);
-
         void Execute() override;
-
-    private:
-        LevelManagerComponent* m_LevelManagerComponent{};
     };
 }
 
