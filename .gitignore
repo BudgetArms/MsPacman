@@ -404,6 +404,7 @@ imgui.ini
 /cmake-build-debug/
 /cmake-build-release-event-trace/
 /cmake-build-relwithdebinfo/
+/cmake-build-debug-compile-commands
 .idea/
 /out/
 
